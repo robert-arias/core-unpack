@@ -1,0 +1,5 @@
+{
+  "name": "drupal_recipe/unmet_config_dependencies",
+  "description": "An example Drupal recipe",
+  "type": "drupal-recipe"
+}

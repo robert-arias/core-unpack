@@ -4,6 +4,8 @@ namespace Drupal\KernelTests\Core\Recipe;
 
 use Drupal\Core\Recipe\Recipe;
 use Drupal\Core\Recipe\RecipeRunner;
+use Drupal\Core\Recipe\RecipeUnmetDependenciesException;
+use Drupal\node\Entity\NodeType;
 use Drupal\views\Entity\View;
 use org\bovigo\vfs\vfsStream;
 
@@ -28,6 +30,7 @@ class RecipeRunnerTest extends RecipeTestBase {
     $this->assertTrue($this->container->get('module_handler')->moduleExists('text'), 'The text module is installed');
     $this->assertTrue($this->container->get('module_handler')->moduleExists('node'), 'The node module is installed');
     $this->assertTrue($this->container->get('config.storage')->exists('node.settings'), 'The node.settings configuration has been created');
+    $this->assertFalse($this->config('node.settings')->get('use_admin_theme'), 'The node.settings:use_admin_theme is set to FALSE');
   }
 
   public function testModuleAndThemeInstall() {
@@ -53,6 +56,36 @@ class RecipeRunnerTest extends RecipeTestBase {
     $this->assertTrue($this->container->get('module_handler')->moduleExists('test_module_required_by_theme'), 'The test_module_required_by_theme module is installed');
     $this->assertTrue($this->container->get('module_handler')->moduleExists('test_another_module_required_by_theme'), 'The test_another_module_required_by_theme module is installed');
     $this->assertTrue($this->container->get('theme_handler')->themeExists('test_theme_depending_on_modules'), 'The test_theme_depending_on_modules theme is installed');
+  }
+
+  public function testModuleConfigurationOverride() {
+    // Test the state prior to applying the recipe.
+    $this->assertEmpty($this->container->get('config.factory')->listAll('node.'), 'There is no node configuration');
+
+    $recipe = Recipe::createFromDirectory(vfsStream::url('root/recipes/install_node_with_config'));
+    RecipeRunner::processRecipe($recipe);
+
+    // Test the state after applying the recipe.
+    $this->assertTrue($this->container->get('config.storage')->exists('node.settings'), 'The node.settings configuration has been created');
+    $this->assertTrue($this->container->get('config.storage')->exists('node.settings'), 'The node.settings configuration has been created');
+    $this->assertTrue($this->config('node.settings')->get('use_admin_theme'), 'The node.settings:use_admin_theme is set to TRUE');
+    $this->assertSame('Test content type', NodeType::load('test')->label());
+    $node_type_data = $this->config('node.type.test')->get();
+    $this->assertGreaterThan(0, strlen($node_type_data['uuid']), 'The node type configuration has been assigned a UUID.');
+    // cSpell:disable-next-line
+    $this->assertSame('965SCwSA3qgVf47x7hEE4dufnUDpxKMsUfsqFtqjGn0', $node_type_data['_core']['default_config_hash']);
+  }
+
+  public function testUnmetConfigurationDependencies() {
+    $recipe = Recipe::createFromDirectory(vfsStream::url('root/recipes/unmet_config_dependencies'));
+    try {
+      RecipeRunner::processRecipe($recipe);
+      $this->fail('Expected exception not thrown');
+    }
+    catch (RecipeUnmetDependenciesException $e) {
+      $this->assertSame("The configuration 'node.type.test' has unmet dependencies", $e->getMessage());
+      $this->assertSame('node.type.test', $e->configName);
+    }
   }
 
 }

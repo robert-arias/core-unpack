@@ -1,0 +1,5 @@
+{
+  "name": "drupal_recipe/install_node_with_config",
+  "description": "An example Drupal recipe that would node and a node type",
+  "type": "drupal-recipe"
+}

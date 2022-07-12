@@ -23,7 +23,7 @@ final class RecipeRunner {
    *   The recipe to apply.
    */
   public static function processRecipe(Recipe $recipe): void {
-    static::processInstall($recipe->install);
+    static::processInstall($recipe->install, $recipe->config->getConfigStorage());
     static::processConfiguration($recipe->config);
     static::processContent($recipe->content);
   }
@@ -33,14 +33,21 @@ final class RecipeRunner {
    *
    * @param \Drupal\Core\Recipe\InstallConfigurator $install
    *   The list of extensions to install.
+   * @param \Drupal\Core\Config\StorageInterface $recipeConfigStorage
+   *   The recipe's configuration storage. Used to override extension provided
+   *   configuration.
    */
-  protected static function processInstall(InstallConfigurator $install): void {
+  protected static function processInstall(InstallConfigurator $install, StorageInterface $recipeConfigStorage): void {
     foreach ($install->modules as $name) {
       // Disable configuration entity install but use the config directory from
       // the module.
       \Drupal::service('config.installer')->setSyncing(TRUE);
       $default_install_path = \Drupal::service('extension.list.module')->get($name)->getPath() . '/' . InstallStorage::CONFIG_INSTALL_DIRECTORY;
-      $storage = new FileStorage($default_install_path, StorageInterface::DEFAULT_COLLECTION);
+      // Allow the recipe to override simple configuration from the module.
+      $storage = new RecipeOverrideConfigStorage(
+        $recipeConfigStorage,
+        new FileStorage($default_install_path, StorageInterface::DEFAULT_COLLECTION)
+      );
       \Drupal::service('config.installer')->setSourceStorage($storage);
 
       \Drupal::service('module_installer')->install([$name]);
@@ -52,7 +59,11 @@ final class RecipeRunner {
       // Disable configuration entity install.
       \Drupal::service('config.installer')->setSyncing(TRUE);
       $default_install_path = \Drupal::service('extension.list.theme')->get($name)->getPath() . '/' . InstallStorage::CONFIG_INSTALL_DIRECTORY;
-      $storage = new FileStorage($default_install_path, StorageInterface::DEFAULT_COLLECTION);
+      // Allow the recipe to override simple configuration from the theme.
+      $storage = new RecipeOverrideConfigStorage(
+        $recipeConfigStorage,
+        new FileStorage($default_install_path, StorageInterface::DEFAULT_COLLECTION)
+      );
       \Drupal::service('config.installer')->setSourceStorage($storage);
 
       \Drupal::service('theme_installer')->install([$name]);
@@ -61,8 +72,20 @@ final class RecipeRunner {
   }
 
   protected static function processConfiguration(ConfigConfigurator $config): void {
-    // @todo https://www.drupal.org/project/distributions_recipes/issues/3292282
     // @todo https://www.drupal.org/project/distributions_recipes/issues/3292284
+
+    // @todo sort out this monstrosity.
+    $config_installer = new RecipeConfigInstaller(
+      \Drupal::service('config.factory'),
+      \Drupal::service('config.storage'),
+      \Drupal::service('config.typed'),
+      \Drupal::service('config.manager'),
+      \Drupal::service('event_dispatcher'),
+      NULL,
+      \Drupal::service('extension.path.resolver'));
+    // Create configuration supplied by the recipe that does not exist.
+    $config_installer->installRecipeConfig($config);
+
     // @todo https://www.drupal.org/project/distributions_recipes/issues/3292286
   }
 
