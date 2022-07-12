@@ -1,0 +1,5 @@
+{
+  "name": "drupal_recipe/base_theme_and_views",
+  "description": "An example Drupal recipe that would install modules and themes",
+  "type": "drupal-recipe"
+}

@@ -1,0 +1,5 @@
+{
+  "name": "drupal_recipe/install_two_modules",
+  "description": "An example Drupal recipe that would install two modules",
+  "type": "drupal-recipe"
+}

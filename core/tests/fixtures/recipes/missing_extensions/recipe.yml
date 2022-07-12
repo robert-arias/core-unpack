@@ -1,0 +1,5 @@
+type: 'Testing'
+install:
+  - does_not_exist_one
+  - does_not_exist_two
+  - dblog

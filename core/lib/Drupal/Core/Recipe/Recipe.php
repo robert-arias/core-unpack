@@ -33,11 +33,16 @@ class Recipe {
       'content' => [],
     ];
 
-    $composer_data = json_decode(file_get_contents($path . '/composer.json'), TRUE);
+    $composer_data = json_decode(file_get_contents($path . '/composer.json'), TRUE) + [
+      'type' => '',
+      'name' => '',
+      'description' => '',
+    ];
+
     if (!isset($composer_data['type']) || $composer_data['type'] !== static::COMPOSER_PROJECT_TYPE) {
       throw new RecipeFileException("The composer project type must be: " . static::COMPOSER_PROJECT_TYPE);
     }
-    $install = new InstallConfigurator($recipe_data['install']);
+    $install = new InstallConfigurator($recipe_data['install'], \Drupal::service('extension.list.module'), \Drupal::service('extension.list.theme'));
     $config = new ConfigConfigurator($recipe_data['config']);
     $content = new ContentConfigurator($recipe_data['content']);
     return new static($composer_data['name'], $composer_data['description'], $recipe_data['type'], $install, $config, $content);

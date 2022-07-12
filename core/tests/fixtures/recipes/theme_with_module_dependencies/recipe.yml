@@ -1,0 +1,4 @@
+type: 'Testing'
+install:
+  - test_theme_depending_on_modules
+  - test_module_required_by_theme

@@ -1,0 +1,5 @@
+type: 'Testing'
+install:
+  - test_subsubtheme
+  - node
+  - views
