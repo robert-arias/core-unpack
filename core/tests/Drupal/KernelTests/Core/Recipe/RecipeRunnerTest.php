@@ -3,6 +3,7 @@
 namespace Drupal\KernelTests\Core\Recipe;
 
 use Drupal\Core\Recipe\Recipe;
+use Drupal\Core\Recipe\RecipePreExistingConfigException;
 use Drupal\Core\Recipe\RecipeRunner;
 use Drupal\Core\Recipe\RecipeUnmetDependenciesException;
 use Drupal\node\Entity\NodeType;
@@ -86,6 +87,29 @@ class RecipeRunnerTest extends RecipeTestBase {
       $this->assertSame("The configuration 'node.type.test' has unmet dependencies", $e->getMessage());
       $this->assertSame('node.type.test', $e->configName);
     }
+  }
+
+  public function testApplySameRecipe() {
+    // Test the state prior to applying the recipe.
+    $this->assertEmpty($this->container->get('config.factory')->listAll('node.'), 'There is no node configuration');
+
+    $recipe = Recipe::createFromDirectory(vfsStream::url('root/recipes/install_node_with_config'));
+    RecipeRunner::processRecipe($recipe);
+
+    // Test the state prior to applying the recipe.
+    $this->assertNotEmpty($this->container->get('config.factory')->listAll('node.'), 'There is node configuration');
+
+    $recipe = Recipe::createFromDirectory(vfsStream::url('root/recipes/install_node_with_config'));
+    RecipeRunner::processRecipe($recipe);
+    $this->assertTrue(TRUE, 'Applying a recipe for the second time with no config changes results in a successful application');
+
+    $type = NodeType::load('test');
+    $type->setNewRevision(FALSE);
+    $type->save();
+
+    $this->expectException(RecipePreExistingConfigException::class);
+    $this->expectExceptionMessage("The configuration 'node.type.test' exists already and does not match the recipe's configuration");
+    Recipe::createFromDirectory(vfsStream::url('root/recipes/install_node_with_config'));
   }
 
 }
