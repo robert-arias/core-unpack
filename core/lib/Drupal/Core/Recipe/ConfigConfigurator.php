@@ -19,12 +19,22 @@ final class ConfigConfigurator {
    *   Config options for a recipe.
    * @param string $recipe_directory
    *   The path to the recipe.
+   * @param \Drupal\Core\Config\StorageInterface $active_configuration
+   *   The active configuration storage.
    */
-  public function __construct(public readonly array $config, string $recipe_directory) {
+  public function __construct(public readonly array $config, string $recipe_directory, StorageInterface $active_configuration) {
     $this->recipeConfigDirectory = is_dir($recipe_directory . '/config') ? $recipe_directory . '/config' : NULL;
-    // @todo https://www.drupal.org/project/distributions_recipes/issues/3292282
     // @todo https://www.drupal.org/project/distributions_recipes/issues/3292284
     // @todo https://www.drupal.org/project/distributions_recipes/issues/3292286
+    $recipe_storage = $this->getConfigStorage();
+    foreach ($recipe_storage->listAll() as $config_name) {
+      if ($active_data = $active_configuration->read($config_name)) {
+        unset($active_data['uuid'], $active_data['_core']);
+        if ($active_data !== $recipe_storage->read($config_name)) {
+          throw new RecipePreExistingConfigException($config_name, sprintf("The configuration '%s' exists already and does not match the recipe's configuration", $config_name));
+        }
+      }
+    }
   }
 
   /**

@@ -5,6 +5,7 @@ namespace Drupal\KernelTests\Core\Recipe;
 use Drupal\Core\Recipe\Recipe;
 use Drupal\Core\Recipe\RecipeFileException;
 use Drupal\Core\Recipe\RecipeMissingExtensionsException;
+use Drupal\Core\Recipe\RecipePreExistingConfigException;
 use org\bovigo\vfs\vfsStream;
 
 /**
@@ -65,6 +66,32 @@ class RecipeTest extends RecipeTestBase {
     catch (RecipeMissingExtensionsException $e) {
       $this->assertSame(['does_not_exist_one', 'does_not_exist_two', 'foo'], $e->extensions);
     }
+  }
+
+  public function testPreExistingDifferentConfiguration() {
+    // Install the node module, its dependencies and configuration.
+    $this->container->get('module_installer')->install(['node']);
+    $this->assertFalse($this->config('node.settings')->get('use_admin_theme'), 'The node.settings:use_admin_theme is set to FALSE');
+
+    try {
+      Recipe::createFromDirectory(vfsStream::url('root/recipes/install_node_with_config'));
+      $this->fail('Expected exception not thrown');
+    }
+    catch (RecipePreExistingConfigException $e) {
+      $this->assertSame("The configuration 'node.settings' exists already and does not match the recipe's configuration", $e->getMessage());
+      $this->assertSame('node.settings', $e->configName);
+    }
+  }
+
+  public function testPreExistingMatchingConfiguration() {
+    // Install the node module, its dependencies and configuration.
+    $this->container->get('module_installer')->install(['node']);
+    // Change the config to match the recipe's config to prevent the exception
+    // being thrown.
+    $this->config('node.settings')->set('use_admin_theme', TRUE)->save();
+
+    $recipe = Recipe::createFromDirectory(vfsStream::url('root/recipes/install_node_with_config'));
+    $this->assertSame(vfsStream::url('root/recipes/install_node_with_config/config'), $recipe->config->recipeConfigDirectory);
   }
 
 }
