@@ -2,6 +2,10 @@
 
 namespace Drupal\Core\Recipe;
 
-class RecipeFileException extends \RuntimeException {
+/**
+ * @internal
+ *   This API is experimental.
+ */
+final class RecipeFileException extends \RuntimeException {
 
 }

@@ -10,7 +10,7 @@ use Drupal\Core\Config\StorageInterface;
  * @internal
  *   This API is experimental.
  */
-class RecipeOverrideConfigStorage implements StorageInterface {
+final class RecipeOverrideConfigStorage implements StorageInterface {
 
   /**
    * @param \Drupal\Core\Config\StorageInterface $recipeStorage

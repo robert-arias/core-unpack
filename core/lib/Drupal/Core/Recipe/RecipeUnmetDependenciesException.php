@@ -4,8 +4,11 @@ namespace Drupal\Core\Recipe;
 
 /**
  * Exception thrown when a recipe has configuration with unmet dependencies.
+ *
+ * @internal
+ *   This API is experimental.
  */
-class RecipeUnmetDependenciesException extends \RuntimeException {
+final class RecipeUnmetDependenciesException extends \RuntimeException {
 
   /**
    * Constructs a RecipeUnmetDependenciesException.

@@ -8,8 +8,11 @@ use Drupal\Core\Config\StorageInterface;
 
 /**
  * Extends the ConfigInstaller service for recipes.
+ *
+ * @internal
+ *   This API is experimental.
  */
-class RecipeConfigInstaller extends ConfigInstaller {
+final class RecipeConfigInstaller extends ConfigInstaller {
 
   /**
    * {@inheritdoc}

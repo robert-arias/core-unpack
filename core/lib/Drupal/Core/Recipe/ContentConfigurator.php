@@ -2,7 +2,11 @@
 
 namespace Drupal\Core\Recipe;
 
-class ContentConfigurator {
+/**
+ * @internal
+ *   This API is experimental.
+ */
+final class ContentConfigurator {
 
   /**
    * @param array $content

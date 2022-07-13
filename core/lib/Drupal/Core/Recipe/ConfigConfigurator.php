@@ -6,7 +6,11 @@ use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Config\NullStorage;
 use Drupal\Core\Config\StorageInterface;
 
-class ConfigConfigurator {
+/**
+ * @internal
+ *   This API is experimental.
+ */
+final class ConfigConfigurator {
 
   public readonly ?string $recipeConfigDirectory;
 

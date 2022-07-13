@@ -6,8 +6,11 @@ use Drupal\Component\Assertion\Inspector;
 
 /**
  * Exception thrown when recipes contain or depend on missing extensions.
+ *
+ * @internal
+ *   This API is experimental.
  */
-class RecipeMissingExtensionsException extends \RuntimeException {
+final class RecipeMissingExtensionsException extends \RuntimeException {
 
   /**
    * Constructs a RecipeMissingExtensionsException.

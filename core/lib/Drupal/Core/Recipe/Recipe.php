@@ -4,7 +4,11 @@ namespace Drupal\Core\Recipe;
 
 use Drupal\Core\Serialization\Yaml;
 
-class Recipe {
+/**
+ * @internal
+ *   This API is experimental.
+ */
+final class Recipe {
 
   const COMPOSER_PROJECT_TYPE = 'drupal-recipe';
 
