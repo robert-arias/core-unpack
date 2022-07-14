@@ -62,7 +62,7 @@ final class RecipeCommand extends Command {
 
     $recipe = Recipe::createFromDirectory($recipe_path);
     RecipeRunner::processRecipe($recipe);
-    $io->info(sprintf('%s applied successfully', $recipe->name));
+    $io->success(sprintf('%s applied successfully', $recipe->name));
     return 0;
   }
 
