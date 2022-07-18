@@ -1,3 +1,4 @@
+name: 'Theme with module dependencies'
 type: 'Testing'
 install:
   - test_theme_depending_on_modules

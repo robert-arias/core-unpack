@@ -35,7 +35,7 @@ class RecipeCommandTest extends BrowserTestBase {
     $status = $process->run();
     $this->assertSame(0, $status);
     $this->assertSame('', $process->getErrorOutput());
-    $this->assertStringContainsString('drupal_recipe/install_node_with_config applied successfully', $process->getOutput());
+    $this->assertStringContainsString('Install node with config applied successfully', $process->getOutput());
 
     $this->rebuildAll();
     $this->assertTrue(\Drupal::moduleHandler()->moduleExists('node'), 'The node module is installed');

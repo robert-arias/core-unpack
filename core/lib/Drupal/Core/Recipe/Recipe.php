@@ -22,34 +22,36 @@ final class Recipe {
   ) {
   }
 
+  /**
+   * Creates a recipe object from the provided path.
+   *
+   * @param string $path
+   *   The path to a recipe.
+   *
+   * @return static
+   *   The Recipe object.
+   */
   public static function createFromDirectory(string $path): static {
     if (!is_readable($path . '/recipe.yml')) {
       throw new RecipeFileException("There is no $path/recipe.yml file");
     }
-    if (!is_readable($path . '/composer.json')) {
-      throw new RecipeFileException("There is no $path/composer.json file");
-    }
 
     $recipe_data = Yaml::decode(file_get_contents($path . '/recipe.yml')) + [
+      'description' => '',
       'type' => '',
       'install' => [],
       'config' => [],
       'content' => [],
     ];
 
-    $composer_data = json_decode(file_get_contents($path . '/composer.json'), TRUE) + [
-      'type' => '',
-      'name' => '',
-      'description' => '',
-    ];
-
-    if (!isset($composer_data['type']) || $composer_data['type'] !== static::COMPOSER_PROJECT_TYPE) {
-      throw new RecipeFileException("The composer project type must be: " . static::COMPOSER_PROJECT_TYPE);
+    if (!isset($recipe_data['name'])) {
+      throw new RecipeFileException("The $path/recipe.yml has no name value.");
     }
+
     $install = new InstallConfigurator($recipe_data['install'], \Drupal::service('extension.list.module'), \Drupal::service('extension.list.theme'));
     $config = new ConfigConfigurator($recipe_data['config'], $path, \Drupal::service('config.storage'));
     $content = new ContentConfigurator($recipe_data['content']);
-    return new static($composer_data['name'], $composer_data['description'], $recipe_data['type'], $install, $config, $content);
+    return new static($recipe_data['name'], $recipe_data['description'], $recipe_data['type'], $install, $config, $content);
   }
 
 }

@@ -1,3 +1,4 @@
+name: 'Config from module'
 type: 'Testing'
 install:
   - config_test

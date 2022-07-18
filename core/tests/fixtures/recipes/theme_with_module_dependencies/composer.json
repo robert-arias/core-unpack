@@ -1,5 +1,0 @@
-{
-  "name": "drupal_recipe/theme_with_module_dependencies",
-  "description": "An example Drupal recipe that would install a theme and its modules",
-  "type": "drupal-recipe"
-}

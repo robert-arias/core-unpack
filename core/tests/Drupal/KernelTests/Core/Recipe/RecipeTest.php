@@ -17,20 +17,21 @@ class RecipeTest extends RecipeTestBase {
 
   public function providerTestCreateFromDirectory() {
     return [
-      'no extensions' => ['no_extensions', 'drupal_recipe/no_extensions' , 'Testing', []],
+      'no extensions' => ['no_extensions', 'No extensions' , 'Testing', [], 'A recipe description'],
       // Filter is installed because it is a dependency and it is not yet installed.
-      'install_two_modules' => ['install_two_modules', 'drupal_recipe/install_two_modules' , 'Content type', ['filter', 'text', 'node']],
+      'install_two_modules' => ['install_two_modules', 'Install two modules' , 'Content type', ['filter', 'text', 'node'], ''],
     ];
   }
 
   /**
    * @dataProvider providerTestCreateFromDirectory
    */
-  public function testCreateFromDirectory2(string $recipe_name, string $expected_name, string $expected_type, array $expected_modules): void {
+  public function testCreateFromDirectory2(string $recipe_name, string $expected_name, string $expected_type, array $expected_modules, string $expected_description): void {
     $recipe = Recipe::createFromDirectory(vfsStream::url('root/recipes/' . $recipe_name));
     $this->assertSame($expected_name, $recipe->name);
     $this->assertSame($expected_type, $recipe->type);
     $this->assertSame($expected_modules, $recipe->install->modules);
+    $this->assertSame($expected_description, $recipe->description);
   }
 
   public function testCreateFromDirectoryNoRecipe(): void {
@@ -39,16 +40,10 @@ class RecipeTest extends RecipeTestBase {
     Recipe::createFromDirectory(vfsStream::url('root/recipes/no_recipe'));
   }
 
-  public function testCreateFromDirectoryNoComposer(): void {
+  public function testCreateFromDirectoryNoRecipeName(): void {
     $this->expectException(RecipeFileException::class);
-    $this->expectExceptionMessage('There is no vfs://root/recipes/no_composer/composer.json file');
-    Recipe::createFromDirectory(vfsStream::url('root/recipes/no_composer'));
-  }
-
-  public function testCreateFromDirectoryWrongComposerType(): void {
-    $this->expectException(RecipeFileException::class);
-    $this->expectExceptionMessage('The composer project type must be: drupal-recipe');
-    Recipe::createFromDirectory(vfsStream::url('root/recipes/wrong_type'));
+    $this->expectExceptionMessage('The vfs://root/recipes/no_name/recipe.yml has no name value.');
+    Recipe::createFromDirectory(vfsStream::url('root/recipes/no_name'));
   }
 
   public function testCreateFromDirectoryMissingExtensions(): void {

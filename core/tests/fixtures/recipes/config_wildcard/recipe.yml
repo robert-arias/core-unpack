@@ -1,3 +1,4 @@
+name: 'Config wildcard'
 type: 'Testing'
 install:
   - config_test
