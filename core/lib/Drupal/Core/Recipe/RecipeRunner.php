@@ -71,9 +71,13 @@ final class RecipeRunner {
     }
   }
 
+  /**
+   * Creates configuration and applies configuration actions.
+   *
+   * @param \Drupal\Core\Recipe\ConfigConfigurator $config
+   *   The config configurator from the recipe.
+   */
   protected static function processConfiguration(ConfigConfigurator $config): void {
-    // @todo https://www.drupal.org/project/distributions_recipes/issues/3292284
-
     // @todo sort out this monstrosity.
     $config_installer = new RecipeConfigInstaller(
       \Drupal::service('config.factory'),
@@ -83,7 +87,9 @@ final class RecipeRunner {
       \Drupal::service('event_dispatcher'),
       NULL,
       \Drupal::service('extension.path.resolver'));
-    // Create configuration supplied by the recipe that does not exist.
+
+    // Create configuration that is either supplied by the recipe or listed in
+    // the config.import section that does not exist.
     $config_installer->installRecipeConfig($config);
 
     // @todo https://www.drupal.org/project/distributions_recipes/issues/3292286

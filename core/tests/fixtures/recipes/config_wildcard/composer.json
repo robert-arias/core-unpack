@@ -1,0 +1,5 @@
+{
+  "name": "drupal_recipe/config_wildcard",
+  "description": "An example Drupal recipe that uses config wildcard from module",
+  "type": "drupal-recipe"
+}

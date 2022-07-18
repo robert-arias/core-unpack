@@ -1,0 +1,5 @@
+{
+  "name": "drupal_recipe/config_from_module",
+  "description": "An example Drupal recipe that uses config from module",
+  "type": "drupal-recipe"
+}
