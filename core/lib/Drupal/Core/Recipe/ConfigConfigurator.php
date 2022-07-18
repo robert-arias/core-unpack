@@ -3,6 +3,7 @@
 namespace Drupal\Core\Recipe;
 
 use Drupal\Core\Config\FileStorage;
+use Drupal\Core\Config\NullStorage;
 use Drupal\Core\Config\StorageInterface;
 
 /**
@@ -23,6 +24,7 @@ final class ConfigConfigurator {
    */
   public function __construct(public readonly array $config, string $recipe_directory, StorageInterface $active_configuration) {
     $this->recipeConfigDirectory = is_dir($recipe_directory . '/config') ? $recipe_directory . '/config' : NULL;
+    // @todo https://www.drupal.org/project/distributions_recipes/issues/3292284
     // @todo https://www.drupal.org/project/distributions_recipes/issues/3292286
     $recipe_storage = $this->getConfigStorage();
     foreach ($recipe_storage->listAll() as $config_name) {
@@ -46,30 +48,7 @@ final class ConfigConfigurator {
    *   The  config storage object for reading config from the recipe.
    */
   public function getConfigStorage(): StorageInterface {
-    $storages = [];
-
-    if ($this->recipeConfigDirectory) {
-      // Config provided by the recipe should take priority over config from
-      // extensions.
-      $storages[] = new FileStorage($this->recipeConfigDirectory);
-    }
-    if (!empty($this->config['import'])) {
-      /** @var \Drupal\Core\Extension\ModuleExtensionList $module_list */
-      $module_list = \Drupal::service('extension.list.module');
-      /** @var \Drupal\Core\Extension\ThemeExtensionList $theme_list */
-      $theme_list = \Drupal::service('extension.list.theme');
-      foreach ($this->config['import'] as $extension => $config) {
-        $path = match (TRUE) {
-          $module_list->exists($extension) => $module_list->getPath($extension),
-          $theme_list->exists($extension) => $theme_list->getPath($extension),
-          default => throw new \RuntimeException("$extension is not a theme or module")
-        };
-        $config = (array) ($config === '*' ? NULL : $config);
-        $storages[] = new RecipeExtensionConfigStorage($path, $config);
-      }
-    }
-
-    return RecipeConfigStorageWrapper::createStorageFromArray($storages);
+    return $this->recipeConfigDirectory ? new FileStorage($this->recipeConfigDirectory) : new NullStorage();
   }
 
 }

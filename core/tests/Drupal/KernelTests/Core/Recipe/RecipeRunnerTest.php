@@ -112,47 +112,4 @@ class RecipeRunnerTest extends RecipeTestBase {
     Recipe::createFromDirectory(vfsStream::url('root/recipes/install_node_with_config'));
   }
 
-  public function testConfigFromModule() {
-    // Test the state prior to applying the recipe.
-    $this->assertEmpty($this->container->get('config.factory')->listAll('config_test.'), 'There is no config_test configuration');
-
-    $recipe = Recipe::createFromDirectory(vfsStream::url('root/recipes/config_from_module'));
-    RecipeRunner::processRecipe($recipe);
-
-    // Test the state prior to applying the recipe.
-    $this->assertNotEmpty($this->container->get('config.factory')->listAll('config_test.'), 'There is config_test configuration');
-    $config_test_entities = \Drupal::entityTypeManager()->getStorage('config_test')->loadMultiple();
-    $this->assertSame(['dotted.default', 'override'], array_keys($config_test_entities));
-  }
-
-  public function testConfigWildcard() {
-    // Test the state prior to applying the recipe.
-    $this->assertEmpty($this->container->get('config.factory')->listAll('config_test.'), 'There is no config_test configuration');
-
-    $recipe = Recipe::createFromDirectory(vfsStream::url('root/recipes/config_wildcard'));
-    RecipeRunner::processRecipe($recipe);
-
-    // Test the state prior to applying the recipe.
-    $this->assertNotEmpty($this->container->get('config.factory')->listAll('config_test.'), 'There is config_test configuration');
-    $config_test_entities = \Drupal::entityTypeManager()->getStorage('config_test')->loadMultiple();
-    $this->assertSame(['dotted.default', 'override', 'override_unmet'], array_keys($config_test_entities));
-    $this->assertSame('Default', $config_test_entities['dotted.default']->label());
-    $this->assertSame('herp', $this->config('config_test.system')->get('404'));
-  }
-
-  public function testConfigFromModuleAndRecipe() {
-    // Test the state prior to applying the recipe.
-    $this->assertEmpty($this->container->get('config.factory')->listAll('config_test.'), 'There is no config_test configuration');
-
-    $recipe = Recipe::createFromDirectory(vfsStream::url('root/recipes/config_from_module_and_recipe'));
-    RecipeRunner::processRecipe($recipe);
-
-    // Test the state prior to applying the recipe.
-    $this->assertNotEmpty($this->container->get('config.factory')->listAll('config_test.'), 'There is config_test configuration');
-    $config_test_entities = \Drupal::entityTypeManager()->getStorage('config_test')->loadMultiple();
-    $this->assertSame(['dotted.default', 'override', 'override_unmet'], array_keys($config_test_entities));
-    $this->assertSame('Provided by recipe', $config_test_entities['dotted.default']->label());
-    $this->assertSame('derp', $this->config('config_test.system')->get('404'));
-  }
-
 }

@@ -118,7 +118,7 @@ final class RecipeOverrideConfigStorage implements StorageInterface {
    * {@inheritdoc}
    */
   public function getAllCollectionNames() {
-    return $this->wrappedStorage->getAllCollectionNames();
+    return array_unique(array_merge($this->wrappedStorage->getAllCollectionNames(), $this->recipeStorage->getAllCollectionNames()));
   }
 
   /**
