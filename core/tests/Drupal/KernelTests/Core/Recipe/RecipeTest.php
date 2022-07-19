@@ -6,14 +6,18 @@ use Drupal\Core\Recipe\Recipe;
 use Drupal\Core\Recipe\RecipeFileException;
 use Drupal\Core\Recipe\RecipeMissingExtensionsException;
 use Drupal\Core\Recipe\RecipePreExistingConfigException;
-use org\bovigo\vfs\vfsStream;
+use Drupal\KernelTests\KernelTestBase;
 
 /**
  * @coversDefaultClass \Drupal\Core\Recipe\Recipe
  * @group Recipe
- * @runInSeparateProcess
  */
-class RecipeTest extends RecipeTestBase {
+class RecipeTest extends KernelTestBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $modules = ['system', 'user', 'field'];
 
   public function providerTestCreateFromDirectory() {
     return [
@@ -27,7 +31,7 @@ class RecipeTest extends RecipeTestBase {
    * @dataProvider providerTestCreateFromDirectory
    */
   public function testCreateFromDirectory2(string $recipe_name, string $expected_name, string $expected_type, array $expected_modules, string $expected_description): void {
-    $recipe = Recipe::createFromDirectory(vfsStream::url('root/recipes/' . $recipe_name));
+    $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/' . $recipe_name);
     $this->assertSame($expected_name, $recipe->name);
     $this->assertSame($expected_type, $recipe->type);
     $this->assertSame($expected_modules, $recipe->install->modules);
@@ -36,14 +40,14 @@ class RecipeTest extends RecipeTestBase {
 
   public function testCreateFromDirectoryNoRecipe(): void {
     $this->expectException(RecipeFileException::class);
-    $this->expectExceptionMessage('There is no vfs://root/recipes/no_recipe/recipe.yml file');
-    Recipe::createFromDirectory(vfsStream::url('root/recipes/no_recipe'));
+    $this->expectExceptionMessage('There is no core/tests/fixtures/recipes/no_recipe/recipe.yml file');
+    Recipe::createFromDirectory('core/tests/fixtures/recipes/no_recipe');
   }
 
   public function testCreateFromDirectoryNoRecipeName(): void {
     $this->expectException(RecipeFileException::class);
-    $this->expectExceptionMessage('The vfs://root/recipes/no_name/recipe.yml has no name value.');
-    Recipe::createFromDirectory(vfsStream::url('root/recipes/no_name'));
+    $this->expectExceptionMessage('The core/tests/fixtures/recipes/no_name/recipe.yml has no name value.');
+    Recipe::createFromDirectory('core/tests/fixtures/recipes/no_name');
   }
 
   public function testCreateFromDirectoryMissingExtensions(): void {
@@ -55,7 +59,7 @@ class RecipeTest extends RecipeTestBase {
     \Drupal::state()->set('module_test.dependency', 'missing dependency');
 
     try {
-      Recipe::createFromDirectory(vfsStream::url('root/recipes/missing_extensions'));
+      Recipe::createFromDirectory('core/tests/fixtures/recipes/missing_extensions');
       $this->fail('Expected exception not thrown');
     }
     catch (RecipeMissingExtensionsException $e) {
@@ -69,7 +73,7 @@ class RecipeTest extends RecipeTestBase {
     $this->assertFalse($this->config('node.settings')->get('use_admin_theme'), 'The node.settings:use_admin_theme is set to FALSE');
 
     try {
-      Recipe::createFromDirectory(vfsStream::url('root/recipes/install_node_with_config'));
+      Recipe::createFromDirectory('core/tests/fixtures/recipes/install_node_with_config');
       $this->fail('Expected exception not thrown');
     }
     catch (RecipePreExistingConfigException $e) {
@@ -85,8 +89,8 @@ class RecipeTest extends RecipeTestBase {
     // being thrown.
     $this->config('node.settings')->set('use_admin_theme', TRUE)->save();
 
-    $recipe = Recipe::createFromDirectory(vfsStream::url('root/recipes/install_node_with_config'));
-    $this->assertSame(vfsStream::url('root/recipes/install_node_with_config/config'), $recipe->config->recipeConfigDirectory);
+    $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/install_node_with_config');
+    $this->assertSame('core/tests/fixtures/recipes/install_node_with_config/config', $recipe->config->recipeConfigDirectory);
   }
 
 }

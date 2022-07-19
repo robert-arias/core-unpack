@@ -6,15 +6,15 @@ use Drupal\Core\Recipe\Recipe;
 use Drupal\Core\Recipe\RecipePreExistingConfigException;
 use Drupal\Core\Recipe\RecipeRunner;
 use Drupal\Core\Recipe\RecipeUnmetDependenciesException;
+use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\NodeType;
 use Drupal\views\Entity\View;
-use org\bovigo\vfs\vfsStream;
 
 /**
  * @coversDefaultClass \Drupal\Core\Recipe\RecipeRunner
  * @group Recipe
  */
-class RecipeRunnerTest extends RecipeTestBase {
+class RecipeRunnerTest extends KernelTestBase {
 
   public function testModuleInstall() {
     // Test the state prior to applying the recipe.
@@ -23,7 +23,7 @@ class RecipeRunnerTest extends RecipeTestBase {
     $this->assertFalse($this->container->get('module_handler')->moduleExists('node'), 'The node module is not installed');
     $this->assertFalse($this->container->get('config.storage')->exists('node.settings'), 'The node.settings configuration does not exist');
 
-    $recipe = Recipe::createFromDirectory(vfsStream::url('root/recipes/install_two_modules'));
+    $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/install_two_modules');
     RecipeRunner::processRecipe($recipe);
 
     // Test the state after applying the recipe.
@@ -35,7 +35,7 @@ class RecipeRunnerTest extends RecipeTestBase {
   }
 
   public function testModuleAndThemeInstall() {
-    $recipe = Recipe::createFromDirectory(vfsStream::url('root/recipes/base_theme_and_views'));
+    $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/base_theme_and_views');
     RecipeRunner::processRecipe($recipe);
 
     // Test the state after applying the recipe.
@@ -50,7 +50,7 @@ class RecipeRunnerTest extends RecipeTestBase {
   }
 
   public function testThemeModuleDependenciesInstall() {
-    $recipe = Recipe::createFromDirectory(vfsStream::url('root/recipes/theme_with_module_dependencies'));
+    $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/theme_with_module_dependencies');
     RecipeRunner::processRecipe($recipe);
 
     // Test the state after applying the recipe.
@@ -63,7 +63,7 @@ class RecipeRunnerTest extends RecipeTestBase {
     // Test the state prior to applying the recipe.
     $this->assertEmpty($this->container->get('config.factory')->listAll('node.'), 'There is no node configuration');
 
-    $recipe = Recipe::createFromDirectory(vfsStream::url('root/recipes/install_node_with_config'));
+    $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/install_node_with_config');
     RecipeRunner::processRecipe($recipe);
 
     // Test the state after applying the recipe.
@@ -78,7 +78,7 @@ class RecipeRunnerTest extends RecipeTestBase {
   }
 
   public function testUnmetConfigurationDependencies() {
-    $recipe = Recipe::createFromDirectory(vfsStream::url('root/recipes/unmet_config_dependencies'));
+    $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/unmet_config_dependencies');
     try {
       RecipeRunner::processRecipe($recipe);
       $this->fail('Expected exception not thrown');
@@ -93,13 +93,13 @@ class RecipeRunnerTest extends RecipeTestBase {
     // Test the state prior to applying the recipe.
     $this->assertEmpty($this->container->get('config.factory')->listAll('node.'), 'There is no node configuration');
 
-    $recipe = Recipe::createFromDirectory(vfsStream::url('root/recipes/install_node_with_config'));
+    $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/install_node_with_config');
     RecipeRunner::processRecipe($recipe);
 
     // Test the state prior to applying the recipe.
     $this->assertNotEmpty($this->container->get('config.factory')->listAll('node.'), 'There is node configuration');
 
-    $recipe = Recipe::createFromDirectory(vfsStream::url('root/recipes/install_node_with_config'));
+    $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/install_node_with_config');
     RecipeRunner::processRecipe($recipe);
     $this->assertTrue(TRUE, 'Applying a recipe for the second time with no config changes results in a successful application');
 
@@ -109,14 +109,14 @@ class RecipeRunnerTest extends RecipeTestBase {
 
     $this->expectException(RecipePreExistingConfigException::class);
     $this->expectExceptionMessage("The configuration 'node.type.test' exists already and does not match the recipe's configuration");
-    Recipe::createFromDirectory(vfsStream::url('root/recipes/install_node_with_config'));
+    Recipe::createFromDirectory('core/tests/fixtures/recipes/install_node_with_config');
   }
 
   public function testConfigFromModule() {
     // Test the state prior to applying the recipe.
     $this->assertEmpty($this->container->get('config.factory')->listAll('config_test.'), 'There is no config_test configuration');
 
-    $recipe = Recipe::createFromDirectory(vfsStream::url('root/recipes/config_from_module'));
+    $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/config_from_module');
     RecipeRunner::processRecipe($recipe);
 
     // Test the state prior to applying the recipe.
@@ -129,7 +129,7 @@ class RecipeRunnerTest extends RecipeTestBase {
     // Test the state prior to applying the recipe.
     $this->assertEmpty($this->container->get('config.factory')->listAll('config_test.'), 'There is no config_test configuration');
 
-    $recipe = Recipe::createFromDirectory(vfsStream::url('root/recipes/config_wildcard'));
+    $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/config_wildcard');
     RecipeRunner::processRecipe($recipe);
 
     // Test the state prior to applying the recipe.
@@ -144,7 +144,7 @@ class RecipeRunnerTest extends RecipeTestBase {
     // Test the state prior to applying the recipe.
     $this->assertEmpty($this->container->get('config.factory')->listAll('config_test.'), 'There is no config_test configuration');
 
-    $recipe = Recipe::createFromDirectory(vfsStream::url('root/recipes/config_from_module_and_recipe'));
+    $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/config_from_module_and_recipe');
     RecipeRunner::processRecipe($recipe);
 
     // Test the state prior to applying the recipe.
