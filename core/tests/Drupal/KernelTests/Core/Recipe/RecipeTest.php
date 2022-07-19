@@ -6,6 +6,7 @@ use Drupal\Core\Recipe\Recipe;
 use Drupal\Core\Recipe\RecipeFileException;
 use Drupal\Core\Recipe\RecipeMissingExtensionsException;
 use Drupal\Core\Recipe\RecipePreExistingConfigException;
+use Drupal\Core\Recipe\UnknownRecipeException;
 use Drupal\KernelTests\KernelTestBase;
 
 /**
@@ -91,6 +92,17 @@ class RecipeTest extends KernelTestBase {
 
     $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/install_node_with_config');
     $this->assertSame('core/tests/fixtures/recipes/install_node_with_config/config', $recipe->config->recipeConfigDirectory);
+  }
+
+  public function testRecipeIncludeMissing() {
+    try {
+      Recipe::createFromDirectory('core/tests/fixtures/recipes/recipe_include_missing');
+    }
+    catch (UnknownRecipeException $e) {
+      $this->assertSame('does_not_exist', $e->recipe);
+      $this->assertSame(['core/tests/fixtures/recipes'], $e->searchPaths);
+      $this->assertSame('Can not find the does_not_exist recipe, search paths: core/tests/fixtures/recipes', $e->getMessage());
+    }
   }
 
 }

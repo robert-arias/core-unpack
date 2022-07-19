@@ -16,6 +16,7 @@ final class Recipe {
     public readonly string $name,
     public readonly string $description,
     public readonly string $type,
+    public readonly RecipeConfigurator $recipes,
     public readonly InstallConfigurator $install,
     public readonly ConfigConfigurator $config,
     public readonly ContentConfigurator $content
@@ -39,6 +40,7 @@ final class Recipe {
     $recipe_data = Yaml::decode(file_get_contents($path . '/recipe.yml')) + [
       'description' => '',
       'type' => '',
+      'recipes' => [],
       'install' => [],
       'config' => [],
       'content' => [],
@@ -48,10 +50,12 @@ final class Recipe {
       throw new RecipeFileException("The $path/recipe.yml has no name value.");
     }
 
+    $recipe_discovery = new RecipeDiscovery([dirname($path)]);
+    $recipes = new RecipeConfigurator($recipe_data['recipes'], $recipe_discovery);
     $install = new InstallConfigurator($recipe_data['install'], \Drupal::service('extension.list.module'), \Drupal::service('extension.list.theme'));
     $config = new ConfigConfigurator($recipe_data['config'], $path, \Drupal::service('config.storage'));
     $content = new ContentConfigurator($recipe_data['content']);
-    return new static($recipe_data['name'], $recipe_data['description'], $recipe_data['type'], $install, $config, $content);
+    return new static($recipe_data['name'], $recipe_data['description'], $recipe_data['type'], $recipes, $install, $config, $content);
   }
 
 }

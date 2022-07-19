@@ -119,7 +119,7 @@ class RecipeRunnerTest extends KernelTestBase {
     $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/config_from_module');
     RecipeRunner::processRecipe($recipe);
 
-    // Test the state prior to applying the recipe.
+    // Test the state after to applying the recipe.
     $this->assertNotEmpty($this->container->get('config.factory')->listAll('config_test.'), 'There is config_test configuration');
     $config_test_entities = \Drupal::entityTypeManager()->getStorage('config_test')->loadMultiple();
     $this->assertSame(['dotted.default', 'override'], array_keys($config_test_entities));
@@ -132,7 +132,7 @@ class RecipeRunnerTest extends KernelTestBase {
     $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/config_wildcard');
     RecipeRunner::processRecipe($recipe);
 
-    // Test the state prior to applying the recipe.
+    // Test the state after to applying the recipe.
     $this->assertNotEmpty($this->container->get('config.factory')->listAll('config_test.'), 'There is config_test configuration');
     $config_test_entities = \Drupal::entityTypeManager()->getStorage('config_test')->loadMultiple();
     $this->assertSame(['dotted.default', 'override', 'override_unmet'], array_keys($config_test_entities));
@@ -147,12 +147,26 @@ class RecipeRunnerTest extends KernelTestBase {
     $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/config_from_module_and_recipe');
     RecipeRunner::processRecipe($recipe);
 
-    // Test the state prior to applying the recipe.
+    // Test the state after to applying the recipe.
     $this->assertNotEmpty($this->container->get('config.factory')->listAll('config_test.'), 'There is config_test configuration');
     $config_test_entities = \Drupal::entityTypeManager()->getStorage('config_test')->loadMultiple();
     $this->assertSame(['dotted.default', 'override', 'override_unmet'], array_keys($config_test_entities));
     $this->assertSame('Provided by recipe', $config_test_entities['dotted.default']->label());
     $this->assertSame('derp', $this->config('config_test.system')->get('404'));
+  }
+
+  public function testRecipeInclude() {
+    // Test the state prior to applying the recipe.
+    $this->assertEmpty($this->container->get('config.factory')->listAll('node.'), 'There is no node configuration');
+    $this->assertFalse($this->container->get('module_handler')->moduleExists('dblog'), 'Dblog module not installed');
+
+    $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/recipe_include');
+    RecipeRunner::processRecipe($recipe);
+
+    // Test the state after to applying the recipe.
+    $this->assertTrue($this->container->get('module_handler')->moduleExists('dblog'), 'Dblog module installed');
+    $this->assertSame('Test content type', NodeType::load('test')->label());
+    $this->assertSame('Another test content type', NodeType::load('another_test')->label());
   }
 
 }
