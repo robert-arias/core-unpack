@@ -40,7 +40,7 @@ final class RecipeCommand extends Command {
   /**
    * {@inheritdoc}
    */
-  protected function configure() {
+  protected function configure(): void {
     $this
       ->setDescription('Applies a recipe to a site.')
       ->addArgument('path', InputArgument::REQUIRED, 'The path to the recipe\'s folder to apply');
@@ -53,7 +53,7 @@ final class RecipeCommand extends Command {
     $io = new SymfonyStyle($input, $output);
 
     $recipe_path = $input->getArgument('path');
-    if (!is_dir($recipe_path)) {
+    if (!is_string($recipe_path) || !is_dir($recipe_path)) {
       $io->error(sprintf('The supplied path %s is not a directory', $recipe_path));
     }
 

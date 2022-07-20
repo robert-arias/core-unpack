@@ -16,7 +16,7 @@ use Drupal\views\Entity\View;
  */
 class RecipeRunnerTest extends KernelTestBase {
 
-  public function testModuleInstall() {
+  public function testModuleInstall(): void {
     // Test the state prior to applying the recipe.
     $this->assertFalse($this->container->get('module_handler')->moduleExists('filter'), 'The filter module is not installed');
     $this->assertFalse($this->container->get('module_handler')->moduleExists('text'), 'The text module is not installed');
@@ -34,7 +34,7 @@ class RecipeRunnerTest extends KernelTestBase {
     $this->assertFalse($this->config('node.settings')->get('use_admin_theme'), 'The node.settings:use_admin_theme is set to FALSE');
   }
 
-  public function testModuleAndThemeInstall() {
+  public function testModuleAndThemeInstall(): void {
     $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/base_theme_and_views');
     RecipeRunner::processRecipe($recipe);
 
@@ -49,7 +49,7 @@ class RecipeRunnerTest extends KernelTestBase {
     $this->assertEmpty(View::loadMultiple(), "No views exist");
   }
 
-  public function testThemeModuleDependenciesInstall() {
+  public function testThemeModuleDependenciesInstall(): void {
     $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/theme_with_module_dependencies');
     RecipeRunner::processRecipe($recipe);
 
@@ -59,7 +59,7 @@ class RecipeRunnerTest extends KernelTestBase {
     $this->assertTrue($this->container->get('theme_handler')->themeExists('test_theme_depending_on_modules'), 'The test_theme_depending_on_modules theme is installed');
   }
 
-  public function testModuleConfigurationOverride() {
+  public function testModuleConfigurationOverride(): void {
     // Test the state prior to applying the recipe.
     $this->assertEmpty($this->container->get('config.factory')->listAll('node.'), 'There is no node configuration');
 
@@ -77,7 +77,7 @@ class RecipeRunnerTest extends KernelTestBase {
     $this->assertSame('965SCwSA3qgVf47x7hEE4dufnUDpxKMsUfsqFtqjGn0', $node_type_data['_core']['default_config_hash']);
   }
 
-  public function testUnmetConfigurationDependencies() {
+  public function testUnmetConfigurationDependencies(): void {
     $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/unmet_config_dependencies');
     try {
       RecipeRunner::processRecipe($recipe);
@@ -89,7 +89,7 @@ class RecipeRunnerTest extends KernelTestBase {
     }
   }
 
-  public function testApplySameRecipe() {
+  public function testApplySameRecipe(): void {
     // Test the state prior to applying the recipe.
     $this->assertEmpty($this->container->get('config.factory')->listAll('node.'), 'There is no node configuration');
 
@@ -112,7 +112,7 @@ class RecipeRunnerTest extends KernelTestBase {
     Recipe::createFromDirectory('core/tests/fixtures/recipes/install_node_with_config');
   }
 
-  public function testConfigFromModule() {
+  public function testConfigFromModule(): void {
     // Test the state prior to applying the recipe.
     $this->assertEmpty($this->container->get('config.factory')->listAll('config_test.'), 'There is no config_test configuration');
 
@@ -125,7 +125,7 @@ class RecipeRunnerTest extends KernelTestBase {
     $this->assertSame(['dotted.default', 'override'], array_keys($config_test_entities));
   }
 
-  public function testConfigWildcard() {
+  public function testConfigWildcard(): void {
     // Test the state prior to applying the recipe.
     $this->assertEmpty($this->container->get('config.factory')->listAll('config_test.'), 'There is no config_test configuration');
 
@@ -140,7 +140,7 @@ class RecipeRunnerTest extends KernelTestBase {
     $this->assertSame('herp', $this->config('config_test.system')->get('404'));
   }
 
-  public function testConfigFromModuleAndRecipe() {
+  public function testConfigFromModuleAndRecipe(): void {
     // Test the state prior to applying the recipe.
     $this->assertEmpty($this->container->get('config.factory')->listAll('config_test.'), 'There is no config_test configuration');
 
@@ -155,7 +155,7 @@ class RecipeRunnerTest extends KernelTestBase {
     $this->assertSame('derp', $this->config('config_test.system')->get('404'));
   }
 
-  public function testRecipeInclude() {
+  public function testRecipeInclude(): void {
     // Test the state prior to applying the recipe.
     $this->assertEmpty($this->container->get('config.factory')->listAll('node.'), 'There is no node configuration');
     $this->assertFalse($this->container->get('module_handler')->moduleExists('dblog'), 'Dblog module not installed');

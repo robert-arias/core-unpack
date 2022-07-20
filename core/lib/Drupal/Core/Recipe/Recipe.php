@@ -37,7 +37,16 @@ final class Recipe {
       throw new RecipeFileException("There is no $path/recipe.yml file");
     }
 
-    $recipe_data = Yaml::decode(file_get_contents($path . '/recipe.yml')) + [
+    $recipe_contents = file_get_contents($path . '/recipe.yml');
+    if (!$recipe_contents) {
+      throw new RecipeFileException("$path/recipe.yml cannot be read");
+    }
+    $recipe_data = Yaml::decode($recipe_contents);
+    // @todo Do we need to improve validation?
+    if (!is_array($recipe_data)) {
+      throw new RecipeFileException("$path/recipe.yml is invalid");
+    }
+    $recipe_data += [
       'description' => '',
       'type' => '',
       'recipes' => [],

@@ -36,7 +36,7 @@ final class RecipeExtensionConfigStorage implements StorageInterface {
   /**
    * {@inheritdoc}
    */
-  public function exists($name) {
+  public function exists($name): bool {
     if (!empty($this->configNames) && !in_array($name, $this->configNames, TRUE)) {
       return FALSE;
     }
@@ -46,7 +46,7 @@ final class RecipeExtensionConfigStorage implements StorageInterface {
   /**
    * {@inheritdoc}
    */
-  public function read($name) {
+  public function read($name): array|bool {
     if (!empty($this->configNames) && !in_array($name, $this->configNames, TRUE)) {
       return FALSE;
     }
@@ -56,7 +56,7 @@ final class RecipeExtensionConfigStorage implements StorageInterface {
   /**
    * {@inheritdoc}
    */
-  public function readMultiple(array $names) {
+  public function readMultiple(array $names): array {
     if (!empty($this->configNames)) {
       $names = array_intersect($this->configNames, $names);
     }
@@ -66,42 +66,42 @@ final class RecipeExtensionConfigStorage implements StorageInterface {
   /**
    * {@inheritdoc}
    */
-  public function write($name, array $data) {
+  public function write($name, array $data): bool {
     throw new \BadMethodCallException();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function delete($name) {
+  public function delete($name): bool {
     throw new \BadMethodCallException();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function rename($name, $new_name) {
+  public function rename($name, $new_name): bool {
     throw new \BadMethodCallException();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function encode($data) {
+  public function encode($data): string {
     return $this->storage->encode($data);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function decode($raw) {
+  public function decode($raw): array {
     return $this->storage->decode($raw);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function listAll($prefix = '') {
+  public function listAll($prefix = ''): array {
     $names = $this->storage->listAll($prefix);
     if (!empty($this->configNames)) {
       $names = array_intersect($this->configNames, $names);
@@ -112,14 +112,14 @@ final class RecipeExtensionConfigStorage implements StorageInterface {
   /**
    * {@inheritdoc}
    */
-  public function deleteAll($prefix = '') {
+  public function deleteAll($prefix = ''): bool {
     throw new \BadMethodCallException();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function createCollection($collection) {
+  public function createCollection($collection): static {
     return new static(
       $this->extensionPath,
       $this->configNames,
@@ -130,14 +130,14 @@ final class RecipeExtensionConfigStorage implements StorageInterface {
   /**
    * {@inheritdoc}
    */
-  public function getAllCollectionNames() {
+  public function getAllCollectionNames(): array {
     return $this->storage->getAllCollectionNames();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCollectionName() {
+  public function getCollectionName(): string {
     return $this->collection;
   }
 

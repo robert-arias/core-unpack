@@ -59,21 +59,21 @@ final class RecipeConfigStorageWrapper implements StorageInterface {
   /**
    * {@inheritdoc}
    */
-  public function exists($name) {
+  public function exists($name): bool {
     return $this->storageA->exists($name) || $this->storageB->exists($name);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function read($name) {
+  public function read($name): array|bool {
     return $this->storageA->read($name) ?: $this->storageB->read($name);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function readMultiple(array $names) {
+  public function readMultiple(array $names): array {
     // If both storageA and storageB contain the same configuration, the value
     // for storageA takes precedence.
     return array_merge($this->storageB->readMultiple($names), $this->storageA->readMultiple($names));
@@ -82,56 +82,56 @@ final class RecipeConfigStorageWrapper implements StorageInterface {
   /**
    * {@inheritdoc}
    */
-  public function write($name, array $data) {
+  public function write($name, array $data): bool {
     throw new \BadMethodCallException();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function delete($name) {
+  public function delete($name): bool {
     throw new \BadMethodCallException();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function rename($name, $new_name) {
+  public function rename($name, $new_name): bool {
     throw new \BadMethodCallException();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function encode($data) {
+  public function encode($data): string {
     return $this->storageA->encode($data);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function decode($raw) {
+  public function decode($raw): array {
     return $this->storageA->decode($raw);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function listAll($prefix = '') {
+  public function listAll($prefix = ''): array {
     return array_unique(array_merge($this->storageA->listAll($prefix), $this->storageB->listAll($prefix)));
   }
 
   /**
    * {@inheritdoc}
    */
-  public function deleteAll($prefix = '') {
+  public function deleteAll($prefix = ''): bool {
     throw new \BadMethodCallException();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function createCollection($collection) {
+  public function createCollection($collection): static {
     return new static(
       $this->storageA->createCollection($collection),
       $this->storageB->createCollection($collection),
@@ -142,14 +142,14 @@ final class RecipeConfigStorageWrapper implements StorageInterface {
   /**
    * {@inheritdoc}
    */
-  public function getAllCollectionNames() {
+  public function getAllCollectionNames(): array {
     return array_unique(array_merge($this->storageA->getAllCollectionNames(), $this->storageB->getAllCollectionNames()));
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCollectionName() {
+  public function getCollectionName(): string {
     return $this->collection;
   }
 

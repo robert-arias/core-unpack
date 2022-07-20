@@ -27,14 +27,14 @@ final class RecipeOverrideConfigStorage implements StorageInterface {
   /**
    * {@inheritdoc}
    */
-  public function exists($name) {
+  public function exists($name): bool {
     return $this->wrappedStorage->exists($name);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function read($name) {
+  public function read($name): array|bool {
     if ($this->wrappedStorage->exists($name) && $this->recipeStorage->exists($name)) {
       return $this->recipeStorage->read($name);
     }
@@ -44,7 +44,7 @@ final class RecipeOverrideConfigStorage implements StorageInterface {
   /**
    * {@inheritdoc}
    */
-  public function readMultiple(array $names) {
+  public function readMultiple(array $names): array {
     $data = $this->wrappedStorage->readMultiple($names);
     foreach ($data as $name => $value) {
       if ($this->recipeStorage->exists($name)) {
@@ -57,56 +57,56 @@ final class RecipeOverrideConfigStorage implements StorageInterface {
   /**
    * {@inheritdoc}
    */
-  public function write($name, array $data) {
+  public function write($name, array $data): bool {
     throw new \BadMethodCallException();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function delete($name) {
+  public function delete($name): bool {
     throw new \BadMethodCallException();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function rename($name, $new_name) {
+  public function rename($name, $new_name): bool {
     throw new \BadMethodCallException();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function encode($data) {
+  public function encode($data): string {
     return $this->wrappedStorage->encode($data);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function decode($raw) {
+  public function decode($raw): array {
     return $this->wrappedStorage->decode($raw);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function listAll($prefix = '') {
+  public function listAll($prefix = ''): array {
     return $this->wrappedStorage->listAll($prefix);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function deleteAll($prefix = '') {
+  public function deleteAll($prefix = ''): bool {
     throw new \BadMethodCallException();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function createCollection($collection) {
+  public function createCollection($collection): static {
     return new static(
       $this->recipeStorage->createCollection($collection),
       $this->wrappedStorage->createCollection($collection),
@@ -117,14 +117,14 @@ final class RecipeOverrideConfigStorage implements StorageInterface {
   /**
    * {@inheritdoc}
    */
-  public function getAllCollectionNames() {
+  public function getAllCollectionNames(): array {
     return $this->wrappedStorage->getAllCollectionNames();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCollectionName() {
+  public function getCollectionName(): string {
     return $this->collection;
   }
 

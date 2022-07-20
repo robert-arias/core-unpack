@@ -24,7 +24,7 @@ class RecipeDiscoveryTest extends KernelTestBase {
    *
    * @dataProvider providerRecipeDiscovery
    */
-  public function testRecipeDiscovery(string $recipe, string $name) {
+  public function testRecipeDiscovery(string $recipe, string $name): void {
     $discovery = new RecipeDiscovery(['core/tests/fixtures/recipes']);
     $recipe = $discovery->getRecipe($recipe);
     $this->assertSame($name, $recipe->name);
@@ -42,7 +42,7 @@ class RecipeDiscoveryTest extends KernelTestBase {
    *
    * @dataProvider providerRecipeDiscoveryException
    */
-  public function testRecipeDiscoveryException(string $recipe) {
+  public function testRecipeDiscoveryException(string $recipe): void {
     $discovery = new RecipeDiscovery(['core/tests/fixtures/recipes']);
     try {
       $discovery->getRecipe($recipe);

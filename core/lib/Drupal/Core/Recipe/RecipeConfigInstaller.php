@@ -17,7 +17,7 @@ final class RecipeConfigInstaller extends ConfigInstaller {
   /**
    * {@inheritdoc}
    */
-  public function installRecipeConfig(ConfigConfigurator $recipe_config) {
+  public function installRecipeConfig(ConfigConfigurator $recipe_config): void {
     $storage = $recipe_config->getConfigStorage();
 
     // Build the list of possible configuration to create.

@@ -19,7 +19,7 @@ class RecipeCommandTest extends BrowserTestBase {
    */
   protected $defaultTheme = 'stark';
 
-  public function testRecipeCommand() {
+  public function testRecipeCommand(): void {
     $this->assertFalse(\Drupal::moduleHandler()->moduleExists('node'), 'The node module is not installed');
     $php_executable_finder = new PhpExecutableFinder();
     $php = $php_executable_finder->find();

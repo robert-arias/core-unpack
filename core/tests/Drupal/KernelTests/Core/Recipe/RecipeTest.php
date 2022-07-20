@@ -68,7 +68,7 @@ class RecipeTest extends KernelTestBase {
     }
   }
 
-  public function testPreExistingDifferentConfiguration() {
+  public function testPreExistingDifferentConfiguration(): void {
     // Install the node module, its dependencies and configuration.
     $this->container->get('module_installer')->install(['node']);
     $this->assertFalse($this->config('node.settings')->get('use_admin_theme'), 'The node.settings:use_admin_theme is set to FALSE');
@@ -83,7 +83,7 @@ class RecipeTest extends KernelTestBase {
     }
   }
 
-  public function testPreExistingMatchingConfiguration() {
+  public function testPreExistingMatchingConfiguration(): void {
     // Install the node module, its dependencies and configuration.
     $this->container->get('module_installer')->install(['node']);
     // Change the config to match the recipe's config to prevent the exception
@@ -94,7 +94,7 @@ class RecipeTest extends KernelTestBase {
     $this->assertSame('core/tests/fixtures/recipes/install_node_with_config/config', $recipe->config->recipeConfigDirectory);
   }
 
-  public function testRecipeIncludeMissing() {
+  public function testRecipeIncludeMissing(): void {
     try {
       Recipe::createFromDirectory('core/tests/fixtures/recipes/recipe_include_missing');
     }

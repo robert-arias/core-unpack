@@ -1,0 +1,291 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Cannot access offset 'uuid' on non\\-empty\\-array\\|true\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/ConfigConfigurator.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\ConfigConfigurator\\:\\:__construct\\(\\) has parameter \\$config with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/ConfigConfigurator.php
+
+		-
+			message: "#^Property Drupal\\\\Core\\\\Recipe\\\\ConfigConfigurator\\:\\:\\$config type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/ConfigConfigurator.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 2
+			path: core/lib/Drupal/Core/Recipe/ConfigConfigurator.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\ContentConfigurator\\:\\:__construct\\(\\) has parameter \\$content with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/ContentConfigurator.php
+
+		-
+			message: "#^Property Drupal\\\\Core\\\\Recipe\\\\ContentConfigurator\\:\\:\\$content type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/ContentConfigurator.php
+
+		-
+			message: "#^Access to an undefined property Drupal\\\\Core\\\\Extension\\\\Extension\\:\\:\\$module_dependencies\\.$#"
+			count: 2
+			path: core/lib/Drupal/Core/Recipe/InstallConfigurator.php
+
+		-
+			message: "#^Access to an undefined property Drupal\\\\Core\\\\Extension\\\\Extension\\:\\:\\$requires\\.$#"
+			count: 2
+			path: core/lib/Drupal/Core/Recipe/InstallConfigurator.php
+
+		-
+			message: "#^Access to an undefined property Drupal\\\\Core\\\\Extension\\\\Extension\\:\\:\\$sort\\.$#"
+			count: 2
+			path: core/lib/Drupal/Core/Recipe/InstallConfigurator.php
+
+		-
+			message: "#^Property Drupal\\\\Core\\\\Recipe\\\\InstallConfigurator\\:\\:\\$modules \\(array\\<string\\>\\) does not accept array\\<int, int\\|string\\>\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/InstallConfigurator.php
+
+		-
+			message: "#^Parameter \\#1 \\$path of static method Drupal\\\\Core\\\\Recipe\\\\Recipe\\:\\:createFromDirectory\\(\\) expects string, mixed given\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeCommand.php
+
+		-
+			message: "#^Parameter \\#2 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeCommand.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeConfigStorageWrapper\\:\\:decode\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeConfigStorageWrapper.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeConfigStorageWrapper\\:\\:encode\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeConfigStorageWrapper.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeConfigStorageWrapper\\:\\:getAllCollectionNames\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeConfigStorageWrapper.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeConfigStorageWrapper\\:\\:listAll\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeConfigStorageWrapper.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeConfigStorageWrapper\\:\\:read\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeConfigStorageWrapper.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeConfigStorageWrapper\\:\\:readMultiple\\(\\) has parameter \\$names with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeConfigStorageWrapper.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeConfigStorageWrapper\\:\\:readMultiple\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeConfigStorageWrapper.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeConfigStorageWrapper\\:\\:write\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeConfigStorageWrapper.php
+
+		-
+			message: "#^Property Drupal\\\\Core\\\\Recipe\\\\RecipeConfigurator\\:\\:\\$recipes type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeConfigurator.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeDiscovery\\:\\:__construct\\(\\) has parameter \\$paths with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeDiscovery.php
+
+		-
+			message: "#^Property Drupal\\\\Core\\\\Recipe\\\\RecipeDiscovery\\:\\:\\$paths type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeDiscovery.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeExtensionConfigStorage\\:\\:__construct\\(\\) has parameter \\$configNames with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeExtensionConfigStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeExtensionConfigStorage\\:\\:decode\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeExtensionConfigStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeExtensionConfigStorage\\:\\:encode\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeExtensionConfigStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeExtensionConfigStorage\\:\\:getAllCollectionNames\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeExtensionConfigStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeExtensionConfigStorage\\:\\:listAll\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeExtensionConfigStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeExtensionConfigStorage\\:\\:read\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeExtensionConfigStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeExtensionConfigStorage\\:\\:readMultiple\\(\\) has parameter \\$names with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeExtensionConfigStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeExtensionConfigStorage\\:\\:readMultiple\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeExtensionConfigStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeExtensionConfigStorage\\:\\:write\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeExtensionConfigStorage.php
+
+		-
+			message: "#^Property Drupal\\\\Core\\\\Recipe\\\\RecipeExtensionConfigStorage\\:\\:\\$configNames type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeExtensionConfigStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeMissingExtensionsException\\:\\:__construct\\(\\) has parameter \\$extensions with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeMissingExtensionsException.php
+
+		-
+			message: "#^Property Drupal\\\\Core\\\\Recipe\\\\RecipeMissingExtensionsException\\:\\:\\$extensions type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeMissingExtensionsException.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeOverrideConfigStorage\\:\\:decode\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeOverrideConfigStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeOverrideConfigStorage\\:\\:encode\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeOverrideConfigStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeOverrideConfigStorage\\:\\:getAllCollectionNames\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeOverrideConfigStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeOverrideConfigStorage\\:\\:listAll\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeOverrideConfigStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeOverrideConfigStorage\\:\\:read\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeOverrideConfigStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeOverrideConfigStorage\\:\\:readMultiple\\(\\) has parameter \\$names with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeOverrideConfigStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeOverrideConfigStorage\\:\\:readMultiple\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeOverrideConfigStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeOverrideConfigStorage\\:\\:write\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeOverrideConfigStorage.php
+
+		-
+			message: "#^Parameter \\#6 \\$install_profile of class Drupal\\\\Core\\\\Recipe\\\\RecipeConfigInstaller constructor expects string, null given\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeRunner.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\UnknownRecipeException\\:\\:__construct\\(\\) has parameter \\$searchPaths with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/UnknownRecipeException.php
+
+		-
+			message: "#^Property Drupal\\\\Core\\\\Recipe\\\\UnknownRecipeException\\:\\:\\$searchPaths type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/UnknownRecipeException.php
+
+		-
+			message: "#^Method Drupal\\\\KernelTests\\\\Core\\\\Recipe\\\\RecipeDiscoveryTest\\:\\:providerRecipeDiscovery\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeDiscoveryTest.php
+
+		-
+			message: "#^Method Drupal\\\\KernelTests\\\\Core\\\\Recipe\\\\RecipeDiscoveryTest\\:\\:providerRecipeDiscoveryException\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeDiscoveryTest.php
+
+		-
+			message: "#^Cannot access offset '_core' on mixed\\.$#"
+			count: 1
+			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeRunnerTest.php
+
+		-
+			message: "#^Cannot access offset 'default_config_hash' on mixed\\.$#"
+			count: 1
+			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeRunnerTest.php
+
+		-
+			message: "#^Cannot access offset 'uuid' on mixed\\.$#"
+			count: 1
+			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeRunnerTest.php
+
+		-
+			message: "#^Cannot call method label\\(\\) on Drupal\\\\node\\\\Entity\\\\NodeType\\|null\\.$#"
+			count: 3
+			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeRunnerTest.php
+
+		-
+			message: "#^Cannot call method save\\(\\) on Drupal\\\\node\\\\Entity\\\\NodeType\\|null\\.$#"
+			count: 1
+			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeRunnerTest.php
+
+		-
+			message: "#^Cannot call method setNewRevision\\(\\) on Drupal\\\\node\\\\Entity\\\\NodeType\\|null\\.$#"
+			count: 1
+			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeRunnerTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function strlen expects string, mixed given\\.$#"
+			count: 1
+			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeRunnerTest.php
+
+		-
+			message: "#^Method Drupal\\\\KernelTests\\\\Core\\\\Recipe\\\\RecipeTest\\:\\:providerTestCreateFromDirectory\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeTest.php
+
+		-
+			message: "#^Method Drupal\\\\KernelTests\\\\Core\\\\Recipe\\\\RecipeTest\\:\\:testCreateFromDirectory2\\(\\) has parameter \\$expected_modules with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeTest.php
+
+		-
+			message: "#^Property Drupal\\\\KernelTests\\\\Core\\\\Recipe\\\\RecipeTest\\:\\:\\$modules type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeTest.php
