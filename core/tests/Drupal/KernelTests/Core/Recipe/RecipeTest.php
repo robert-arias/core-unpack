@@ -20,7 +20,7 @@ class RecipeTest extends KernelTestBase {
    */
   protected static $modules = ['system', 'user', 'field'];
 
-  public function providerTestCreateFromDirectory() {
+  public function providerTestCreateFromDirectory(): array {
     return [
       'no extensions' => ['no_extensions', 'No extensions' , 'Testing', [], 'A recipe description'],
       // Filter is installed because it is a dependency and it is not yet installed.
