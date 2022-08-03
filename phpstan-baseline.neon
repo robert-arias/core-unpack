@@ -1,6 +1,56 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Method Drupal\\\\Core\\\\Config\\\\Action\\\\ConfigActionManager\\:\\:__construct\\(\\) has parameter \\$namespaces with no value type specified in iterable type Traversable\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Action/ConfigActionManager.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Config\\\\Action\\\\Plugin\\\\ConfigAction\\\\Deriver\\\\EntityCreateDeriver\\:\\:getDerivativeDefinitions\\(\\) has parameter \\$base_plugin_definition with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Action/Plugin/ConfigAction/Deriver/EntityCreateDeriver.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Config\\\\Action\\\\Plugin\\\\ConfigAction\\\\Deriver\\\\EntityCreateDeriver\\:\\:getDerivativeDefinitions\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Action/Plugin/ConfigAction/Deriver/EntityCreateDeriver.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Config\\\\Action\\\\Plugin\\\\ConfigAction\\\\Deriver\\\\EntityMethodDeriver\\:\\:getDerivativeDefinitions\\(\\) has parameter \\$base_plugin_definition with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Action/Plugin/ConfigAction/Deriver/EntityMethodDeriver.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Config\\\\Action\\\\Plugin\\\\ConfigAction\\\\Deriver\\\\EntityMethodDeriver\\:\\:getDerivativeDefinitions\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Action/Plugin/ConfigAction/Deriver/EntityMethodDeriver.php
+
+		-
+			message: "#^Parameter \\#1 \\$objectOrClass of class ReflectionClass constructor expects class\\-string\\<T of object\\>\\|T of object, string given\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Action/Plugin/ConfigAction/Deriver/EntityMethodDeriver.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Config\\\\Action\\\\Plugin\\\\ConfigAction\\\\EntityCreate\\:\\:create\\(\\) has parameter \\$configuration with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Action/Plugin/ConfigAction/EntityCreate.php
+
+		-
+			message: "#^Cannot call method save\\(\\) on Drupal\\\\Core\\\\Config\\\\Entity\\\\ConfigEntityInterface\\|null\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Action/Plugin/ConfigAction/EntityMethod.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Config\\\\Action\\\\Plugin\\\\ConfigAction\\\\EntityMethod\\:\\:create\\(\\) has parameter \\$configuration with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Action/Plugin/ConfigAction/EntityMethod.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Config\\\\Action\\\\Plugin\\\\ConfigAction\\\\SimpleConfigUpdate\\:\\:create\\(\\) has parameter \\$configuration with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Action/Plugin/ConfigAction/SimpleConfigUpdate.php
+
+		-
 			message: "#^Cannot access offset 'uuid' on non\\-empty\\-array\\|true\\.$#"
 			count: 1
 			path: core/lib/Drupal/Core/Recipe/ConfigConfigurator.php
@@ -229,6 +279,11 @@ parameters:
 			message: "#^Property Drupal\\\\Core\\\\Recipe\\\\UnknownRecipeException\\:\\:\\$searchPaths type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: core/lib/Drupal/Core/Recipe/UnknownRecipeException.php
+
+		-
+			message: "#^Property Drupal\\\\KernelTests\\\\Core\\\\Config\\\\Action\\\\ConfigActionTest\\:\\:\\$modules type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/tests/Drupal/KernelTests/Core/Config/Action/ConfigActionTest.php
 
 		-
 			message: "#^Method Drupal\\\\KernelTests\\\\Core\\\\Recipe\\\\RecipeDiscoveryTest\\:\\:providerRecipeDiscovery\\(\\) return type has no value type specified in iterable type array\\.$#"

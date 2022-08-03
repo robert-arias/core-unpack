@@ -2,6 +2,7 @@
 
 namespace Drupal\config_test\Entity;
 
+use Drupal\Core\Config\Action\Attribute\ActionMethod;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\config_test\ConfigTestInterface;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
@@ -186,6 +187,31 @@ class ConfigTest extends ConfigEntityBase implements ConfigTestInterface {
    */
   public function isInstallable() {
     return $this->id != 'isinstallable' || \Drupal::state()->get('config_test.isinstallable');
+  }
+
+  /**
+   * Sets the protected property value.
+   *
+   * @param $value
+   *   The value to set.
+   *
+   * @return $this
+   *   The config entity.
+   */
+  #[ActionMethod]
+  public function setProtectedProperty(string $value) {
+    $this->protected_property = $value;
+    return $this;
+  }
+
+  /**
+   * Gets the protected property value.
+   *
+   * @return string
+   *   The protected property value.
+   */
+  public function getProtectedProperty() {
+    return $this->protected_property;
   }
 
 }
