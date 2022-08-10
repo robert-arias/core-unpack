@@ -3,6 +3,8 @@
 namespace Drupal\Core\Config\Action\Annotation;
 
 use Drupal\Component\Annotation\Plugin;
+use Drupal\Core\Annotation\Translation;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Defines a ConfigAction annotation object.
@@ -18,15 +20,28 @@ class ConfigAction extends Plugin {
    *
    * @var string
    */
-  public $id;
+  public string $id;
 
   /**
    * The administrative label of the config action.
    *
-   * @var \Drupal\Core\Annotation\Translation|string
+   * @var \Drupal\Core\Annotation\Translation|\Drupal\Core\StringTranslation\TranslatableMarkup|string
    *
    * @ingroup plugin_translatable
    */
-  public $admin_label = '';
+  public Translation|TranslatableMarkup|string $admin_label = '';
+
+  /**
+   * Allows action shorthand IDs for the listed config entity types.
+   *
+   * If '*' is present in the array then it can apply to all entity types. An
+   * empty array means that shorthand action IDs are not available for this
+   * plugin.
+   *
+   * @see \Drupal\Core\Config\Action\ConfigActionManager::convertActionToPluginId()
+   *
+   * @var string[]
+   */
+  public array $entity_types = [];
 
 }

@@ -5,6 +5,7 @@ namespace Drupal\KernelTests\Core\Config\Action;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Component\Uuid\Uuid;
 use Drupal\Core\Config\Action\ConfigActionException;
+use Drupal\Core\Config\Action\DuplicateConfigActionIdException;
 use Drupal\KernelTests\KernelTestBase;
 
 /**
@@ -110,6 +111,44 @@ class ConfigActionTest extends KernelTestBase {
     catch (ConfigActionException $e) {
       $this->assertSame('Config config_test.system does not exist so can not be updated', $e->getMessage());
     }
+  }
+
+  /**
+   * @see \Drupal\Core\Config\Action\ConfigActionManager::getShorthandActionIdsForEntityType()
+   */
+  public function testShorthandActionIds(): void {
+    $storage = \Drupal::entityTypeManager()->getStorage('config_test');
+    $this->assertCount(0, $storage->loadMultiple(), 'There are no config_test entities');
+    /** @var \Drupal\Core\Config\Action\ConfigActionManager $manager */
+    $manager = $this->container->get('plugin.manager.config_action');
+    $manager->applyAction('ensure_exists', 'config_test.dynamic.action_test', ['label' => 'Action test', 'protected_property' => '']);
+    /** @var \Drupal\config_test\Entity\ConfigTest[] $config_test_entities */
+    $config_test_entities = $storage->loadMultiple();
+    $this->assertCount(1, $config_test_entities, 'There is 1 config_test entity');
+    $this->assertSame('Action test', $config_test_entities['action_test']->label());
+
+    $this->assertSame('', $config_test_entities['action_test']->getProtectedProperty());
+
+    /** @var \Drupal\Core\Config\Action\ConfigActionManager $manager */
+    $manager = $this->container->get('plugin.manager.config_action');
+    // Call a method action.
+    $manager->applyAction('setProtectedProperty', 'config_test.dynamic.action_test', 'Test value');
+    /** @var \Drupal\config_test\Entity\ConfigTest $config_test_entity */
+    $config_test_entity = $storage->load('action_test');
+    $this->assertSame('Test value', $config_test_entity->getProtectedProperty());
+  }
+
+  /**
+   * @see \Drupal\Core\Config\Action\ConfigActionManager::getShorthandActionIdsForEntityType()
+   */
+  public function testDuplicateShorthandActionIds(): void {
+    $this->enableModules(['config_action_duplicate_test']);
+    /** @var \Drupal\Core\Config\Action\ConfigActionManager $manager */
+    $manager = $this->container->get('plugin.manager.config_action');
+    $this->expectException(DuplicateConfigActionIdException::class);
+    $this->expectExceptionMessage("The plugins 'entity_method:config_test.dynamic:setProtectedProperty' and 'config_action_duplicate_test:config_test.dynamic:setProtectedProperty' both resolve to the same shorthand action ID for the 'config_test' entity type");
+    $manager->applyAction('ensure_exists', 'config_test.dynamic.action_test', ['label' => 'Action test', 'protected_property' => '']);
+
   }
 
   /**

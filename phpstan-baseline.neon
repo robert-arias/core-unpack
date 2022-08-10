@@ -1,8 +1,18 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Cannot access offset 'entity_types' on mixed\\.$#"
+			count: 2
+			path: core/lib/Drupal/Core/Config/Action/ConfigActionManager.php
+
+		-
 			message: "#^Method Drupal\\\\Core\\\\Config\\\\Action\\\\ConfigActionManager\\:\\:__construct\\(\\) has parameter \\$namespaces with no value type specified in iterable type Traversable\\.$#"
 			count: 1
+			path: core/lib/Drupal/Core/Config/Action/ConfigActionManager.php
+
+		-
+			message: "#^Parameter \\#2 \\$haystack of function in_array expects array, mixed given\\.$#"
+			count: 2
 			path: core/lib/Drupal/Core/Config/Action/ConfigActionManager.php
 
 		-

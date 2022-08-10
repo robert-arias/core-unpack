@@ -68,6 +68,7 @@ services:
   plugin.manager.config_action:
     class: Drupal\Core\Config\Action\ConfigActionManager
     parent: default_plugin_manager
+    arguments: ['@config.manager']
   # Simple cache contexts, directly derived from the request context.
   cache_context.ip:
     class: Drupal\Core\Cache\Context\IpCacheContext

@@ -2,7 +2,9 @@
 
 namespace Drupal\Core\Config\Action;
 
+use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Config\ConfigManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 
@@ -49,8 +51,10 @@ class ConfigActionManager extends DefaultPluginManager {
    *   Cache backend instance to use.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler to invoke the alter hook with.
+   * @param \Drupal\Core\Config\ConfigManagerInterface $configManager
+   *   The config manager.
    */
-  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
+  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, protected readonly ConfigManagerInterface $configManager) {
     assert($namespaces instanceof \ArrayAccess, '$namespaces can be accessed like an array');
     // Enable this namespace to be searched for plugins.
     $namespaces[__NAMESPACE__] = 'core/lib/Drupal/Core/Config/Action';
@@ -65,7 +69,9 @@ class ConfigActionManager extends DefaultPluginManager {
    * Applies a config action.
    *
    * @param string $action_id
-   *   The ID of the action to apply.
+   *   The ID of the action to apply. This can be a complete configuration
+   *   action plugin ID or a shorthand action ID that is available for the
+   *   entity type of the provided configuration name.
    * @param string $configName
    *   The configuration name.
    * @param mixed $data
@@ -77,9 +83,41 @@ class ConfigActionManager extends DefaultPluginManager {
    *   Thrown when the config action fails to apply.
    */
   public function applyAction(string $action_id, string $configName, mixed $data): void {
+    if (!$this->hasDefinition($action_id)) {
+      // Get the full plugin ID from the shorthand map, if it is available.
+      $entity_type = $this->configManager->getEntityTypeIdByName($configName);
+      if ($entity_type) {
+        $action_id = $this->getShorthandActionIdsForEntityType($entity_type)[$action_id] ?? $action_id;
+      }
+    }
     /** @var \Drupal\Core\Config\Action\ConfigActionPluginInterface $action */
     $action = $this->createInstance($action_id);
     $action->apply($configName, $data);
+  }
+
+  /**
+   * Gets a map of shorthand action IDs to plugin IDs for an entity type.
+   *
+   * @param string $entityType
+   *   The entity type ID to get the map for.
+   *
+   * @return string[]
+   *   An array of plugin IDs keyed by shorthand action ID for the provided
+   *   entity type.
+   */
+  protected function getShorthandActionIdsForEntityType(string $entityType): array {
+    $map = [];
+    foreach ($this->getDefinitions() as $plugin_id => $definition) {
+      if (in_array($entityType, $definition['entity_types'], TRUE) || in_array('*', $definition['entity_types'], TRUE)) {
+        $regex = '/' . PluginBase::DERIVATIVE_SEPARATOR . '([^' . PluginBase::DERIVATIVE_SEPARATOR . ']*)$/';
+        $action_id = preg_match($regex, $plugin_id, $matches) ? $matches[1] : $plugin_id;
+        if (isset($map[$action_id])) {
+          throw new DuplicateConfigActionIdException(sprintf('The plugins \'%s\' and \'%s\' both resolve to the same shorthand action ID for the \'%s\' entity type', $plugin_id, $map[$action_id], $entityType));
+        }
+        $map[$action_id] = $plugin_id;
+      }
+    }
+    return $map;
   }
 
 }

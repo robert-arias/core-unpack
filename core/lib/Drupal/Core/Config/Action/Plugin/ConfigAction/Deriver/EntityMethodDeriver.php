@@ -44,20 +44,21 @@ final class EntityMethodDeriver extends DeriverBase implements ContainerDeriverI
    */
   public function getDerivativeDefinitions($base_plugin_definition) {
     // Scan all the config entity classes for attributes.
-    foreach ($this->entityTypeManager->getDefinitions() as $definition) {
-      if ($definition instanceof ConfigEntityTypeInterface) {
-        $reflectionClass = new \ReflectionClass($definition->getClass());
+    foreach ($this->entityTypeManager->getDefinitions() as $entity_type) {
+      if ($entity_type instanceof ConfigEntityTypeInterface) {
+        $reflectionClass = new \ReflectionClass($entity_type->getClass());
         foreach ($reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
           foreach ($method->getAttributes(ActionMethod::class) as $attribute) {
             $derivative = $base_plugin_definition;
             /** @var \Drupal\Core\Config\Action\Attribute\ActionMethod  $action_attribute */
             $action_attribute = $attribute->newInstance();
-            $derivative['admin_label'] = $action_attribute->adminLabel ?: $this->t('@entity_type @method', [$definition->getLabel(), $method->name]);
+            $derivative['admin_label'] = $action_attribute->adminLabel ?: $this->t('@entity_type @method', [$entity_type->getLabel(), $method->name]);
             $derivative['additional'] = ['method' => $method->name, 'exists' => $action_attribute->exists];
+            $derivative['entity_types'] = [$entity_type->id()];
             // Build a config action identifier from the entity type's config
             // prefix  and the method name. For example, the Role entity adds a
             // 'user.role:grantPermission' action.
-            $derivative_id = $definition->getConfigPrefix() . PluginBase::DERIVATIVE_SEPARATOR . $method->name;
+            $derivative_id = $entity_type->getConfigPrefix() . PluginBase::DERIVATIVE_SEPARATOR . $method->name;
             $this->derivatives[$derivative_id] = $derivative;
           }
         }
