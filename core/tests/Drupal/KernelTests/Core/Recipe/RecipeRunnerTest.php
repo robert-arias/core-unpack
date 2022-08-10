@@ -169,4 +169,41 @@ class RecipeRunnerTest extends KernelTestBase {
     $this->assertSame('Another test content type', NodeType::load('another_test')->label());
   }
 
+  public function testConfigActions() :void {
+    // Test the state prior to applying the recipe.
+    $this->assertEmpty($this->container->get('config.factory')->listAll('config_test.'), 'There is no config_test configuration');
+
+    $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/config_actions');
+    RecipeRunner::processRecipe($recipe);
+
+    // Test the state after to applying the recipe.
+    $storage = \Drupal::entityTypeManager()->getStorage('config_test');
+    /** @var \Drupal\config_test\Entity\ConfigTest $config_test_entity */
+    $config_test_entity = $storage->load('recipe');
+    $this->assertSame('Created by recipe', $config_test_entity->label());
+    $this->assertSame('Set by recipe', $config_test_entity->getProtectedProperty());
+    $this->assertSame('not bar', $this->config('config_test.system')->get('foo'));
+  }
+
+  public function testConfigActionsPreExistingConfig() :void {
+    $this->enableModules(['config_test']);
+    $this->installConfig(['config_test']);
+    $this->assertSame('bar', $this->config('config_test.system')->get('foo'));
+    $storage = \Drupal::entityTypeManager()->getStorage('config_test');
+    /** @var \Drupal\config_test\Entity\ConfigTest $config_test_entity */
+    $config_test_entity = $storage->create(['id' => 'recipe', 'label' => 'Created by test']);
+    $config_test_entity->setProtectedProperty('Set by test');
+    $config_test_entity->save();
+
+    $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/config_actions');
+    RecipeRunner::processRecipe($recipe);
+
+    // Test the state after to applying the recipe.
+    /** @var \Drupal\config_test\Entity\ConfigTest $config_test_entity */
+    $config_test_entity = $storage->load('recipe');
+    $this->assertSame('Created by test', $config_test_entity->label());
+    $this->assertSame('Set by recipe', $config_test_entity->getProtectedProperty());
+    $this->assertSame('not bar', $this->config('config_test.system')->get('foo'));
+  }
+
 }

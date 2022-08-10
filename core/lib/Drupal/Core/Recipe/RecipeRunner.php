@@ -105,7 +105,16 @@ final class RecipeRunner {
     // the config.import section that does not exist.
     $config_installer->installRecipeConfig($config);
 
-    // @todo https://www.drupal.org/project/distributions_recipes/issues/3292286
+    if (!empty($config->config['actions'])) {
+      // Process the actions.
+      /** @var \Drupal\Core\Config\Action\ConfigActionManager $config_action_manager */
+      $config_action_manager = \Drupal::service('plugin.manager.config_action');
+      foreach ($config->config['actions'] as $config_name => $actions) {
+        foreach ($actions as $action_id => $data) {
+          $config_action_manager->applyAction($action_id, $config_name, $data);
+        }
+      }
+    }
   }
 
   protected static function processContent(ContentConfigurator $content): void {
