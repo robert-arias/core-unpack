@@ -6,6 +6,7 @@ use Drupal\Core\Config\Action\ConfigActionPluginInterface;
 use Drupal\Core\Config\Action\EntityMethodException;
 use Drupal\Core\Config\Action\Exists;
 use Drupal\Core\Config\ConfigManagerInterface;
+use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -53,6 +54,8 @@ final class EntityMethod implements ConfigActionPluginInterface, ContainerFactor
    *   The number of parameters the method has.
    * @param int $numberOfRequiredParams
    *   The number of required parameters the method has.
+   * @param bool $pluralized
+   *   Determines whether an array maps to multiple calls.
    */
   public function __construct(
     protected readonly string $pluginId,
@@ -60,7 +63,8 @@ final class EntityMethod implements ConfigActionPluginInterface, ContainerFactor
     protected readonly string $method,
     protected readonly Exists $exists,
     protected readonly int $numberOfParams,
-    protected readonly int $numberOfRequiredParams
+    protected readonly int $numberOfRequiredParams,
+    protected readonly bool $pluralized
   ) {
   }
 
@@ -86,6 +90,43 @@ final class EntityMethod implements ConfigActionPluginInterface, ContainerFactor
       return;
     }
 
+    $entity = $this->pluralized ? $this->applyPluralized($entity, $value) : $this->applySingle($entity, $value);
+    $entity->save();
+  }
+
+  /**
+   * Apply the action to entity treating the $values array as multiple calls.
+   *
+   * @param \Drupal\Core\Config\Entity\ConfigEntityInterface $entity
+   *   The entity to apply the action to.
+   * @param mixed $values
+   *   The values for the action to use.
+   *
+   * @return \Drupal\Core\Config\Entity\ConfigEntityInterface
+   *   The unsaved entity with the action applied.
+   */
+  private function applyPluralized(ConfigEntityInterface $entity, mixed $values): ConfigEntityInterface {
+    if (!is_array($values)) {
+      throw new EntityMethodException(sprintf('The pluralized entity method config action \'%s\' requires an array value in order to call %s::%s() multiple times', $this->pluginId, $entity->getEntityType()->getClass(), $this->method));
+    }
+    foreach ($values as $value) {
+      $entity = $this->applySingle($entity, $value);
+    }
+    return $entity;
+  }
+
+  /**
+   * Apply the action to entity treating the $values array a single call.
+   *
+   * @param \Drupal\Core\Config\Entity\ConfigEntityInterface $entity
+   *   The entity to apply the action to.
+   * @param mixed $value
+   *   The value for the action to use.
+   *
+   * @return \Drupal\Core\Config\Entity\ConfigEntityInterface
+   *   The unsaved entity with the action applied.
+   */
+  private function applySingle(ConfigEntityInterface $entity, mixed $value): ConfigEntityInterface {
     // If $value is not an array then we only support calling the method if the
     // number of parameters or required parameters is 1. If there is only 1
     // parameter and $value is an array then assume that the parameter expects
@@ -99,7 +140,7 @@ final class EntityMethod implements ConfigActionPluginInterface, ContainerFactor
     else {
       $entity->{$this->method}(...$value);
     }
-    $entity->save();
+    return $entity;
   }
 
 }

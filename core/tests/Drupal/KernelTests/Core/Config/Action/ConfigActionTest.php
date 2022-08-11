@@ -2,8 +2,11 @@
 
 namespace Drupal\KernelTests\Core\Config\Action;
 
+// cspell:ignore inflector
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Component\Uuid\Uuid;
+use Drupal\config_test\ConfigActionErrorEntity\DuplicatePluralizedMethodName;
+use Drupal\config_test\ConfigActionErrorEntity\DuplicatePluralizedOtherMethodName;
 use Drupal\Core\Config\Action\ConfigActionException;
 use Drupal\Core\Config\Action\DuplicateConfigActionIdException;
 use Drupal\Core\Config\Action\EntityMethodException;
@@ -132,6 +135,91 @@ class ConfigActionTest extends KernelTestBase {
     catch (ConfigActionException $e) {
       $this->assertSame('Entity config_test.dynamic.dotted.default does not exist', $e->getMessage());
     }
+
+    // Test custom and default admin labels.
+    $this->assertSame('Test configuration append', (string) $manager->getDefinition('entity_method:config_test.dynamic:append')['admin_label']);
+    $this->assertSame('Set default name', (string) $manager->getDefinition('entity_method:config_test.dynamic:defaultProtectedProperty')['admin_label']);
+  }
+
+  /**
+   * @see \Drupal\Core\Config\Action\Plugin\ConfigAction\EntityMethod
+   */
+  public function testPluralizedEntityMethod(): void {
+    $this->installConfig('config_test');
+    $storage = \Drupal::entityTypeManager()->getStorage('config_test');
+
+    /** @var \Drupal\Core\Config\Action\ConfigActionManager $manager */
+    $manager = $this->container->get('plugin.manager.config_action');
+    // Call a pluralized method action.
+    $manager->applyAction('entity_method:config_test.dynamic:addToArrayMultipleTimes', 'config_test.dynamic.dotted.default', ['a', 'b', 'c', 'd']);
+    /** @var \Drupal\config_test\Entity\ConfigTest $config_test_entity */
+    $config_test_entity = $storage->load('dotted.default');
+    $this->assertSame(['a', 'b', 'c', 'd'], $config_test_entity->getArrayProperty());
+
+    $manager->applyAction('entity_method:config_test.dynamic:addToArrayMultipleTimes', 'config_test.dynamic.dotted.default', [['foo'], 'bar']);
+    /** @var \Drupal\config_test\Entity\ConfigTest $config_test_entity */
+    $config_test_entity = $storage->load('dotted.default');
+    $this->assertSame(['a', 'b', 'c', 'd', ['foo'], 'bar'], $config_test_entity->getArrayProperty());
+
+    $config_test_entity->setProtectedProperty('')->save();
+    $manager->applyAction('entity_method:config_test.dynamic:appends', 'config_test.dynamic.dotted.default', ['1', '2', '3']);
+    /** @var \Drupal\config_test\Entity\ConfigTest $config_test_entity */
+    $config_test_entity = $storage->load('dotted.default');
+    $this->assertSame('123', $config_test_entity->getProtectedProperty());
+
+    // Test that the inflector converts to a good plural form.
+    $config_test_entity->setProtectedProperty('')->save();
+    $manager->applyAction('entity_method:config_test.dynamic:concatProtectedProperties', 'config_test.dynamic.dotted.default', [['1', '2'], ['3', '4']]);
+    /** @var \Drupal\config_test\Entity\ConfigTest $config_test_entity */
+    $config_test_entity = $storage->load('dotted.default');
+    $this->assertSame('34', $config_test_entity->getProtectedProperty());
+
+    $this->assertTrue($manager->hasDefinition('entity_method:config_test.dynamic:setProtectedProperty'), 'The setProtectedProperty action exists');
+    // cspell:ignore Propertys
+    $this->assertFalse($manager->hasDefinition('entity_method:config_test.dynamic:setProtectedPropertys'), 'There is no automatically pluralized version of the setProtectedProperty action');
+
+    // Admin label for pluralized form.
+    $this->assertSame('Test configuration append (multiple calls)', (string) $manager->getDefinition('entity_method:config_test.dynamic:appends')['admin_label']);
+  }
+
+  /**
+   * @see \Drupal\Core\Config\Action\Plugin\ConfigAction\EntityMethod
+   */
+  public function testPluralizedEntityMethodException(): void {
+    $this->installConfig('config_test');
+    /** @var \Drupal\Core\Config\Action\ConfigActionManager $manager */
+    $manager = $this->container->get('plugin.manager.config_action');
+    $this->expectException(EntityMethodException::class);
+    $this->expectExceptionMessage('The pluralized entity method config action \'entity_method:config_test.dynamic:addToArrayMultipleTimes\' requires an array value in order to call Drupal\config_test\Entity\ConfigTest::addToArray() multiple times');
+    $manager->applyAction('entity_method:config_test.dynamic:addToArrayMultipleTimes', 'config_test.dynamic.dotted.default', 'Test value');
+  }
+
+  /**
+   * @see \Drupal\Core\Config\Action\Plugin\ConfigAction\Deriver\EntityMethodDeriver
+   */
+  public function testDuplicatePluralizedMethodNameException(): void {
+    \Drupal::state()->set('config_test.class_override', DuplicatePluralizedMethodName::class);
+    \Drupal::entityTypeManager()->clearCachedDefinitions();
+    $this->installConfig('config_test');
+    /** @var \Drupal\Core\Config\Action\ConfigActionManager $manager */
+    $manager = $this->container->get('plugin.manager.config_action');
+    $this->expectException(EntityMethodException::class);
+    $this->expectExceptionMessage('Duplicate action can not be created for ID \'config_test.dynamic:testMethod\' for Drupal\config_test\ConfigActionErrorEntity\DuplicatePluralizedMethodName::testMethod(). The existing action is for the ::testMethod() method');
+    $manager->getDefinitions();
+  }
+
+  /**
+   * @see \Drupal\Core\Config\Action\Plugin\ConfigAction\Deriver\EntityMethodDeriver
+   */
+  public function testDuplicatePluralizedOtherMethodNameException(): void {
+    \Drupal::state()->set('config_test.class_override', DuplicatePluralizedOtherMethodName::class);
+    \Drupal::entityTypeManager()->clearCachedDefinitions();
+    $this->installConfig('config_test');
+    /** @var \Drupal\Core\Config\Action\ConfigActionManager $manager */
+    $manager = $this->container->get('plugin.manager.config_action');
+    $this->expectException(EntityMethodException::class);
+    $this->expectExceptionMessage('Duplicate action can not be created for ID \'config_test.dynamic:testMethod2\' for Drupal\config_test\ConfigActionErrorEntity\DuplicatePluralizedOtherMethodName::testMethod2(). The existing action is for the ::testMethod() method');
+    $manager->getDefinitions();
   }
 
   /**

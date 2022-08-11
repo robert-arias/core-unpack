@@ -7,6 +7,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\config_test\ConfigTestInterface;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Defines the ConfigTest configuration entity.
@@ -206,7 +207,7 @@ class ConfigTest extends ConfigEntityBase implements ConfigTestInterface {
    * @return $this
    *   The config entity.
    */
-  #[ActionMethod]
+  #[ActionMethod(pluralize: FALSE)]
   public function setProtectedProperty(string $value): static {
     $this->protected_property = $value;
     return $this;
@@ -233,7 +234,7 @@ class ConfigTest extends ConfigEntityBase implements ConfigTestInterface {
    * @return $this
    *   The config entity.
    */
-  #[ActionMethod]
+  #[ActionMethod()]
   public function concatProtectedProperty(string $value1, string $value2): static {
     $this->protected_property = $value1 . $value2;
     return $this;
@@ -250,9 +251,24 @@ class ConfigTest extends ConfigEntityBase implements ConfigTestInterface {
    * @return $this
    *   The config entity.
    */
-  #[ActionMethod]
+  #[ActionMethod(pluralize: FALSE)]
   public function concatProtectedPropertyOptional(string $value1, string $value2 = ''): static {
     $this->protected_property = $value1 . $value2;
+    return $this;
+  }
+
+  /**
+   * Appends to protected property.
+   *
+   * @param $value
+   *   The value to append.
+   *
+   * @return $this
+   *   The config entity.
+   */
+  #[ActionMethod()]
+  public function append(string $value): static {
+    $this->protected_property .= $value;
     return $this;
   }
 
@@ -262,7 +278,7 @@ class ConfigTest extends ConfigEntityBase implements ConfigTestInterface {
    * @return $this
    *   The config entity.
    */
-  #[ActionMethod]
+  #[ActionMethod(pluralize: FALSE, adminLabel: new TranslatableMarkup('Set default name'))]
   public function defaultProtectedProperty(): static {
     $this->protected_property = 'Set by method';
     return $this;
@@ -277,7 +293,7 @@ class ConfigTest extends ConfigEntityBase implements ConfigTestInterface {
    * @return $this
    *   The config entity.
    */
-  #[ActionMethod()]
+  #[ActionMethod(pluralize: 'addToArrayMultipleTimes')]
   public function addToArray(mixed $value): static {
     $this->array_property[] = $value;
     return $this;
@@ -302,7 +318,7 @@ class ConfigTest extends ConfigEntityBase implements ConfigTestInterface {
    * @return $this
    *   The config entity.
    */
-  #[ActionMethod]
+  #[ActionMethod(pluralize: FALSE)]
   public function setArray(array $value): static {
     $this->array_property = $value;
     return $this;
