@@ -46,6 +46,11 @@ parameters:
 			path: core/lib/Drupal/Core/Config/Action/Plugin/ConfigAction/EntityCreate.php
 
 		-
+			message: "#^Cannot call method getEntityType\\(\\) on Drupal\\\\Core\\\\Config\\\\Entity\\\\ConfigEntityInterface\\|null\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Action/Plugin/ConfigAction/EntityMethod.php
+
+		-
 			message: "#^Cannot call method save\\(\\) on Drupal\\\\Core\\\\Config\\\\Entity\\\\ConfigEntityInterface\\|null\\.$#"
 			count: 1
 			path: core/lib/Drupal/Core/Config/Action/Plugin/ConfigAction/EntityMethod.php

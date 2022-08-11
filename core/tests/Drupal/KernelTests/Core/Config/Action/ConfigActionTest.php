@@ -6,6 +6,7 @@ use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Component\Uuid\Uuid;
 use Drupal\Core\Config\Action\ConfigActionException;
 use Drupal\Core\Config\Action\DuplicateConfigActionIdException;
+use Drupal\Core\Config\Action\EntityMethodException;
 use Drupal\KernelTests\KernelTestBase;
 
 /**
@@ -72,14 +73,77 @@ class ConfigActionTest extends KernelTestBase {
     $config_test_entity = $storage->load('dotted.default');
     $this->assertSame('Test value 2', $config_test_entity->getProtectedProperty());
 
+    $manager->applyAction('entity_method:config_test.dynamic:concatProtectedProperty', 'config_test.dynamic.dotted.default', ['Test value ', '3']);
+    /** @var \Drupal\config_test\Entity\ConfigTest $config_test_entity */
+    $config_test_entity = $storage->load('dotted.default');
+    $this->assertSame('Test value 3', $config_test_entity->getProtectedProperty());
+
+    $manager->applyAction('entity_method:config_test.dynamic:concatProtectedPropertyOptional', 'config_test.dynamic.dotted.default', ['Test value ', '4']);
+    /** @var \Drupal\config_test\Entity\ConfigTest $config_test_entity */
+    $config_test_entity = $storage->load('dotted.default');
+    $this->assertSame('Test value 4', $config_test_entity->getProtectedProperty());
+
+    // Test calling an action that has 2 arguments but one is optional with an
+    // array value.
+    $manager->applyAction('entity_method:config_test.dynamic:concatProtectedPropertyOptional', 'config_test.dynamic.dotted.default', ['Test value 5']);
+    /** @var \Drupal\config_test\Entity\ConfigTest $config_test_entity */
+    $config_test_entity = $storage->load('dotted.default');
+    $this->assertSame('Test value 5', $config_test_entity->getProtectedProperty());
+
+    // Test calling an action that has 2 arguments but one is optional with a
+    // non array value.
+    $manager->applyAction('entity_method:config_test.dynamic:concatProtectedPropertyOptional', 'config_test.dynamic.dotted.default', 'Test value 6');
+    /** @var \Drupal\config_test\Entity\ConfigTest $config_test_entity */
+    $config_test_entity = $storage->load('dotted.default');
+    $this->assertSame('Test value 6', $config_test_entity->getProtectedProperty());
+
+    // Test calling an action that expects no arguments.
+    $manager->applyAction('entity_method:config_test.dynamic:defaultProtectedProperty', 'config_test.dynamic.dotted.default', []);
+    /** @var \Drupal\config_test\Entity\ConfigTest $config_test_entity */
+    $config_test_entity = $storage->load('dotted.default');
+    $this->assertSame('Set by method', $config_test_entity->getProtectedProperty());
+
+    $manager->applyAction('entity_method:config_test.dynamic:addToArray', 'config_test.dynamic.dotted.default', 'foo');
+    $manager->applyAction('entity_method:config_test.dynamic:addToArray', 'config_test.dynamic.dotted.default', 'bar');
+    /** @var \Drupal\config_test\Entity\ConfigTest $config_test_entity */
+    $config_test_entity = $storage->load('dotted.default');
+    $this->assertSame(['foo', 'bar'], $config_test_entity->getArrayProperty());
+
+    $manager->applyAction('entity_method:config_test.dynamic:addToArray', 'config_test.dynamic.dotted.default', ['a', 'b', 'c']);
+    /** @var \Drupal\config_test\Entity\ConfigTest $config_test_entity */
+    $config_test_entity = $storage->load('dotted.default');
+    $this->assertSame(['foo', 'bar', ['a', 'b', 'c']], $config_test_entity->getArrayProperty());
+
+    $manager->applyAction('entity_method:config_test.dynamic:setArray', 'config_test.dynamic.dotted.default', ['a', 'b', 'c']);
+    /** @var \Drupal\config_test\Entity\ConfigTest $config_test_entity */
+    $config_test_entity = $storage->load('dotted.default');
+    $this->assertSame(['a', 'b', 'c'], $config_test_entity->getArrayProperty());
+
+    $manager->applyAction('entity_method:config_test.dynamic:setArray', 'config_test.dynamic.dotted.default', [['a', 'b', 'c'], ['a']]);
+    /** @var \Drupal\config_test\Entity\ConfigTest $config_test_entity */
+    $config_test_entity = $storage->load('dotted.default');
+    $this->assertSame([['a', 'b', 'c'], ['a']], $config_test_entity->getArrayProperty());
+
     $config_test_entity->delete();
     try {
-      $manager->applyAction('entity_method:config_test.dynamic:setProtectedProperty', 'config_test.dynamic.dotted.default', 'Test value 3');
+      $manager->applyAction('entity_method:config_test.dynamic:setProtectedProperty', 'config_test.dynamic.dotted.default', 'Test value');
       $this->fail('Expected exception not thrown');
     }
     catch (ConfigActionException $e) {
       $this->assertSame('Entity config_test.dynamic.dotted.default does not exist', $e->getMessage());
     }
+  }
+
+  /**
+   * @see \Drupal\Core\Config\Action\Plugin\ConfigAction\EntityMethod
+   */
+  public function testEntityMethodException(): void {
+    $this->installConfig('config_test');
+    /** @var \Drupal\Core\Config\Action\ConfigActionManager $manager */
+    $manager = $this->container->get('plugin.manager.config_action');
+    $this->expectException(EntityMethodException::class);
+    $this->expectExceptionMessage('Entity method config action \'entity_method:config_test.dynamic:concatProtectedProperty\' requires an array value. The number of parameters or required parameters for Drupal\config_test\Entity\ConfigTest::concatProtectedProperty() is not 1');
+    $manager->applyAction('entity_method:config_test.dynamic:concatProtectedProperty', 'config_test.dynamic.dotted.default', 'Test value');
   }
 
   /**

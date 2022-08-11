@@ -37,6 +37,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
  *     "size",
  *     "size_value",
  *     "protected_property",
+ *     "array_property",
  *   },
  *   links = {
  *     "edit-form" = "/admin/structure/config_test/manage/{config_test}",
@@ -83,6 +84,13 @@ class ConfigTest extends ConfigEntityBase implements ConfigTestInterface {
    * @var string
    */
   protected $protected_property;
+
+  /**
+   * An array property of the configuration entity.
+   *
+   * @var array
+   */
+  protected array $array_property = [];
 
   /**
    * {@inheritdoc}
@@ -199,7 +207,7 @@ class ConfigTest extends ConfigEntityBase implements ConfigTestInterface {
    *   The config entity.
    */
   #[ActionMethod]
-  public function setProtectedProperty(string $value) {
+  public function setProtectedProperty(string $value): static {
     $this->protected_property = $value;
     return $this;
   }
@@ -210,8 +218,94 @@ class ConfigTest extends ConfigEntityBase implements ConfigTestInterface {
    * @return string
    *   The protected property value.
    */
-  public function getProtectedProperty() {
+  public function getProtectedProperty(): string {
     return $this->protected_property;
+  }
+
+  /**
+   * Concatenates the two params and sets the protected property value.
+   *
+   * @param $value1
+   *   The first value to concatenate.
+   * @param $value2
+   *   The second value to concatenate.
+   *
+   * @return $this
+   *   The config entity.
+   */
+  #[ActionMethod]
+  public function concatProtectedProperty(string $value1, string $value2): static {
+    $this->protected_property = $value1 . $value2;
+    return $this;
+  }
+
+  /**
+   * Concatenates up to two params and sets the protected property value.
+   *
+   * @param $value1
+   *   The first value to concatenate.
+   * @param $value2
+   *   (optional) The second value to concatenate. Defaults to ''.
+   *
+   * @return $this
+   *   The config entity.
+   */
+  #[ActionMethod]
+  public function concatProtectedPropertyOptional(string $value1, string $value2 = ''): static {
+    $this->protected_property = $value1 . $value2;
+    return $this;
+  }
+
+  /**
+   * Sets the protected property to a default value.
+   *
+   * @return $this
+   *   The config entity.
+   */
+  #[ActionMethod]
+  public function defaultProtectedProperty(): static {
+    $this->protected_property = 'Set by method';
+    return $this;
+  }
+
+  /**
+   * Adds a value to the array property.
+   *
+   * @param mixed $value
+   *   The value to add.
+   *
+   * @return $this
+   *   The config entity.
+   */
+  #[ActionMethod()]
+  public function addToArray(mixed $value): static {
+    $this->array_property[] = $value;
+    return $this;
+  }
+
+  /**
+   * Gets the array property value.
+   *
+   * @return array
+   *   The array property value.
+   */
+  public function getArrayProperty(): array {
+    return $this->array_property;
+  }
+
+  /**
+   * Sets the array property.
+   *
+   * @param $value
+   *   The value to set.
+   *
+   * @return $this
+   *   The config entity.
+   */
+  #[ActionMethod]
+  public function setArray(array $value): static {
+    $this->array_property = $value;
+    return $this;
   }
 
 }

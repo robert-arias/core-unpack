@@ -52,8 +52,14 @@ final class EntityMethodDeriver extends DeriverBase implements ContainerDeriverI
             $derivative = $base_plugin_definition;
             /** @var \Drupal\Core\Config\Action\Attribute\ActionMethod  $action_attribute */
             $action_attribute = $attribute->newInstance();
+
             $derivative['admin_label'] = $action_attribute->adminLabel ?: $this->t('@entity_type @method', [$entity_type->getLabel(), $method->name]);
-            $derivative['additional'] = ['method' => $method->name, 'exists' => $action_attribute->exists];
+            $derivative['constructor_args'] = [
+              'method' => $method->name,
+              'exists' => $action_attribute->exists,
+              'numberOfParams' => $method->getNumberOfParameters(),
+              'numberOfRequiredParams' => $method->getNumberOfRequiredParameters(),
+            ];
             $derivative['entity_types'] = [$entity_type->id()];
             // Build a config action identifier from the entity type's config
             // prefix  and the method name. For example, the Role entity adds a

@@ -38,8 +38,8 @@ final class EntityCreate implements ConfigActionPluginInterface, ContainerFactor
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
-    assert(is_array($plugin_definition) && isset($plugin_definition['additional']['exists']), '$plugin_definition contains the expected setting');
-    return new static($container->get('config.manager'), $plugin_definition['additional']['exists']);
+    assert(is_array($plugin_definition) && is_array($plugin_definition['constructor_args']), '$plugin_definition contains the expected settings');
+    return new static($container->get('config.manager'), ...$plugin_definition['constructor_args']);
   }
 
   /**
