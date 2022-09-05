@@ -19,7 +19,7 @@ final class DuplicateConfigAction implements ConfigActionPluginInterface {
    * {@inheritdoc}
    */
   public function apply(string $configName, mixed $value): void {
-    // This method wit
+    // This method should never be called.
     throw new \BadMethodCallException();
   }
 
