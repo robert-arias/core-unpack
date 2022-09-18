@@ -34,11 +34,12 @@ config:
   # editor is having the permissions added. The permissions key will be
   # mapped to the \Drupal\user\Entity\Role::grantPermission() method.
   actions:
-    role:
-      editor:
-        permissions:
-          - 'delete any article content'
-          - 'edit any article content'
+    user.role.editor:
+      ensure_exists:
+        label: 'Editor'
+      grantPermissions:
+        - 'delete any article content'
+        - 'edit any article content'
 
 content:
 # A Drupal recipe can have a content directory. All content in this
