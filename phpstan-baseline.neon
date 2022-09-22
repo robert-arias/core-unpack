@@ -81,22 +81,12 @@ parameters:
 			path: core/lib/Drupal/Core/Recipe/ConfigConfigurator.php
 
 		-
-			message: "#^Property Drupal\\\\Core\\\\Recipe\\\\ConfigConfigurator\\:\\:\\$config type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: core/lib/Drupal/Core/Recipe/ConfigConfigurator.php
-
-		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 2
 			path: core/lib/Drupal/Core/Recipe/ConfigConfigurator.php
 
 		-
 			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\ContentConfigurator\\:\\:__construct\\(\\) has parameter \\$content with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: core/lib/Drupal/Core/Recipe/ContentConfigurator.php
-
-		-
-			message: "#^Property Drupal\\\\Core\\\\Recipe\\\\ContentConfigurator\\:\\:\\$content type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: core/lib/Drupal/Core/Recipe/ContentConfigurator.php
 
@@ -181,11 +171,6 @@ parameters:
 			path: core/lib/Drupal/Core/Recipe/RecipeDiscovery.php
 
 		-
-			message: "#^Property Drupal\\\\Core\\\\Recipe\\\\RecipeDiscovery\\:\\:\\$paths type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: core/lib/Drupal/Core/Recipe/RecipeDiscovery.php
-
-		-
 			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeExtensionConfigStorage\\:\\:__construct\\(\\) has parameter \\$configNames with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: core/lib/Drupal/Core/Recipe/RecipeExtensionConfigStorage.php
@@ -231,17 +216,7 @@ parameters:
 			path: core/lib/Drupal/Core/Recipe/RecipeExtensionConfigStorage.php
 
 		-
-			message: "#^Property Drupal\\\\Core\\\\Recipe\\\\RecipeExtensionConfigStorage\\:\\:\\$configNames type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: core/lib/Drupal/Core/Recipe/RecipeExtensionConfigStorage.php
-
-		-
 			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeMissingExtensionsException\\:\\:__construct\\(\\) has parameter \\$extensions with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: core/lib/Drupal/Core/Recipe/RecipeMissingExtensionsException.php
-
-		-
-			message: "#^Property Drupal\\\\Core\\\\Recipe\\\\RecipeMissingExtensionsException\\:\\:\\$extensions type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: core/lib/Drupal/Core/Recipe/RecipeMissingExtensionsException.php
 
@@ -292,11 +267,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\UnknownRecipeException\\:\\:__construct\\(\\) has parameter \\$searchPaths with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: core/lib/Drupal/Core/Recipe/UnknownRecipeException.php
-
-		-
-			message: "#^Property Drupal\\\\Core\\\\Recipe\\\\UnknownRecipeException\\:\\:\\$searchPaths type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: core/lib/Drupal/Core/Recipe/UnknownRecipeException.php
 
