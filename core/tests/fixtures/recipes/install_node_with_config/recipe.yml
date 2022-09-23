@@ -2,4 +2,4 @@ name: 'Install node with config'
 type: 'Content type'
 install:
   - node
-  - drupal:text
+  - text
