@@ -71,11 +71,6 @@ parameters:
 			path: core/lib/Drupal/Core/Config/Action/Plugin/ConfigAction/SimpleConfigUpdate.php
 
 		-
-			message: "#^Cannot access offset 'uuid' on non\\-empty\\-array\\|true\\.$#"
-			count: 1
-			path: core/lib/Drupal/Core/Recipe/ConfigConfigurator.php
-
-		-
 			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\ConfigConfigurator\\:\\:__construct\\(\\) has parameter \\$config with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: core/lib/Drupal/Core/Recipe/ConfigConfigurator.php
@@ -344,3 +339,13 @@ parameters:
 			message: "#^Property Drupal\\\\KernelTests\\\\Core\\\\Recipe\\\\RecipeTest\\:\\:\\$modules type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeTest.php
+
+		-
+			message: "#^Method Drupal\\\\Tests\\\\Core\\\\Recipe\\\\RecipeConfigStorageWrapperTest\\:\\:testUnsupportedMethods\\(\\) has parameter \\$args with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/tests/Drupal/Tests/Core/Recipe/RecipeConfigStorageWrapperTest.php
+
+		-
+			message: "#^Method Drupal\\\\Tests\\\\Core\\\\Recipe\\\\RecipeConfigStorageWrapperTest\\:\\:unsupportedMethods\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/tests/Drupal/Tests/Core/Recipe/RecipeConfigStorageWrapperTest.php

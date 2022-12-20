@@ -293,7 +293,7 @@ class RecipeConfigStorageWrapperTest extends UnitTestCase {
    * @param bool $b_return
    *   The return value for storage $b's exist method.
    *
-   * @return array
+   * @return \Drupal\Core\Config\StorageInterface[]
    *   An array of two mocked storages.
    */
   private function generateStorages(bool $b_return): array {
