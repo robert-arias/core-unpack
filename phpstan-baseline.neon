@@ -41,6 +41,11 @@ parameters:
 			path: core/lib/Drupal/Core/Config/Action/Plugin/ConfigAction/Deriver/EntityMethodDeriver.php
 
 		-
+			message: "#^Method Drupal\\\\Core\\\\Config\\\\Action\\\\Plugin\\\\ConfigAction\\\\Deriver\\\\EntityMethodDeriver\\:\\:processMethod\\(\\) has parameter \\$derivative with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Action/Plugin/ConfigAction/Deriver/EntityMethodDeriver.php
+
+		-
 			message: "#^Parameter \\#1 \\$objectOrClass of class ReflectionClass constructor expects class\\-string\\<T of object\\>\\|T of object, string given\\.$#"
 			count: 1
 			path: core/lib/Drupal/Core/Config/Action/Plugin/ConfigAction/Deriver/EntityMethodDeriver.php

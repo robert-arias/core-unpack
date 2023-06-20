@@ -303,6 +303,16 @@ class ConfigActionTest extends KernelTestBase {
   }
 
   /**
+   * @see \Drupal\Core\Config\Action\ConfigActionManager::getShorthandActionIdsForEntityType()
+   */
+  public function testParentAttributes(): void {
+    $definitions = $this->container->get('plugin.manager.config_action')->getDefinitions();
+    // The \Drupal\config_test\Entity\ConfigQueryTest::concatProtectedProperty()
+    // does not have an attribute but the parent does so this is discovered.
+    $this->assertArrayHasKey('entity_method:config_test.query:concatProtectedProperty', $definitions);
+  }
+
+  /**
    * @see \Drupal\Core\Config\Action\ConfigActionManager
    */
   public function testMissingAction(): void {
