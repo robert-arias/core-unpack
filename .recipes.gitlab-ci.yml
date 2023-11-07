@@ -124,6 +124,7 @@ build-patch:
     - git diff drupal-core/$CI_COMMIT_BRANCH HEAD -- core > new-recipe.patch
     - git checkout patch
     - cp new-recipe.patch recipe-$CI_COMMIT_BRANCH.patch
+    - git add recipe-$CI_COMMIT_BRANCH.patch
     - git status --untracked-files=no
     - if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
     -   git add recipe-$CI_COMMIT_BRANCH.patch
