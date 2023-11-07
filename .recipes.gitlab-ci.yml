@@ -99,7 +99,7 @@ test:
 # available on protected branches. For more information on how this is set up
 # see https://dev.to/nop33/git-commits-from-gitlab-ci-2l90.
 build-patch:
-  stage: build
+  stage: deploy
   only:
     refs:
       - /^10\.\d+\.x$/
