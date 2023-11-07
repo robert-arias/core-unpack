@@ -312,7 +312,7 @@ class RecipeConfigStorageWrapperTest extends UnitTestCase {
    * @return array
    *   An array of method names w/ args to test the unsupported methods.
    */
-  private function unsupportedMethods(): array {
+  public function unsupportedMethods(): array {
     return [
       ['write', 'name', []],
       ['delete', 'name'],

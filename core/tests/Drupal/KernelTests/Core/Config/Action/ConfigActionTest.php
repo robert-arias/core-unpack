@@ -317,7 +317,7 @@ class ConfigActionTest extends KernelTestBase {
    */
   public function testMissingAction(): void {
     $this->expectException(PluginNotFoundException::class);
-    $this->expectErrorMessageMatches('/^The "does_not_exist" plugin does not exist/');
+    $this->expectExceptionMessageMatches('/^The "does_not_exist" plugin does not exist/');
     $this->container->get('plugin.manager.config_action')->applyAction('does_not_exist', 'config_test.system', ['foo' => 'Yay!']);
   }
 
