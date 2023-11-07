@@ -99,6 +99,9 @@ test:
 # available on protected branches. For more information on how this is set up
 # see https://dev.to/nop33/git-commits-from-gitlab-ci-2l90.
 build-patch:
+  variables:
+    # We need a fuller history for merging.
+    GIT_DEPTH: 2000
   stage: deploy
   only:
     refs:
