@@ -1,4 +1,4 @@
-# cspell:ignore drupaltestbot drupaltestbotpw analyse keyscan oneline unshallow
+# cspell:ignore drupaltestbot drupaltestbotpw analyse keyscan
 
 # This is based on work from PreviousNext found in
 # https://git.drupalcode.org/project/search_api_opensearch/-/blob/2.x/.gitlab-ci.yml
@@ -111,7 +111,6 @@ build-patch:
     - mkdir -p ~/.ssh
     - ssh-keyscan git.drupal.org >> ~/.ssh/known_hosts
   script:
-    - git branch
     - git config --global user.email "gitlabci@example.com"
     - git config --global user.name "GitLabCi"
     - git config --global --add safe.directory /builds/project/distributions_recipes
@@ -121,9 +120,6 @@ build-patch:
     - git fetch origin
     - git fetch drupal-core $CI_COMMIT_BRANCH
     - git checkout origin/$CI_COMMIT_BRANCH -b $CI_COMMIT_BRANCH-patch
-    - git pull --unshallow
-    - git log HEAD --oneline -n 100
-    - git log drupal-core/$CI_COMMIT_BRANCH --oneline -n 100
     - git merge drupal-core/$CI_COMMIT_BRANCH HEAD
     - git diff drupal-core/$CI_COMMIT_BRANCH HEAD -- core > new-recipe.patch
     - git checkout patch
