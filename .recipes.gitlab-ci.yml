@@ -1,0 +1,140 @@
+# cspell:ignore drupaltestbot drupaltestbotpw analyse keyscan oneline unshallow
+
+# This is based on work from PreviousNext found in
+# https://git.drupalcode.org/project/search_api_opensearch/-/blob/2.x/.gitlab-ci.yml
+
+workflow:
+  rules:
+    - if: $CI_COMMIT_TITLE =~ /-draft$/
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH =~ /^10\.\d+\.x$/
+
+variables:
+  _TARGET_PHP: "8.1"
+  _TARGET_DB: "mysql-5.7"
+  _CONFIG_DOCKERHUB_ROOT: "drupalci"
+  MYSQL_ROOT_PASSWORD: root
+  MYSQL_DATABASE: mysql
+  MYSQL_USER: drupaltestbot
+  MYSQL_PASSWORD: drupaltestbotpw
+  TEST_DIRECTORIES: "core/tests/Drupal/Tests/Core/Recipe core/tests/Drupal/KernelTests/Core/Recipe core/tests/Drupal/FunctionalTests/Core/Recipe core/tests/Drupal/KernelTests/Core/Config/Action"
+  CODE_DIRECTORIES: "core/lib/Drupal/Core/Recipe core/lib/Drupal/Core/Config/Action core/modules/config/tests/config_action_duplicate_test"
+
+default:
+  image: $_CONFIG_DOCKERHUB_ROOT/php-$_TARGET_PHP-apache:production
+
+stages:
+  - build
+  - test
+  - deploy
+
+build:
+  stage: build
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-composer2
+    paths:
+      - vendor/
+  script:
+    - COMPOSER_ROOT_VERSION=10.0.x-dev composer install --no-interaction --no-progress --prefer-dist
+  artifacts:
+    paths:
+      - vendor/
+      - composer.lock
+
+lint:
+  stage: test
+  needs: [ build ]
+  dependencies:
+    - build
+  script:
+    - DIRS="$CODE_DIRECTORIES $TEST_DIRECTORIES"
+    - composer run phpcs -- ${DIRS} -ps
+    # Ensure core phpstan passes.
+    - vendor/bin/phpstan analyse -c core/phpstan-partial.neon ${DIRS}
+    # Do a level 9 pass using baseline for even stricter checking. The baseline
+    # can be regenerated locally by running:
+    # vendor/bin/phpstan analyse -l 9 --generate-baseline phpstan-baseline.neon LIST_ALL_THE_DIRECTORIES
+    - vendor/bin/phpstan analyse -l 9 -c phpstan-baseline.neon ${DIRS}
+
+test:
+  stage: test
+  needs: [ build ]
+  dependencies:
+    - build
+  services:
+    - name: $_CONFIG_DOCKERHUB_ROOT/$_TARGET_DB:production
+      alias: database
+  variables:
+    SIMPLETEST_DB: "mysql://$MYSQL_USER:$MYSQL_PASSWORD@database/$MYSQL_DATABASE?module=mysql"
+    SIMPLETEST_BASE_URL: "http://localhost/subdirectory"
+    BROWSERTEST_OUTPUT_DIRECTORY: "sites/simpletest/browser_output"
+    BROWSERTEST_OUTPUT_FILE: "test-output.html"
+    MINK_DRIVER_ARGS_WEBDRIVER: '["chrome", {"chromeOptions": { "args": [ "--disable-gpu", "--headless" ] } }, "http://127.0.0.1:4444/wd/hub" ]'
+#    SYMFONY_DEPRECATIONS_HELPER: "max[self]=0"
+  before_script:
+    - ln -s $CI_PROJECT_DIR /var/www/html/subdirectory
+    - sudo service apache2 start
+  script:
+    - mkdir sites/simpletest
+    - chown www-data sites/simpletest
+    - mkdir junit-reports
+    - chown www-data junit-reports
+    - mkdir -p $BROWSERTEST_OUTPUT_DIRECTORY
+    - chown www-data $BROWSERTEST_OUTPUT_DIRECTORY
+    - |
+      for TEST_DIRECTORY in $TEST_DIRECTORIES
+      do
+        REPORT="${TEST_DIRECTORY//[\/]/-}-test-report.xml"
+        sudo --preserve-env=SIMPLETEST_DB,SIMPLETEST_BASE_URL,BROWSERTEST_OUTPUT_DIRECTORY,BROWSERTEST_OUTPUT_FILE,MINK_DRIVER_ARGS_WEBDRIVER -u www-data vendor/bin/phpunit -v -c core/phpunit.xml.dist --log-junit junit-reports/${REPORT} ${TEST_DIRECTORY}
+      done
+    - ls -lah junit-reports
+  artifacts:
+    when: always
+    reports:
+      junit: "junit-reports/*"
+
+# This job builds a patch. It relies on the repository having a deployment key
+# and the private key being a CI variable. The variable is protected and only
+# available on protected branches. For more information on how this is set up
+# see https://dev.to/nop33/git-commits-from-gitlab-ci-2l90.
+build-patch:
+  stage: build
+  only:
+    refs:
+      - /^10\.\d+\.x$/
+  before_script:
+    # Set up the SSH key and the known_hosts file
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - echo "${SSH_PRIVATE_KEY}" | tr -d '\r' | ssh-add - > /dev/null
+    - mkdir -p ~/.ssh
+    - ssh-keyscan git.drupal.org >> ~/.ssh/known_hosts
+  script:
+    - git branch
+    - git config --global user.email "gitlabci@example.com"
+    - git config --global user.name "GitLabCi"
+    - git config --global --add safe.directory /builds/project/distributions_recipes
+    - git remote add drupal-core https://git.drupalcode.org/project/drupal.git
+    - git remote set-url origin git@git.drupal.org:project/distributions_recipes.git
+    - git remote -v
+    - git fetch origin
+    - git fetch drupal-core $CI_COMMIT_BRANCH
+    - git checkout origin/$CI_COMMIT_BRANCH -b $CI_COMMIT_BRANCH-patch
+    - git pull --unshallow
+    - git log HEAD --oneline -n 100
+    - git log drupal-core/$CI_COMMIT_BRANCH --oneline -n 100
+    - git merge drupal-core/$CI_COMMIT_BRANCH HEAD
+    - git diff drupal-core/$CI_COMMIT_BRANCH HEAD -- core > new-recipe.patch
+    - git checkout patch
+    - cp new-recipe.patch recipe-$CI_COMMIT_BRANCH.patch
+    - git status --untracked-files=no
+    - if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
+    -   git add recipe-$CI_COMMIT_BRANCH.patch
+    -   git commit -m "Update recipe $CI_COMMIT_BRANCH patch $CI_COMMIT_SHORT_SHA $CI_COMMIT_MESSAGE"
+    -   git push origin patch -o ci.skip
+    - fi
+  artifacts:
+    when: always
+    paths:
+      - recipe-$CI_COMMIT_BRANCH.patch
