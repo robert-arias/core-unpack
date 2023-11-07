@@ -51,7 +51,7 @@ class RecipeCommandTest extends BrowserTestBase {
     $process->setTimeout(500);
     $status = $process->run();
     $this->assertSame(1, $status);
-    $this->assertStringContainsString('Drupal\Core\Recipe\RecipeMissingExtensionsException', $process->getErrorOutput());
+    $this->assertStringContainsString("The following extensions are missing and are required for this recipe: does  \n  _not_exist_one, does_not_exist_two", $process->getErrorOutput());
   }
 
 }
