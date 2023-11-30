@@ -20,9 +20,12 @@ variables:
   MYSQL_PASSWORD: drupaltestbotpw
   TEST_DIRECTORIES: "core/tests/Drupal/Tests/Core/Recipe core/tests/Drupal/KernelTests/Core/Recipe core/tests/Drupal/FunctionalTests/Core/Recipe core/tests/Drupal/KernelTests/Core/Config/Action"
   CODE_DIRECTORIES: "core/lib/Drupal/Core/Recipe core/lib/Drupal/Core/Config/Action core/modules/config/tests/config_action_duplicate_test"
+  ALL_DIRECTORIES: "${CODE_DIRECTORIES} ${TEST_DIRECTORIES}"
 
 default:
   image: $_CONFIG_DOCKERHUB_ROOT/php-$_TARGET_PHP-apache:production
+  interruptible: true
+
 
 stages:
   - build
@@ -42,20 +45,53 @@ build:
       - vendor/
       - composer.lock
 
-lint:
+phpcs:
   stage: test
   needs: [ build ]
   dependencies:
     - build
   script:
-    - DIRS="$CODE_DIRECTORIES $TEST_DIRECTORIES"
-    - composer run phpcs -- ${DIRS} -ps
+    - composer run phpcs -- ${ALL_DIRECTORIES} -ps --report-full --report-summary --report-\\Micheh\\PhpCodeSniffer\\Report\\Gitlab=phpcs-quality-report.json
+  artifacts:
+    reports:
+      codequality: phpcs-quality-report.json
+
+phpstan:
+  stage: test
+  needs: [ build ]
+  dependencies:
+    - build
+  script:
     # Ensure core phpstan passes.
-    - vendor/bin/phpstan analyse -c core/phpstan-partial.neon ${DIRS}
+    - vendor/bin/phpstan analyse -c core/phpstan-partial.neon ${ALL_DIRECTORIES} || true
+    - vendor/bin/phpstan analyze -c core/phpstan-partial.neon ${ALL_DIRECTORIES} --no-progress --error-format=gitlab > phpstan-quality-report.json
+  artifacts:
+    reports:
+      codequality: phpstan-quality-report.json
+
+phpstan-level9:
+  stage: test
+  needs: [ build ]
+  dependencies:
+    - build
+  script:
     # Do a level 9 pass using baseline for even stricter checking. The baseline
     # can be regenerated locally by running:
-    # vendor/bin/phpstan analyse -l 9 --generate-baseline phpstan-baseline.neon LIST_ALL_THE_DIRECTORIES
-    - vendor/bin/phpstan analyse -l 9 -c phpstan-baseline.neon ${DIRS}
+    # vendor/bin/phpstan analyse -l 9 --generate-baseline=phpstan-baseline.neon LIST_ALL_THE_DIRECTORIES
+    - vendor/bin/phpstan analyse -l 9 -c phpstan-baseline.neon ${ALL_DIRECTORIES} || EXIT_CODE=$?
+    - vendor/bin/phpstan analyse -l 9 --no-progress -c phpstan-baseline.neon ${ALL_DIRECTORIES} --error-format=gitlab > phpstan9-quality-report.json || true
+    - |
+      if [ -n "$EXIT_CODE" ]; then
+        vendor/bin/phpstan analyse -l 9 --no-progress --generate-baseline=phpstan-baseline.neon -c phpstan-baseline.neon ${ALL_DIRECTORIES} || true
+        exit $EXIT_CODE
+      fi
+  artifacts:
+    reports:
+      codequality: phpstan9-quality-report.json
+    # Only store the baseline if the job fails.
+    when: on_failure
+    paths:
+      - core/phpstan-baseline.neon
 
 test:
   stage: test
@@ -99,6 +135,7 @@ test:
 # available on protected branches. For more information on how this is set up
 # see https://dev.to/nop33/git-commits-from-gitlab-ci-2l90.
 build-patch:
+  interruptible: false
   variables:
     # We need a fuller history for merging.
     GIT_DEPTH: 2000
