@@ -91,7 +91,7 @@ phpstan-level9:
     # Only store the baseline if the job fails.
     when: on_failure
     paths:
-      - core/phpstan-baseline.neon
+      - phpstan-baseline.neon
 
 test:
   stage: test
