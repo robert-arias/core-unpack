@@ -77,12 +77,12 @@ phpstan-level9:
   script:
     # Do a level 9 pass using baseline for even stricter checking. The baseline
     # can be regenerated locally by running:
-    # vendor/bin/phpstan analyse -l 9 --generate-baseline=phpstan-baseline.neon LIST_ALL_THE_DIRECTORIES
-    - vendor/bin/phpstan analyse -l 9 -c phpstan-baseline.neon ${ALL_DIRECTORIES} || EXIT_CODE=$?
-    - vendor/bin/phpstan analyse -l 9 --no-progress -c phpstan-baseline.neon ${ALL_DIRECTORIES} --error-format=gitlab > phpstan9-quality-report.json || true
+    # vendor/bin/phpstan analyse -l 9 --generate-baseline=phpstan-level9-baseline.neon LIST_ALL_THE_DIRECTORIES
+    - vendor/bin/phpstan analyse -l 9 -c phpstan-level9-baseline.neon ${ALL_DIRECTORIES} || EXIT_CODE=$?
+    - vendor/bin/phpstan analyse -l 9 --no-progress -c phpstan-level9-baseline.neon ${ALL_DIRECTORIES} --error-format=gitlab > phpstan9-quality-report.json || true
     - |
       if [ -n "$EXIT_CODE" ]; then
-        vendor/bin/phpstan analyse -l 9 --no-progress --generate-baseline=phpstan-baseline.neon -c phpstan-baseline.neon ${ALL_DIRECTORIES} || true
+        vendor/bin/phpstan analyse -l 9 --no-progress --generate-baseline=phpstan-level9-baseline.neon -c phpstan-level9-baseline.neon ${ALL_DIRECTORIES} || true
         exit $EXIT_CODE
       fi
   artifacts:
@@ -91,7 +91,7 @@ phpstan-level9:
     # Only store the baseline if the job fails.
     when: on_failure
     paths:
-      - phpstan-baseline.neon
+      - phpstan-level9-baseline.neon
 
 test:
   stage: test
