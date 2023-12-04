@@ -19,7 +19,7 @@ variables:
   MYSQL_USER: drupaltestbot
   MYSQL_PASSWORD: drupaltestbotpw
   TEST_DIRECTORIES: "core/tests/Drupal/Tests/Core/Recipe core/tests/Drupal/KernelTests/Core/Recipe core/tests/Drupal/FunctionalTests/Core/Recipe core/tests/Drupal/KernelTests/Core/Config/Action"
-  CODE_DIRECTORIES: "core/lib/Drupal/Core/Recipe core/lib/Drupal/Core/Config/Action core/modules/config/tests/config_action_duplicate_test"
+  CODE_DIRECTORIES: "core/lib/Drupal/Core/Recipe core/lib/Drupal/Core/Config/Action core/modules/config/tests/config_action_duplicate_test core/tests/fixtures/recipes"
   ALL_DIRECTORIES: "${CODE_DIRECTORIES} ${TEST_DIRECTORIES}"
 
 default:
@@ -92,6 +92,23 @@ phpstan-level9:
     when: on_failure
     paths:
       - phpstan-level9-baseline.neon
+
+cspell:
+  stage: test
+  before_script:
+    - cd core
+    - yarn install
+  script:
+    # Build up a list of the directories in the required format.
+    - |
+      export DIRECTORIES=""
+      for DIRECTORY in $ALL_DIRECTORIES
+      do
+        export DIRECTORIES="${DIRECTORIES} ${DIRECTORY}/**/*"
+      done
+      echo "Spellchecking the following directories:"
+      echo  ${DIRECTORIES}
+    - yarn --cwd=./core run -s cspell -c .cspell.json --root .. ${DIRECTORIES}
 
 test:
   stage: test

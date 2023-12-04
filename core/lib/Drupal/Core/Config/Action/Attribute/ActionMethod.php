@@ -21,7 +21,7 @@ final class ActionMethod {
    * @param bool|string $pluralize
    *   Determines whether to create a pluralized version of the method to enable
    *   the action to be called multiple times before saving the entity. The
-   *   default behaviour is to create an action with a plural form as determined
+   *   default behavior is to create an action with a plural form as determined
    *   by \Symfony\Component\String\Inflector\EnglishInflector::pluralize().
    *   For example, 'grantPermission' has a pluralized version of
    *   'grantPermissions'. If a string is provided this will be the full action

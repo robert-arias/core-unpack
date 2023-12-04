@@ -20,9 +20,7 @@ use Drupal\KernelTests\KernelTestBase;
 class ConfigActionTest extends KernelTestBase {
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
   protected static $modules = ['config_test'];
 

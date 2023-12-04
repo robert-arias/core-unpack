@@ -152,7 +152,7 @@ class RecipeRunnerTest extends KernelTestBase {
     $config_test_entities = \Drupal::entityTypeManager()->getStorage('config_test')->loadMultiple();
     $this->assertSame(['dotted.default', 'override', 'override_unmet'], array_keys($config_test_entities));
     $this->assertSame('Provided by recipe', $config_test_entities['dotted.default']->label());
-    $this->assertSame('derp', $this->config('config_test.system')->get('404'));
+    $this->assertSame('foo', $this->config('config_test.system')->get('404'));
   }
 
   public function testRecipeInclude(): void {
