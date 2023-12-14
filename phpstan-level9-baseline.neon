@@ -396,16 +396,6 @@ parameters:
 			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeDiscoveryTest.php
 
 		-
-			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertNotEmpty\\(\\) with array\\{\\} and 'There is config…' will always evaluate to false\\.$#"
-			count: 3
-			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeRunnerTest.php
-
-		-
-			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertNotEmpty\\(\\) with array\\{\\} and 'There is node…' will always evaluate to false\\.$#"
-			count: 1
-			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeRunnerTest.php
-
-		-
 			message: "#^Cannot access offset '_core' on mixed\\.$#"
 			count: 1
 			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeRunnerTest.php
