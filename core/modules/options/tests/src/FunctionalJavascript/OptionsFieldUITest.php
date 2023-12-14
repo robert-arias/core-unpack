@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\options\FunctionalJavascript;
 
 use Drupal\field\Entity\FieldConfig;
@@ -397,7 +399,7 @@ JS;
    */
   private function assertHasFocusByAttribute(string $name, string $value): void {
     $active_element = $this->getSession()->evaluateScript('document.activeElement');
-    $this->assertSame($value, $active_element->getAttribute($name));
+    $this->assertSame($value, $active_element->attribute($name));
   }
 
   /**
