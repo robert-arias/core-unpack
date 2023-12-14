@@ -76,6 +76,81 @@ parameters:
 			path: core/lib/Drupal/Core/Config/Action/Plugin/ConfigAction/SimpleConfigUpdate.php
 
 		-
+			message: "#^Cannot access property \\$id on Drupal\\\\Core\\\\Config\\\\Checkpoint\\\\Checkpoint\\|null\\.$#"
+			count: 3
+			path: core/lib/Drupal/Core/Config/Checkpoint/CheckpointStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Config\\\\Checkpoint\\\\CheckpointStorage\\:\\:decode\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Checkpoint/CheckpointStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Config\\\\Checkpoint\\\\CheckpointStorage\\:\\:encode\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Checkpoint/CheckpointStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Config\\\\Checkpoint\\\\CheckpointStorage\\:\\:getAllCollectionNames\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Checkpoint/CheckpointStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Config\\\\Checkpoint\\\\CheckpointStorage\\:\\:listAll\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Checkpoint/CheckpointStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Config\\\\Checkpoint\\\\CheckpointStorage\\:\\:read\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Checkpoint/CheckpointStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Config\\\\Checkpoint\\\\CheckpointStorage\\:\\:readMultiple\\(\\) has parameter \\$names with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Checkpoint/CheckpointStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Config\\\\Checkpoint\\\\CheckpointStorage\\:\\:readMultiple\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Checkpoint/CheckpointStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Config\\\\Checkpoint\\\\CheckpointStorage\\:\\:write\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Checkpoint/CheckpointStorage.php
+
+		-
+			message: "#^Parameter \\#2 \\.\\.\\.\\$arrays of function array_merge expects array, mixed given\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Checkpoint/CheckpointStorage.php
+
+		-
+			message: "#^Method Drupal\\\\Core\\\\Config\\\\Checkpoint\\\\LinearHistory\\:\\:getParents\\(\\) return type has no value type specified in iterable type Traversable\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Checkpoint/LinearHistory.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function end expects array\\|object, mixed given\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Checkpoint/LinearHistory.php
+
+		-
+			message: "#^Property Drupal\\\\Core\\\\Config\\\\Checkpoint\\\\LinearHistory\\:\\:\\$activeCheckpoint \\(Drupal\\\\Core\\\\Config\\\\Checkpoint\\\\Checkpoint\\|null\\) does not accept mixed\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Checkpoint/LinearHistory.php
+
+		-
+			message: "#^Property Drupal\\\\Core\\\\Config\\\\Checkpoint\\\\LinearHistory\\:\\:\\$checkpoints \\(array\\<Drupal\\\\Core\\\\Config\\\\Checkpoint\\\\Checkpoint\\>\\) does not accept mixed\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Checkpoint/LinearHistory.php
+
+		-
+			message: "#^Property Drupal\\\\Core\\\\Config\\\\Checkpoint\\\\NoCheckpointsException\\:\\:\\$message has no type specified\\.$#"
+			count: 1
+			path: core/lib/Drupal/Core/Config/Checkpoint/NoCheckpointsException.php
+
+		-
 			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\ConfigConfigurator\\:\\:__construct\\(\\) has parameter \\$config with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: core/lib/Drupal/Core/Recipe/ConfigConfigurator.php
@@ -281,6 +356,36 @@ parameters:
 			path: core/tests/Drupal/KernelTests/Core/Config/Action/ConfigActionTest.php
 
 		-
+			message: "#^Call to an undefined method Drupal\\\\Core\\\\Config\\\\StorageComparerInterface\\:\\:createChangelist\\(\\)\\.$#"
+			count: 5
+			path: core/tests/Drupal/KernelTests/Core/Config/Storage/Checkpoint/CheckpointStorageTest.php
+
+		-
+			message: "#^Cannot access offset 'collection' on array\\|false\\.$#"
+			count: 2
+			path: core/tests/Drupal/KernelTests/Core/Config/Storage/Checkpoint/CheckpointStorageTest.php
+
+		-
+			message: "#^Cannot access offset 'foo' on array\\|false\\.$#"
+			count: 1
+			path: core/tests/Drupal/KernelTests/Core/Config/Storage/Checkpoint/CheckpointStorageTest.php
+
+		-
+			message: "#^Cannot access offset 'foo' on false\\.$#"
+			count: 1
+			path: core/tests/Drupal/KernelTests/Core/Config/Storage/Checkpoint/CheckpointStorageTest.php
+
+		-
+			message: "#^Cannot access offset 'id' on array\\|false\\.$#"
+			count: 1
+			path: core/tests/Drupal/KernelTests/Core/Config/Storage/Checkpoint/CheckpointStorageTest.php
+
+		-
+			message: "#^Cannot access offset 'name' on array\\|false\\.$#"
+			count: 1
+			path: core/tests/Drupal/KernelTests/Core/Config/Storage/Checkpoint/CheckpointStorageTest.php
+
+		-
 			message: "#^Method Drupal\\\\KernelTests\\\\Core\\\\Recipe\\\\RecipeDiscoveryTest\\:\\:providerRecipeDiscovery\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeDiscoveryTest.php
@@ -344,6 +449,121 @@ parameters:
 			message: "#^Method Drupal\\\\KernelTests\\\\Core\\\\Recipe\\\\RecipeTest\\:\\:testCreateFromDirectory2\\(\\) has parameter \\$expected_modules with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeTest.php
+
+		-
+			message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:getName\\(\\)\\.$#"
+			count: 4
+			path: core/tests/Drupal/Tests/Core/Config/Checkpoint/CheckpointStorageTest.php
+
+		-
+			message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:getOriginal\\(\\)\\.$#"
+			count: 4
+			path: core/tests/Drupal/Tests/Core/Config/Checkpoint/CheckpointStorageTest.php
+
+		-
+			message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:getRawData\\(\\)\\.$#"
+			count: 4
+			path: core/tests/Drupal/Tests/Core/Config/Checkpoint/CheckpointStorageTest.php
+
+		-
+			message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:getStorage\\(\\)\\.$#"
+			count: 4
+			path: core/tests/Drupal/Tests/Core/Config/Checkpoint/CheckpointStorageTest.php
+
+		-
+			message: "#^Cannot access property \\$id on mixed\\.$#"
+			count: 3
+			path: core/tests/Drupal/Tests/Core/Config/Checkpoint/CheckpointStorageTest.php
+
+		-
+			message: "#^Method Drupal\\\\Tests\\\\Core\\\\Config\\\\Checkpoint\\\\CheckpointStorageTest\\:\\:readMethodsProvider\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/tests/Drupal/Tests/Core/Config/Checkpoint/CheckpointStorageTest.php
+
+		-
+			message: "#^Method Drupal\\\\Tests\\\\Core\\\\Config\\\\Checkpoint\\\\CheckpointStorageTest\\:\\:setRandomFixtureConfig\\(\\) has parameter \\$config with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/tests/Drupal/Tests/Core/Config/Checkpoint/CheckpointStorageTest.php
+
+		-
+			message: "#^Method Drupal\\\\Tests\\\\Core\\\\Config\\\\Checkpoint\\\\CheckpointStorageTest\\:\\:testReadOperations\\(\\) has parameter \\$arguments with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/tests/Drupal/Tests/Core/Config/Checkpoint/CheckpointStorageTest.php
+
+		-
+			message: "#^Method Drupal\\\\Tests\\\\Core\\\\Config\\\\Checkpoint\\\\CheckpointStorageTest\\:\\:testReadOperations\\(\\) has parameter \\$fixture with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/tests/Drupal/Tests/Core/Config/Checkpoint/CheckpointStorageTest.php
+
+		-
+			message: "#^Method Drupal\\\\Tests\\\\Core\\\\Config\\\\Checkpoint\\\\CheckpointStorageTest\\:\\:testWriteOperations\\(\\) has parameter \\$arguments with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/tests/Drupal/Tests/Core/Config/Checkpoint/CheckpointStorageTest.php
+
+		-
+			message: "#^Method Drupal\\\\Tests\\\\Core\\\\Config\\\\Checkpoint\\\\CheckpointStorageTest\\:\\:testWriteOperations\\(\\) has parameter \\$fixture with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/tests/Drupal/Tests/Core/Config/Checkpoint/CheckpointStorageTest.php
+
+		-
+			message: "#^Method Drupal\\\\Tests\\\\Core\\\\Config\\\\Checkpoint\\\\CheckpointStorageTest\\:\\:writeMethodsProvider\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/tests/Drupal/Tests/Core/Config/Checkpoint/CheckpointStorageTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of function call_user_func_array expects callable\\(\\)\\: mixed, array\\{Drupal\\\\Core\\\\Config\\\\Checkpoint\\\\CheckpointStorage, string\\} given\\.$#"
+			count: 2
+			path: core/tests/Drupal/Tests/Core/Config/Checkpoint/CheckpointStorageTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of function call_user_func_array expects callable\\(\\)\\: mixed, array\\{Drupal\\\\Core\\\\Config\\\\MemoryStorage, string\\} given\\.$#"
+			count: 1
+			path: core/tests/Drupal/Tests/Core/Config/Checkpoint/CheckpointStorageTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$config of class Drupal\\\\Core\\\\Config\\\\ConfigCrudEvent constructor expects Drupal\\\\Core\\\\Config\\\\StorableConfigBase, object given\\.$#"
+			count: 4
+			path: core/tests/Drupal/Tests/Core/Config/Checkpoint/CheckpointStorageTest.php
+
+		-
+			message: "#^Using nullsafe property access on non\\-nullable type mixed\\. Use \\-\\> instead\\.$#"
+			count: 1
+			path: core/tests/Drupal/Tests/Core/Config/Checkpoint/CheckpointStorageTest.php
+
+		-
+			message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:delete\\(\\)\\.$#"
+			count: 1
+			path: core/tests/Drupal/Tests/Core/Config/Checkpoint/LinearHistoryTest.php
+
+		-
+			message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:get\\(\\)\\.$#"
+			count: 7
+			path: core/tests/Drupal/Tests/Core/Config/Checkpoint/LinearHistoryTest.php
+
+		-
+			message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:getCurrentTime\\(\\)\\.$#"
+			count: 2
+			path: core/tests/Drupal/Tests/Core/Config/Checkpoint/LinearHistoryTest.php
+
+		-
+			message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:set\\(\\)\\.$#"
+			count: 3
+			path: core/tests/Drupal/Tests/Core/Config/Checkpoint/LinearHistoryTest.php
+
+		-
+			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertSame\\(\\) with 'hash2' and 'hash1'\\|null will always evaluate to false\\.$#"
+			count: 1
+			path: core/tests/Drupal/Tests/Core/Config/Checkpoint/LinearHistoryTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$state of class Drupal\\\\Core\\\\Config\\\\Checkpoint\\\\LinearHistory constructor expects Drupal\\\\Core\\\\State\\\\StateInterface, object given\\.$#"
+			count: 7
+			path: core/tests/Drupal/Tests/Core/Config/Checkpoint/LinearHistoryTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$time of class Drupal\\\\Core\\\\Config\\\\Checkpoint\\\\LinearHistory constructor expects Drupal\\\\Component\\\\Datetime\\\\TimeInterface, object given\\.$#"
+			count: 7
+			path: core/tests/Drupal/Tests/Core/Config/Checkpoint/LinearHistoryTest.php
 
 		-
 			message: "#^Method Drupal\\\\Tests\\\\Core\\\\Recipe\\\\RecipeConfigStorageWrapperTest\\:\\:testUnsupportedMethods\\(\\) has parameter \\$args with no value type specified in iterable type array\\.$#"
