@@ -143,9 +143,12 @@ class ManageFieldsTest extends BrowserTestBase {
 
     $this->drupalGet('/admin/structure/types/manage/' . $type->id() . '/fields/add-field');
     $edit = [
+      'new_storage_type' => 'test_field',
+    ];
+    $this->submitForm($edit, 'Continue');
+    $edit = [
       'label' => 'Test field',
       'field_name' => 'test_field',
-      'new_storage_type' => 'test_field',
     ];
     $this->submitForm($edit, 'Continue');
     $this->assertSession()->statusMessageNotContains('Saved');
@@ -161,9 +164,12 @@ class ManageFieldsTest extends BrowserTestBase {
     // Try creating a field with the same machine name.
     $this->drupalGet('/admin/structure/types/manage/' . $type->id() . '/fields/add-field');
     $edit = [
+      'new_storage_type' => 'test_field',
+    ];
+    $this->submitForm($edit, 'Continue');
+    $edit = [
       'label' => 'Test field',
       'field_name' => 'test_field',
-      'new_storage_type' => 'test_field',
     ];
     $this->submitForm($edit, 'Continue');
     // Assert that the values in the field storage form are reset.
@@ -194,9 +200,12 @@ class ManageFieldsTest extends BrowserTestBase {
     $this->drupalLogin($user1);
     $this->drupalGet($bundle_path . '/fields/add-field');
     $edit = [
+      'new_storage_type' => 'test_field',
+    ];
+    $this->submitForm($edit, 'Continue');
+    $edit = [
       'label' => 'Test field',
       'field_name' => 'test_field',
-      'new_storage_type' => 'test_field',
     ];
     $this->submitForm($edit, 'Continue');
     // Make changes to the storage form.
@@ -209,9 +218,12 @@ class ManageFieldsTest extends BrowserTestBase {
     $this->drupalLogin($user2);
     $this->drupalGet($bundle_path . '/fields/add-field');
     $edit = [
+      'new_storage_type' => 'test_field',
+    ];
+    $this->submitForm($edit, 'Continue');
+    $edit = [
       'label' => 'Test field',
       'field_name' => 'test_field',
-      'new_storage_type' => 'test_field',
     ];
     $this->submitForm($edit, 'Continue');
     $allowed_no_of_values = $page->findField('field_storage[subform][cardinality_number]')->getValue();
@@ -247,9 +259,12 @@ class ManageFieldsTest extends BrowserTestBase {
     $this->drupalLogin($user);
     $this->drupalGet($bundle_path . '/fields/add-field');
     $edit = [
+      'new_storage_type' => 'test_field',
+    ];
+    $this->submitForm($edit, 'Continue');
+    $edit = [
       'label' => 'Test field',
       'field_name' => 'test_field',
-      'new_storage_type' => 'test_field',
     ];
     $this->submitForm($edit, 'Continue');
 
@@ -343,6 +358,17 @@ class ManageFieldsTest extends BrowserTestBase {
 
     $this->drupalGet("/admin/structure/types/manage/$bundle/fields/node.$bundle.field_test_field");
     $this->assertSession()->elementTextContains('css', '#edit-field-storage', 'Greetings from Drupal\field_test\Plugin\Field\FieldType\TestItem::storageSettingsForm');
+  }
+
+  /**
+   * Tests hook_field_info_entity_type_ui_definitions_alter().
+   */
+  public function testFieldUiDefinitionsAlter() {
+    $user = $this->drupalCreateUser(['administer node fields']);
+    $node_type = $this->drupalCreateContentType();
+    $this->drupalLogin($user);
+    $this->drupalGet('/admin/structure/types/manage/' . $node_type->id() . '/fields/add-field');
+    $this->assertSession()->pageTextContains('Boolean (overridden by alter)');
   }
 
 }
