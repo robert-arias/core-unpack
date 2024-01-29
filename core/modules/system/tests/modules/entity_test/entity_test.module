@@ -32,7 +32,7 @@ const ENTITY_TEST_TYPES_REVISABLE = 1;
 const ENTITY_TEST_TYPES_MULTILINGUAL = 2;
 
 /**
- * Filter that limits test entity list to routeable ones.
+ * Filter that limits test entity list to ones that can be routed.
  */
 const ENTITY_TEST_TYPES_ROUTING = 3;
 
@@ -291,6 +291,15 @@ function entity_test_entity_form_mode_info_alter(&$form_modes) {
         'status' => TRUE,
       ];
     }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view_mode_alter().
+ */
+function entity_test_entity_test_view_mode_alter(string &$view_mode, EntityInterface $entity): void {
+  if ($view_mode == 'entity_test.vm_alter_test') {
+    $view_mode = 'entity_test.vm_alter_full';
   }
 }
 

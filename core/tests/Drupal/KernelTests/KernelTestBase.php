@@ -37,6 +37,7 @@ use Drupal\Core\Routing\RouteObjectInterface;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\VarDumper\VarDumper;
 use Symfony\Bridge\PhpUnit\ExpectDeprecationTrait;
+use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 
 /**
  * Base class for functional integration tests.
@@ -591,16 +592,6 @@ abstract class KernelTestBase extends TestCase implements ServiceProviderInterfa
         ->addTag('event_subscriber');
     }
 
-    if ($container->hasDefinition('path_alias.path_processor')) {
-      // The alias-based processor requires the path_alias entity schema to be
-      // installed, so we prevent it from being registered to the path processor
-      // manager. We do this by removing the tags that the compiler pass looks
-      // for. This means that the URL generator can safely be used within tests.
-      $container->getDefinition('path_alias.path_processor')
-        ->clearTag('path_processor_inbound')
-        ->clearTag('path_processor_outbound');
-    }
-
     // Relax the password hashing cost in tests to avoid performance issues.
     if ($container->hasDefinition('password')) {
       $container->getDefinition('password')
@@ -622,6 +613,10 @@ abstract class KernelTestBase extends TestCase implements ServiceProviderInterfa
     $route_provider_definition = new Definition(RouteProvider::class);
     $route_provider_definition->setPublic(TRUE);
     $container->setDefinition($id, $route_provider_definition);
+
+    // Remove the stored configuration importer so if used again it will be
+    // built with up-to-date services.
+    $this->configImporter = NULL;
   }
 
   /**
@@ -667,6 +662,19 @@ abstract class KernelTestBase extends TestCase implements ServiceProviderInterfa
    * {@inheritdoc}
    */
   protected function tearDown(): void {
+    if ($this->container) {
+      // Clean up mock session started in DrupalKernel::preHandle().
+      try {
+        /** @var \Symfony\Component\HttpFoundation\Session\Session $session */
+        $session = $this->container->get('request_stack')->getSession();
+        $session->clear();
+        $session->save();
+      }
+      catch (SessionNotFoundException) {
+        @trigger_error('Pushing requests without a session onto the request_stack is deprecated in drupal:10.3.0 and an error will be thrown from drupal:11.0.0. See https://www.drupal.org/node/3337193', E_USER_DEPRECATED);
+      }
+    }
+
     // Destroy the testing kernel.
     if (isset($this->kernel)) {
       $this->kernel->shutdown();

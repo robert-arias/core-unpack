@@ -48,6 +48,8 @@ system.site:
 system.maintenance:
   type: config_object
   label: 'Maintenance mode'
+  constraints:
+    FullyValidatable: ~
   mapping:
     message:
       type: text
@@ -180,6 +182,10 @@ system.performance:
         gzip:
           type: boolean
           label: 'Compress JavaScript files.'
+    stale_file_threshold:
+      type: integer
+      label: 'Stale file threshold'
+      deprecated: 'The system.performance.stale_file_threshold config key is deprecated in drupal:10.2.0 and is removed from drupal:11.0.0. See https://www.drupal.org/node/3301744'
 
 system.rss:
   type: config_object
@@ -369,6 +375,8 @@ system.advisories:
 block.settings.system_branding_block:
   type: block_settings
   label: 'Branding block'
+  constraints:
+    FullyValidatable: ~
   mapping:
     use_site_logo:
       type: boolean
@@ -397,6 +405,8 @@ block.settings.system_menu_block:*:
 block.settings.local_tasks_block:
   type: block_settings
   label: 'Tabs block'
+  constraints:
+    FullyValidatable: ~
   mapping:
     primary:
       type: boolean
@@ -422,6 +432,8 @@ condition.plugin.response_status:
 system.feature_flags:
   type: config_object
   label: 'System Feature Flags'
+  constraints:
+    FullyValidatable: ~
   mapping:
     linkset_endpoint:
       type: boolean

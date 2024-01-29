@@ -9,6 +9,7 @@ use Drupal\menu_link_content\Entity\MenuLinkContent;
  * Tests the Olivero theme.
  *
  * @group olivero
+ * @group #slow
  */
 class OliveroTest extends BrowserTestBase {
 
@@ -55,7 +56,7 @@ class OliveroTest extends BrowserTestBase {
 
     // Optional configuration.
     \Drupal::service('module_installer')->install(
-      ['search', 'image', 'book', 'help', 'node']
+      ['search', 'image', 'help', 'node']
     );
     $this->rebuildAll();
     $this->drupalLogin(

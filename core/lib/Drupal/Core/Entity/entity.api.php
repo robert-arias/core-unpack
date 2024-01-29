@@ -287,7 +287,6 @@ use Drupal\node\Entity\NodeType;
  * - hook_entity_build_defaults_alter()
  *
  * View builders for some types override these hooks, notably:
- * - The Tour view builder does not invoke any hooks.
  * - The Block view builder invokes hook_block_view_alter() and
  *   hook_block_view_BASE_BLOCK_ID_alter(). Note that in other view builders,
  *   the view alter hooks are run later in the process.
@@ -524,9 +523,6 @@ use Drupal\node\Entity\NodeType;
  * general information about configuration.)
  *
  * There are several good examples of this in Drupal Core:
- * - The Forum module defines a content type in node.type.forum.yml and a
- *   vocabulary in taxonomy.vocabulary.forums.yml
- * - The Book module defines a content type in node.type.book.yml
  * - The Standard install profile defines Page and Article content types in
  *   node.type.page.yml and node.type.article.yml, a Tags vocabulary in
  *   taxonomy.vocabulary.tags.yml, and a Node comment type in
@@ -1695,6 +1691,23 @@ function hook_entity_view_mode_alter(&$view_mode, \Drupal\Core\Entity\EntityInte
   // For nodes, change the view mode when it is teaser.
   if ($entity->getEntityTypeId() == 'node' && $view_mode == 'teaser') {
     $view_mode = 'my_custom_view_mode';
+  }
+}
+
+/**
+ * Change the view mode of a specific entity type currently being displayed.
+ *
+ * @param string $view_mode
+ *   The view_mode currently displaying the entity.
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   The entity that is being viewed.
+ *
+ * @ingroup entity_crud
+ */
+function hook_ENTITY_TYPE_view_mode_alter(string &$view_mode, \Drupal\Core\Entity\EntityInterface $entity): void {
+  // Change the view mode to teaser.
+  if ($view_mode == 'full') {
+    $view_mode = 'teaser';
   }
 }
 

@@ -2,15 +2,17 @@
 
 namespace Drupal\Tests\system\Functional\Form;
 
-use Drupal\Core\Serialization\Yaml;
 use Drupal\Tests\BrowserTestBase;
+use Drupal\TestTools\Extension\InfoWriterTrait;
 
 /**
  * Tests \Drupal\system\Form\ModulesListForm.
  *
  * @group Form
+ * @group #slow
  */
 class ModulesListFormWebTest extends BrowserTestBase {
+  use InfoWriterTrait;
 
   /**
    * {@inheritdoc}
@@ -71,20 +73,20 @@ class ModulesListFormWebTest extends BrowserTestBase {
     // Enable a module that does not define permissions.
     $edit = ['modules[layout_discovery][enable]' => 'layout_discovery'];
     $this->submitForm($edit, 'Install');
-    $this->assertSession()->elementTextContains('xpath', "//div[@role='contentinfo' and h2[text()='Status message']]", 'Module Layout Discovery has been enabled.');
+    $this->assertSession()->elementTextContains('xpath', "//div[@role='contentinfo' and h2[text()='Status message']]", 'Module Layout Discovery has been installed.');
     $this->assertSession()->elementNotExists('xpath', "//div[@role='contentinfo' and h2[text()='Status message']]//a");
 
     // Enable a module that defines permissions.
     $edit = ['modules[action][enable]' => 'action'];
     $this->submitForm($edit, 'Install');
-    $this->assertSession()->elementTextContains('xpath', "//div[@role='contentinfo' and h2[text()='Status message']]", 'Module Actions UI has been enabled.');
+    $this->assertSession()->elementTextContains('xpath', "//div[@role='contentinfo' and h2[text()='Status message']]", 'Module Actions UI has been installed.');
     $this->assertSession()->elementExists('xpath', "//div[@role='contentinfo' and h2[text()='Status message']]//a[contains(@href, '/admin/people/permissions/module/action')]");
 
     // Enable a module that has dependencies and both define permissions.
     $edit = ['modules[content_moderation][enable]' => 'content_moderation'];
     $this->submitForm($edit, 'Install');
     $this->submitForm([], 'Continue');
-    $this->assertSession()->elementTextContains('xpath', "//div[@role='contentinfo' and h2[text()='Status message']]", '2 modules have been enabled: Content Moderation, Workflows.');
+    $this->assertSession()->elementTextContains('xpath', "//div[@role='contentinfo' and h2[text()='Status message']]", '2 modules have been installed: Content Moderation, Workflows.');
     $this->assertSession()->elementExists('xpath', "//div[@role='contentinfo' and h2[text()='Status message']]//a[contains(@href, '/admin/people/permissions/module/content_moderation%2Cworkflows')]");
   }
 
@@ -177,17 +179,17 @@ BROKEN;
     $compatible_info = $info + ['core_version_requirement' => '*'];
     $incompatible_info = $info + ['core_version_requirement' => '^1'];
 
-    file_put_contents($file_path, Yaml::encode($compatible_info));
+    $this->writeInfoFile($file_path, $compatible_info);
     $edit = ['modules[changing_module][enable]' => 'changing_module'];
     $this->drupalGet('admin/modules');
     $this->submitForm($edit, 'Install');
-    $this->assertSession()->pageTextContains('Module Module that changes has been enabled.');
+    $this->assertSession()->pageTextContains('Module Module that changes has been installed.');
 
-    file_put_contents($file_path, Yaml::encode($incompatible_info));
+    $this->writeInfoFile($file_path, $incompatible_info);
     $this->drupalGet('admin/modules');
     $this->assertSession()->pageTextContains($incompatible_modules_message);
 
-    file_put_contents($file_path, Yaml::encode($compatible_info));
+    $this->writeInfoFile($file_path, $compatible_info);
     $this->drupalGet('admin/modules');
     $this->assertSession()->pageTextNotContains($incompatible_modules_message);
 
@@ -199,7 +201,7 @@ BROKEN;
     $this->submitForm([], 'Uninstall');
     $this->assertSession()->pageTextContains('The selected modules have been uninstalled.');
 
-    file_put_contents($file_path, Yaml::encode($incompatible_info));
+    $this->writeInfoFile($file_path, $incompatible_info);
     $this->drupalGet('admin/modules');
     $this->assertSession()->pageTextNotContains($incompatible_modules_message);
   }

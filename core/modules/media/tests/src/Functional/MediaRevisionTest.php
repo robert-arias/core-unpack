@@ -13,6 +13,7 @@ use Drupal\user\RoleInterface;
  * Tests the revisions of media entities.
  *
  * @group media
+ * @group #slow
  */
 class MediaRevisionTest extends MediaFunctionalTestBase {
 
@@ -83,7 +84,6 @@ class MediaRevisionTest extends MediaFunctionalTestBase {
     // Test 'view all media revisions' permission ('view media' permission is
     // needed as well).
     user_role_revoke_permissions($role->id(), [
-      'view media',
       'view all media revisions',
     ]);
     $this->drupalGet($media->toUrl('revision'));

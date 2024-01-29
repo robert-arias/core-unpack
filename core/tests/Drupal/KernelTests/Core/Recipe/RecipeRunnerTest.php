@@ -74,7 +74,7 @@ class RecipeRunnerTest extends KernelTestBase {
     $node_type_data = $this->config('node.type.test')->get();
     $this->assertGreaterThan(0, strlen($node_type_data['uuid']), 'The node type configuration has been assigned a UUID.');
     // cSpell:disable-next-line
-    $this->assertSame('965SCwSA3qgVf47x7hEE4dufnUDpxKMsUfsqFtqjGn0', $node_type_data['_core']['default_config_hash']);
+    $this->assertSame('8Jlq8CmNXHVtNIHBHgFGpnAKthlUz0XoW_D0g56QXqY', $node_type_data['_core']['default_config_hash']);
   }
 
   public function testUnmetConfigurationDependencies(): void {

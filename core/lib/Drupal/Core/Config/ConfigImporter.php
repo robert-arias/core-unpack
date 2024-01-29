@@ -556,6 +556,9 @@ class ConfigImporter {
    *   Exception thrown if the $sync_step can not be called.
    */
   public function doSyncStep($sync_step, &$context) {
+    if ($this->validated) {
+      $this->storageComparer->writeMode();
+    }
     if (is_string($sync_step) && method_exists($this, $sync_step)) {
       \Drupal::service('config.installer')->setSyncing(TRUE);
       $this->$sync_step($context);
@@ -870,8 +873,8 @@ class ConfigImporter {
       ->setSourceStorage($this->storageComparer->getSourceStorage());
     if ($type == 'module') {
       $this->moduleInstaller->$op([$name], FALSE);
-      // Installing a module can cause a kernel boot therefore reinject all the
-      // services.
+      // Installing a module can cause a kernel boot therefore inject all the
+      // services again.
       $this->reInjectMe();
       // During a module install or uninstall the container is rebuilt and the
       // module handler is called. This causes the container's instance of the
@@ -1132,6 +1135,8 @@ class ConfigImporter {
     // the new container.
     $this->__sleep();
     $this->__wakeup();
+    $this->storageComparer->__sleep();
+    $this->storageComparer->__wakeup();
   }
 
 }

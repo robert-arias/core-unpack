@@ -829,6 +829,50 @@ class ConfigImporterTest extends KernelTestBase {
     $this->assertTrue($state['entity_state::predelete'], 'ConfigEntity::isSyncing() returns TRUE');
     $this->assertTrue($state['global_state::delete'], '\Drupal::isConfigSyncing() returns TRUE');
     $this->assertTrue($state['entity_state::delete'], 'ConfigEntity::isSyncing() returns TRUE');
+
+    // Test that isSyncing is TRUE in hook_module_preinstall() when installing
+    // module via config import.
+    $extensions = $sync->read('core.extension');
+    // First, install system_test so that its hook_module_preinstall() will run
+    // when module_test is installed.
+    $this->container->get('module_installer')->install(['system_test']);
+    // Add module_test and system_test to the enabled modules to be imported,
+    // so that module_test gets installed on import and system_test does not get
+    // uninstalled.
+    $extensions['module']['module_test'] = 0;
+    $extensions['module']['system_test'] = 0;
+    $extensions['module'] = module_config_sort($extensions['module']);
+    $sync->write('core.extension', $extensions);
+    $this->configImporter()->import();
+
+    // Syncing values stored in state by hook_module_preinstall should be TRUE
+    // when module is installed via config import.
+    $this->assertTrue(\Drupal::state()->get('system_test_preinstall_module_config_installer_syncing'), '\Drupal::isConfigSyncing() in system_test_module_preinstall() returns TRUE');
+    $this->assertTrue(\Drupal::state()->get('system_test_preinstall_module_syncing_param'), 'system_test_module_preinstall() $is_syncing value is TRUE');
+
+    // Syncing value stored in state by uninstall hooks should be FALSE
+    // when uninstalling outside of config import.
+    $this->container->get('module_installer')->uninstall(['module_test']);
+    $this->assertFalse(\Drupal::state()->get('system_test_preuninstall_module_config_installer_syncing'), '\Drupal::isConfigSyncing() in system_test_module_preuninstall() returns FALSE');
+    $this->assertFalse(\Drupal::state()->get('system_test_preuninstall_module_syncing_param'), 'system_test_module_preuninstall() $is_syncing value is FALSE');
+    $this->assertFalse(\Drupal::state()->get('system_test_modules_uninstalled_config_installer_syncing'), '\Drupal::isConfigSyncing() in system_test_modules_uninstalled returns FALSE');
+    $this->assertFalse(\Drupal::state()->get('system_test_modules_uninstalled_syncing_param'), 'system_test_modules_uninstalled $is_syncing value is FALSE');
+
+    // Syncing value stored in state by hook_module_preinstall should be FALSE
+    // when installing outside of config import.
+    $this->container->get('module_installer')->install(['module_test']);
+    $this->assertFalse(\Drupal::state()->get('system_test_preinstall_module_config_installer_syncing'), '\Drupal::isConfigSyncing() in system_test_module_preinstall() returns TRUE');
+    $this->assertFalse(\Drupal::state()->get('system_test_preinstall_module_syncing_param'), 'system_test_module_preinstall() $is_syncing value is TRUE');
+
+    // Uninstall module_test via config import. Syncing value stored in state
+    // by uninstall hooks should be TRUE.
+    unset($extensions['module']['module_test']);
+    $sync->write('core.extension', $extensions);
+    $this->configImporter()->import();
+    $this->assertTrue(\Drupal::state()->get('system_test_preuninstall_module_config_installer_syncing'), '\Drupal::isConfigSyncing() in system_test_module_preuninstall() returns TRUE');
+    $this->assertTrue(\Drupal::state()->get('system_test_preuninstall_module_syncing_param'), 'system_test_module_preuninstall() $is_syncing value is TRUE');
+    $this->assertTrue(\Drupal::state()->get('system_test_modules_uninstalled_config_installer_syncing'), '\Drupal::isConfigSyncing() in system_test_modules_uninstalled returns TRUE');
+    $this->assertTrue(\Drupal::state()->get('system_test_modules_uninstalled_syncing_param'), 'system_test_modules_uninstalled $is_syncing value is TRUE');
   }
 
   /**
@@ -967,6 +1011,41 @@ class ConfigImporterTest extends KernelTestBase {
       $event_collections[] = $event['current_config_data']['collection'];
     }
     $this->assertSame($collections, $event_collections);
+  }
+
+  /**
+   * Tests the target storage caching during configuration import.
+   */
+  public function testStorageComparerTargetStorage(): void {
+    $this->installConfig(['config_events_test']);
+    $this->copyConfig($this->container->get('config.storage'), $this->container->get('config.storage.sync'));
+    $this->assertTrue($this->container->get('module_installer')->uninstall(['config_test']));
+    \Drupal::state()->set('config_events_test.all_events', []);
+    \Drupal::state()->set('config_test_install.foo_value', 'transient');
+
+    // Prime the active config cache. If the ConfigImporter and StorageComparer
+    // do not manage the target storage correctly this cache can pollute the
+    // data.
+    \Drupal::configFactory()->get('config_test.system');
+
+    // Import the configuration. This results in a save event with the value
+    // changing from foo to bar.
+    $this->configImporter()->import();
+    $all_events = \Drupal::state()->get('config_events_test.all_events');
+
+    // Test that the values change as expected during the configuration import.
+    $this->assertCount(3, $all_events[ConfigEvents::SAVE]['config_test.system']);
+    // First, the values are set by the module installer using the configuration
+    // import's source storage.
+    $this->assertSame([], $all_events[ConfigEvents::SAVE]['config_test.system'][0]['original_config_data']);
+    $this->assertSame('bar', $all_events[ConfigEvents::SAVE]['config_test.system'][0]['current_config_data']['foo']);
+    // Next, the config_test_install() function changes the value.
+    $this->assertSame('bar', $all_events[ConfigEvents::SAVE]['config_test.system'][1]['original_config_data']['foo']);
+    $this->assertSame('transient', $all_events[ConfigEvents::SAVE]['config_test.system'][1]['current_config_data']['foo']);
+    // Last, the config importer processes all the configuration in the source
+    // storage and ensures the values are as expected.
+    $this->assertSame('transient', $all_events[ConfigEvents::SAVE]['config_test.system'][2]['original_config_data']['foo']);
+    $this->assertSame('bar', $all_events[ConfigEvents::SAVE]['config_test.system'][2]['current_config_data']['foo']);
   }
 
   /**

@@ -9,6 +9,7 @@ use Drupal\views\Entity\View;
  * Tests some general functionality of editing views, like deleting a view.
  *
  * @group views_ui
+ * @group #slow
  */
 class ViewEditTest extends UITestBase {
 
@@ -50,12 +51,11 @@ class ViewEditTest extends UITestBase {
     $this->drupalGet('admin/structure/views/view/test_view');
     // Add a new attachment display.
     $this->submitForm([], 'Add Attachment');
-
     // Test that a long administrative comment is truncated.
     $edit = ['display_comment' => 'one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen'];
     $this->drupalGet('admin/structure/views/nojs/display/test_view/attachment_1/display_comment');
     $this->submitForm($edit, 'Apply');
-    $this->assertSession()->pageTextContains('one two three four five six seven eight nine ten eleven twelve thirteen fourteen...');
+    $this->assertSession()->pageTextContains('one two three four five six seven eight nine ten eleven twelve thirteen…');
 
     // Change the machine name for the display from page_1 to test_1.
     $edit = ['display_id' => 'test_1'];

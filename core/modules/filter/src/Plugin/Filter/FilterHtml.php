@@ -7,6 +7,9 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\filter\FilterProcessResult;
 use Drupal\filter\Plugin\FilterBase;
+use Masterminds\HTML5\Parser\DOMTreeBuilder;
+use Masterminds\HTML5\Parser\Scanner;
+use Masterminds\HTML5\Parser\Tokenizer;
 
 /**
  * Provides a filter to limit allowed HTML tags.
@@ -121,7 +124,7 @@ class FilterHtml extends FilterBase {
       $allowed_attributes = ['exact' => [], 'prefix' => []];
       foreach (($global_allowed_attributes + $tag_attributes) as $name => $values) {
         // A trailing * indicates wildcard, but it must have some prefix.
-        if (substr($name, -1) === '*' && $name[0] !== '*') {
+        if (str_ends_with($name, '*') && $name[0] !== '*') {
           $allowed_attributes['prefix'][str_replace('*', '', $name)] = $this->prepareAttributeValues($values);
         }
         else {
@@ -228,7 +231,7 @@ class FilterHtml extends FilterBase {
     $result = ['exact' => [], 'prefix' => []];
     foreach ($attribute_values as $name => $allowed) {
       // A trailing * indicates wildcard, but it must have some prefix.
-      if (substr($name, -1) === '*' && $name[0] !== '*') {
+      if (str_ends_with($name, '*') && $name[0] !== '*') {
         $result['prefix'][str_replace('*', '', $name)] = $allowed;
       }
       else {
@@ -258,7 +261,20 @@ class FilterHtml extends FilterBase {
     $star_protector = '__zqh6vxfbk3cg__';
     $html = str_replace('*', $star_protector, $html);
 
-    $dom = Html::load($html);
+    // Use HTML5 parser with a custom tokenizer to correctly parse tags that
+    // normally use text mode, such as iframe.
+    $events = new DOMTreeBuilder(FALSE, ['disable_html_ns' => TRUE]);
+    $scanner = new Scanner('<body>' . $html);
+    $parser = new class($scanner, $events) extends Tokenizer {
+
+      public function setTextMode($textMode, $untilTag = NULL) {
+        // Do nothing, we never enter text mode.
+      }
+
+    };
+    $parser->parse();
+
+    $dom = $events->document();
     $xpath = new \DOMXPath($dom);
     foreach ($xpath->query('//body//*') as $node) {
       $tag = $node->tagName;

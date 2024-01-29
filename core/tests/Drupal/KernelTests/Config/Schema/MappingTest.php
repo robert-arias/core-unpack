@@ -133,17 +133,23 @@ class MappingTest extends KernelTestBase {
       case 'editor.editor.funky':
         $this->enableModules(['filter', 'editor', 'ckeditor5']);
         FilterFormat::create(['format' => 'funky', 'name' => 'Funky'])->save();
-        Editor::create(['format' => 'funky', 'editor' => 'ckeditor5'])->save();
+        Editor::create([
+          'format' => 'funky',
+          'editor' => 'ckeditor5',
+          'image_upload' => [
+            'status' => FALSE,
+          ],
+        ])->save();
         break;
 
-      case 'field.field.node.forum.comment_forum':
-        $this->enableModules(['field', 'node', 'comment', 'taxonomy', 'forum']);
-        $this->assertNull(FieldConfig::load('node.forum.comment_forum'));
+      case 'field.field.node.config_mapping_test.comment_config_mapping_test':
+        $this->enableModules(['field', 'node', 'comment', 'taxonomy', 'config_mapping_test']);
+        $this->assertNull(FieldConfig::load('node.config_mapping_test.comment_config_mapping_test'));
         // TRICKY: \Drupal\node\Entity\NodeType::$preview_mode uses
         // DRUPAL_OPTIONAL, which is defined in system.module.
         require_once 'core/modules/system/system.module';
-        $this->installConfig(['forum']);
-        $this->assertNotNull(FieldConfig::load('node.forum.comment_forum'));
+        $this->installConfig(['config_mapping_test']);
+        $this->assertNotNull(FieldConfig::load('node.config_mapping_test.comment_config_mapping_test'));
         break;
     }
 
@@ -345,8 +351,8 @@ class MappingTest extends KernelTestBase {
       [],
       $available_block_settings_types,
     ];
-    yield 'Dynamic type with [%parent.%parent]: field.field.node.forum.comment_forum:default_value.0' => [
-      'field.field.node.forum.comment_forum',
+    yield 'Dynamic type with [%parent.%parent]: field.field.node.config_mapping_test.comment_config_mapping_test:default_value.0' => [
+      'field.field.node.config_mapping_test.comment_config_mapping_test',
       'default_value.0',
       [
         // Keys defined locally, in `type: field.value.comment`.
