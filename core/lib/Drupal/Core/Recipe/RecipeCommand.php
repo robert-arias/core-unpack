@@ -63,10 +63,14 @@ final class RecipeCommand extends Command {
     }
 
     // Recipes have to be applied to installed sites.
-    $this->boot();
+    $container = $this->boot()->getContainer();
 
+    /** @var \Drupal\Core\Config\Checkpoint\CheckpointStorageInterface $checkpoint_storage */
+    $checkpoint_storage = $container->get('config.storage.checkpoint');
     $recipe = Recipe::createFromDirectory($recipe_path);
+    $checkpoint_storage->checkpoint("Backup before the '$recipe->name' recipe.");
     RecipeRunner::processRecipe($recipe);
+
     $io->success(sprintf('%s applied successfully', $recipe->name));
     return 0;
   }
