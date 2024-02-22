@@ -21,7 +21,7 @@ use Drupal\migrate\Row;
 use Drupal\user\EntityOwnerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-// cspell:ignore huhuu maailma sivun validatable
+// cspell:ignore huhuu maailma otsikko sivun validatable
 
 /**
  * Provides destination class for all content entities lacking a specific class.
@@ -184,7 +184,7 @@ class EntityContentBase extends Entity implements HighestIdInterface, MigrateVal
    */
   public function isEntityValidationRequired(FieldableEntityInterface $entity) {
     // Prioritize the entity method over migration config because it won't be
-    // possible to save that entity unvalidated.
+    // possible to save that entity non validated.
     /* @see \Drupal\Core\Entity\ContentEntityBase::preSave() */
     return $entity->isValidationRequired() || !empty($this->configuration['validate']);
   }

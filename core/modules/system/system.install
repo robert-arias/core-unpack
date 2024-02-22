@@ -28,7 +28,7 @@ use Drupal\Core\StringTranslation\PluralTranslatableMarkup;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\Core\Utility\Error;
-use GuzzleHttp\Exception\TransferException;
+use Psr\Http\Client\ClientExceptionInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 // cspell:ignore quickedit
@@ -1312,7 +1312,7 @@ function system_requirements($phase) {
       $requirements['update status'] = [
         'value' => t('Not enabled'),
         'severity' => REQUIREMENT_WARNING,
-        'description' => t('Update notifications are not enabled. It is <strong>highly recommended</strong> that you enable the Update Manager module from the <a href=":module">module administration page</a> in order to stay up-to-date on new releases. For more information, <a href=":update">Update status handbook page</a>.', [
+        'description' => t('Update notifications are not enabled. It is <strong>highly recommended</strong> that you install the Update Manager module from the <a href=":module">module administration page</a> in order to stay up-to-date on new releases. For more information, <a href=":update">Update status handbook page</a>.', [
           ':update' => 'https://www.drupal.org/documentation/modules/update',
           ':module' => Url::fromRoute('system.modules_list')->toString(),
         ]),
@@ -1357,7 +1357,7 @@ function system_requirements($phase) {
     ];
   }
 
-  // See if trusted hostnames have been configured, and warn the user if they
+  // See if trusted host names have been configured, and warn the user if they
   // are not set.
   if ($phase == 'runtime') {
     $trusted_host_patterns = Settings::get('trusted_host_patterns');
@@ -1706,7 +1706,7 @@ function _system_advisories_requirements(array &$requirements): void {
   try {
     $advisories = $fetcher->getSecurityAdvisories(TRUE, 5);
   }
-  catch (TransferException $exception) {
+  catch (ClientExceptionInterface $exception) {
     $requirements['system_advisories']['title'] = t('Critical security announcements');
     $requirements['system_advisories']['severity'] = REQUIREMENT_WARNING;
     $requirements['system_advisories']['description'] = ['#theme' => 'system_security_advisories_fetch_error_message'];

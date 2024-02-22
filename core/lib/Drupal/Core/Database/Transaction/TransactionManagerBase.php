@@ -33,11 +33,11 @@ abstract class TransactionManagerBase implements TransactionManagerInterface {
    * additional savepoints, and release any savepoint in the sequence. When
    * this happens, the database will implicitly release all the savepoints
    * created after the one released. Given Drupal implementation of the
-   * Transaction objects, we cannot force descoping of the corresponding
-   * Transaction savepoint objects from the manager, because they live in the
-   * scope of the calling code. This stack ensures that when an outlived
-   * Transaction object gets out of scope, it will not try to release on the
-   * database a savepoint that no longer exists.
+   * Transaction objects, we cannot force reducing the scope of the
+   * corresponding Transaction savepoint objects from the manager, because they
+   * live in the scope of the calling code. This stack ensures that when an
+   * outlived Transaction object gets out of scope, it will not try to release
+   * on the database a savepoint that no longer exists.
    *
    * Differently, rollbacks are strictly being checked for LIFO order: if a
    * rollback is requested against a savepoint that is not the last created,
@@ -125,6 +125,20 @@ abstract class TransactionManagerBase implements TransactionManagerInterface {
    */
   protected function stack(): array {
     return $this->stack;
+  }
+
+  /**
+   * Commits the entire transaction stack.
+   *
+   * @internal
+   *   This method exists only to work around a bug caused by Drupal incorrectly
+   *   relying on object destruction order to commit transactions. Xdebug 3.3.0
+   *   changes the order of object destruction when the develop mode is enabled.
+   */
+  public function commitAll(): void {
+    foreach (array_reverse($this->stack()) as $id => $item) {
+      $this->unpile($item->name, $id);
+    }
   }
 
   /**
@@ -253,7 +267,6 @@ abstract class TransactionManagerBase implements TransactionManagerInterface {
     // DDL statement breaking an active transaction). That should be listed in
     // $voidedItems, so we can remove it from there.
     if (!isset($this->stack()[$id]) || $this->stack()[$id]->name !== $name) {
-      assert(isset($this->voidedItems[$id]), "Transaction {$id}/{$name} is out of sequence. Active stack: " . $this->dumpStackItemsAsString());
       unset($this->voidedItems[$id]);
       return;
     }

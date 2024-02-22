@@ -54,7 +54,7 @@ class ThemeUiTest extends BrowserTestBase {
 
     // The links to install a theme that would enable modules should be replaced
     // by this message.
-    $this->assertSession()->pageTextContains('This theme requires the listed modules to operate correctly. They must first be enabled by a user with permissions to do so.');
+    $this->assertSession()->pageTextContains('This theme requires the listed modules to operate correctly. They must first be installed by a user with permissions to do so.');
 
     // The install page should not be reachable.
     $this->drupalGet('admin/appearance/install?theme=test_theme_depending_on_modules');
@@ -65,7 +65,7 @@ class ThemeUiTest extends BrowserTestBase {
       'administer modules',
     ]));
     $this->drupalGet('admin/appearance');
-    $this->assertSession()->pageTextNotContains('This theme requires the listed modules to operate correctly. They must first be enabled by a user with permissions to do so.');
+    $this->assertSession()->pageTextNotContains('This theme requires the listed modules to operate correctly. They must first be installed by a user with permissions to do so.');
   }
 
   /**
@@ -211,7 +211,7 @@ class ThemeUiTest extends BrowserTestBase {
    *   An array of arrays. Details on the specific elements can be found in the
    *   function body.
    */
-  public function providerTestThemeInstallWithModuleDependencies() {
+  public static function providerTestThemeInstallWithModuleDependencies() {
     // Data provider values with the following keys:
     // -'theme_name': The name of the theme being tested.
     // -'first_modules': Array of module machine names to enable first.
@@ -300,7 +300,7 @@ class ThemeUiTest extends BrowserTestBase {
     }
 
     $incompatible = $theme_container->find('css', '.incompatible');
-    $expected_incompatible_text = 'This theme requires the listed modules to operate correctly. They must first be enabled via the Extend page.';
+    $expected_incompatible_text = 'This theme requires the listed modules to operate correctly. They must first be installed via the Extend page.';
     $this->assertSame($expected_incompatible_text, $incompatible->getText());
     $this->assertFalse($theme_container->hasLink('Install Test Theme Depending on Modules theme'));
   }

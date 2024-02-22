@@ -3,7 +3,6 @@
 namespace Drupal\Core\Test;
 
 use Drupal\Component\FileCache\FileCacheFactory;
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Component\Utility\Environment;
 use Drupal\Core\Config\Development\ConfigSchemaChecker;
 use Drupal\Core\Config\FileStorage;
@@ -265,9 +264,10 @@ trait FunctionalTestSetupTrait {
 
     $request = Request::create($request_path, 'GET', [], [], [], $server);
     $request->setSession(new Session(new MockArraySessionStorage()));
-    // Ensure the request time is REQUEST_TIME to ensure that API calls
-    // in the test use the right timestamp.
-    $request->server->set('REQUEST_TIME', REQUEST_TIME);
+
+    // Ensure the request time is \Drupal::time()->getRequestTime() to ensure
+    // that API calls in the test use the right timestamp.
+    $request->server->set('REQUEST_TIME', \Drupal::time()->getRequestTime());
 
     $this->container->get('request_stack')->push($request);
     // The request context is normally set by the router_listener from within
@@ -474,7 +474,7 @@ trait FunctionalTestSetupTrait {
       $modules = array_unique($modules);
       try {
         $success = $container->get('module_installer')->install($modules, TRUE);
-        $this->assertTrue($success, new FormattableMarkup('Enabled modules: %modules', ['%modules' => implode(', ', $modules)]));
+        $this->assertTrue($success, 'Enabled modules: ' . implode(', ', $modules));
       }
       catch (MissingDependencyException $e) {
         // The exception message has all the details.

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\Core\Session;
 
+use Drupal\Component\Datetime\Time;
 use Drupal\Core\Cache\MemoryCache\MemoryCache;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Session\PermissionChecker;
@@ -29,7 +30,7 @@ class UserSessionTest extends UnitTestCase {
    *
    * @return array
    */
-  public function providerTestHasPermission() {
+  public static function providerTestHasPermission() {
     $data = [];
     $data[] = ['example permission', ['user_one', 'user_two'], ['user_last']];
     $data[] = ['another example permission', ['user_two'], ['user_one', 'user_last']];
@@ -98,7 +99,7 @@ class UserSessionTest extends UnitTestCase {
       ]);
 
     $role_storage = $this->getMockBuilder('Drupal\user\RoleStorage')
-      ->setConstructorArgs(['role', new MemoryCache()])
+      ->setConstructorArgs(['role', new MemoryCache(new Time())])
       ->disableOriginalConstructor()
       ->onlyMethods(['loadMultiple'])
       ->getMock();

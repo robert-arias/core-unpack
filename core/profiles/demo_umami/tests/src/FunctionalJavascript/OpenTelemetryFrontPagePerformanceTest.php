@@ -48,9 +48,17 @@ class OpenTelemetryFrontPagePerformanceTest extends PerformanceTestBase {
     // in the browser cache.
     $this->drupalGet('<front>');
     $this->drupalGet('<front>');
-    $this->collectPerformanceData(function () {
+    $performance_data = $this->collectPerformanceData(function () {
       $this->drupalGet('<front>');
-    }, 'umamiFrontPageWarmCache');
+    }, 'umamiFrontPageHotCache');
+    $this->assertSession()->pageTextContains('Umami');
+    $this->assertSame(0, $performance_data->getQueryCount());
+    $this->assertSame(1, $performance_data->getCacheGetCount());
+    $this->assertSame(0, $performance_data->getCacheSetCount());
+    $this->assertSame(0, $performance_data->getCacheDeleteCount());
+    $this->assertSame(0, $performance_data->getCacheTagChecksumCount());
+    $this->assertSame(1, $performance_data->getCacheTagIsValidCount());
+    $this->assertSame(0, $performance_data->getCacheTagInvalidationCount());
   }
 
   /**

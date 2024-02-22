@@ -5,6 +5,7 @@ namespace Drupal\Core;
 use Composer\Autoload\ClassLoader;
 use Drupal\Component\EventDispatcher\Event;
 use Drupal\Component\FileCache\FileCacheFactory;
+use Drupal\Component\Serialization\PhpSerialize;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Cache\DatabaseBackend;
 use Drupal\Core\Config\BootstrapConfigStorageFactory;
@@ -74,13 +75,30 @@ class DrupalKernel implements DrupalKernelInterface, TerminableInterface {
         'factory' => 'Drupal\Core\Database\Database::getConnection',
         'arguments' => ['default'],
       ],
+      'request_stack' => [
+        'class' => 'Symfony\Component\HttpFoundation\RequestStack',
+      ],
+      'datetime.time' => [
+        'class' => 'Drupal\Component\Datetime\Time',
+        'arguments' => ['@request_stack'],
+      ],
       'cache.container' => [
         'class' => 'Drupal\Core\Cache\DatabaseBackend',
-        'arguments' => ['@database', '@cache_tags_provider.container', 'container', DatabaseBackend::MAXIMUM_NONE],
+        'arguments' => [
+          '@database',
+          '@cache_tags_provider.container',
+          'container',
+          '@serialization.phpserialize',
+          '@datetime.time',
+          DatabaseBackend::MAXIMUM_NONE,
+        ],
       ],
       'cache_tags_provider.container' => [
         'class' => 'Drupal\Core\Cache\DatabaseCacheTagsChecksum',
         'arguments' => ['@database'],
+      ],
+      'serialization.phpserialize' => [
+        'class' => PhpSerialize::class,
       ],
     ],
   ];
@@ -179,7 +197,7 @@ class DrupalKernel implements DrupalKernelInterface, TerminableInterface {
   protected $containerNeedsDumping;
 
   /**
-   * List of discovered services.yml pathnames.
+   * List of discovered services.yml path names.
    *
    * This is a nested array whose top-level keys are 'app' and 'site', denoting
    * the origin of a service provider. Site-specific providers have to be
@@ -685,14 +703,21 @@ class DrupalKernel implements DrupalKernelInterface, TerminableInterface {
    * @return void
    */
   public function terminate(Request $request, Response $response) {
-    // Only run terminate() when essential services have been set up properly
-    // by preHandle() before.
-    if (FALSE === $this->prepared) {
-      return;
-    }
-
-    if ($this->getHttpKernel() instanceof TerminableInterface) {
-      $this->getHttpKernel()->terminate($request, $response);
+    if ($this->booted && $this->getHttpKernel() instanceof TerminableInterface) {
+      // Only run terminate() when essential services have been set up properly
+      // by preHandle() before.
+      if ($this->prepared === TRUE) {
+        $this->getHttpKernel()->terminate($request, $response);
+      }
+      // For destructable services, always call the destruct method if they were
+      // initialized during the request. Destruction is not necessary if the
+      // service was not used.
+      foreach ($this->container->getParameter('kernel.destructable_services') as $id) {
+        if ($this->container->initialized($id)) {
+          $service = $this->container->get($id);
+          $service->destruct();
+        }
+      }
     }
   }
 

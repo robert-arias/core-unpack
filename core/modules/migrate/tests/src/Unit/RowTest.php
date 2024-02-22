@@ -107,7 +107,7 @@ class RowTest extends UnitTestCase {
     $multi_source_ids = $this->testSourceIds + ['vid' => 'Node revision'];
     $multi_source_ids_values = $this->testValues + ['vid' => 1];
     $row = new Row($multi_source_ids_values, $multi_source_ids);
-    $this->assertSame($multi_source_ids_values, $row->getSource(), 'Row with data, multifield id.');
+    $this->assertSame($multi_source_ids_values, $row->getSource(), 'Row with data, multiple source id.');
   }
 
   /**
@@ -333,7 +333,7 @@ class RowTest extends UnitTestCase {
    * @return array
    *   The keys and expected values.
    */
-  public function getDataProvider() {
+  public static function getDataProvider() {
     return [
       ['source_key_1', 'source_value_1'],
       ['source_key_2', 'source_value_2'],
@@ -377,7 +377,7 @@ class RowTest extends UnitTestCase {
    * @return array
    *   The keys and expected values.
    */
-  public function getMultipleDataProvider() {
+  public static function getMultipleDataProvider() {
     return [
       'Single Key' => [
         'keys' => ['source_key_1'],

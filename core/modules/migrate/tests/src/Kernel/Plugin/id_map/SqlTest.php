@@ -9,8 +9,6 @@ use Drupal\Tests\migrate\Unit\TestSqlIdMap;
 use Drupal\migrate\MigrateException;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-// cspell:ignore sourceid
-
 /**
  * Tests that the migrate map table is created.
  *
@@ -98,7 +96,7 @@ class SqlTest extends MigrateTestBase {
   /**
    * Provides data for testEnsureTables.
    */
-  public function providerTestEnsureTables() {
+  public static function providerTestEnsureTables() {
     return [
       'no ids' => [
         [],
@@ -158,7 +156,7 @@ class SqlTest extends MigrateTestBase {
   /**
    * Provides data for testFailEnsureTables.
    */
-  public function providerTestFailEnsureTables() {
+  public static function providerTestFailEnsureTables() {
     return [
       'one id' => [
         [

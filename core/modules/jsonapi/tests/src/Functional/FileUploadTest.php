@@ -147,45 +147,45 @@ class FileUploadTest extends ResourceTestBase {
 
   /**
    * {@inheritdoc}
-   *
-   * @requires module irrelevant_for_this_test
    */
-  public function testGetIndividual() {}
+  public function testGetIndividual() {
+    $this->markTestSkipped('Irrelevant for this test');
+  }
 
   /**
    * {@inheritdoc}
-   *
-   * @requires module irrelevant_for_this_test
    */
-  public function testPostIndividual() {}
+  public function testPostIndividual() {
+    $this->markTestSkipped('Irrelevant for this test');
+  }
 
   /**
    * {@inheritdoc}
-   *
-   * @requires module irrelevant_for_this_test
    */
-  public function testPatchIndividual() {}
+  public function testPatchIndividual() {
+    $this->markTestSkipped('Irrelevant for this test');
+  }
 
   /**
    * {@inheritdoc}
-   *
-   * @requires module irrelevant_for_this_test
    */
-  public function testDeleteIndividual() {}
+  public function testDeleteIndividual() {
+    $this->markTestSkipped('Irrelevant for this test');
+  }
 
   /**
    * {@inheritdoc}
-   *
-   * @requires module irrelevant_for_this_test
    */
-  public function testCollection() {}
+  public function testCollection() {
+    $this->markTestSkipped('Irrelevant for this test');
+  }
 
   /**
    * {@inheritdoc}
-   *
-   * @requires module irrelevant_for_this_test
    */
-  public function testRelationships() {}
+  public function testRelationships() {
+    $this->markTestSkipped('Irrelevant for this test');
+  }
 
   /**
    * {@inheritdoc}
@@ -249,7 +249,7 @@ class FileUploadTest extends ResourceTestBase {
     // header with no 'file' prefix.
     $response = $this->fileRequest($uri, $this->testFileData, ['Content-Disposition' => 'filename="example.txt"']);
     $this->assertSame(201, $response->getStatusCode());
-    $expected = $this->getExpectedDocument(2, 'example_0.txt');
+    $expected = $this->getExpectedDocument(2, 'example_0.txt', TRUE);
     $this->assertResponseData($expected, $response);
 
     // Check the actual file data.
@@ -340,7 +340,7 @@ class FileUploadTest extends ResourceTestBase {
       'data' => [
         0 => $this->getExpectedDocument(1, 'existing.txt', TRUE, TRUE)['data'],
         1 => $this->getExpectedDocument(2, 'example.txt', TRUE, TRUE)['data'],
-        2 => $this->getExpectedDocument(3, 'example_0.txt', FALSE, TRUE)['data'],
+        2 => $this->getExpectedDocument(3, 'example_0.txt', TRUE, TRUE)['data'],
       ],
     ];
     $this->assertResponseData($expected, $response);
@@ -448,7 +448,7 @@ class FileUploadTest extends ResourceTestBase {
     $this->assertSame(201, $response->getStatusCode());
 
     // Loading expected normalized data for file 2, the duplicate file.
-    $expected = $this->getExpectedDocument(2, 'example_0.txt');
+    $expected = $this->getExpectedDocument(2, 'example_0.txt', TRUE);
     $this->assertResponseData($expected, $response);
 
     // Check the actual file data.

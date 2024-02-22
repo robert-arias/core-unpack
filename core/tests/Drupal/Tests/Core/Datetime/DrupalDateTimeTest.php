@@ -62,7 +62,7 @@ class DrupalDateTimeTest extends UnitTestCase {
    *
    * @see DrupalDateTimeTest::testDateDiff()
    */
-  public function providerTestDateDiff() {
+  public static function providerTestDateDiff() {
 
     $settings = ['langcode' => 'en'];
 
@@ -145,7 +145,7 @@ class DrupalDateTimeTest extends UnitTestCase {
    *
    * @see DateTimePlusTest::testInvalidDateDiff()
    */
-  public function providerTestInvalidDateDiff() {
+  public static function providerTestInvalidDateDiff() {
     $settings = ['langcode' => 'en'];
     $utc_tz = new \DateTimeZone('UTC');
     return [
@@ -269,6 +269,25 @@ class DrupalDateTimeTest extends UnitTestCase {
       // Check that RFC2822 format date is returned regardless of langcode.
       $this->assertEquals('Sat, 02 Feb 2019 13:30:00 +0100', $datetime->format('r'));
     }
+  }
+
+  /**
+   * Test to avoid serialization of formatTranslationCache.
+   */
+  public function testSleep(): void {
+    $tz = new \DateTimeZone(date_default_timezone_get());
+    $date = new DrupalDateTime('now', $tz, ['langcode' => 'en']);
+
+    // Override timestamp before serialize.
+    $date->setTimestamp(12345678);
+
+    $vars = $date->__sleep();
+    $this->assertContains('langcode', $vars);
+    $this->assertContains('dateTimeObject', $vars);
+    $this->assertNotContains('formatTranslationCache', $vars);
+
+    $unserialized_date = unserialize(serialize($date));
+    $this->assertSame(12345678, $unserialized_date->getTimestamp());
   }
 
 }

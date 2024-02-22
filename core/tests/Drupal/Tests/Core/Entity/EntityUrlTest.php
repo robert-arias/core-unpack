@@ -110,27 +110,52 @@ class EntityUrlTest extends UnitTestCase {
   }
 
   /**
-   * Tests the toUrl() method without specifying the $rel parameter..
+   * Tests the toUrl() method without specifying the $rel parameter.
+   *
+   * It should throw an exception when neither canonical and edit-form link
+   * templates exist if no parameters are passed in.
    *
    * @covers ::toUrl
    */
-  public function testToUrlDefault() {
+  public function testToUrlDefaultException(): void {
     $values = ['id' => $this->entityId];
     $entity = $this->getEntity(UrlTestEntity::class, $values);
+    $this->entityType->getUriCallback()->willReturn(NULL);
 
     $this->expectException(UndefinedLinkTemplateException::class);
     $this->expectExceptionMessage("Cannot generate default URL because no link template 'canonical' or 'edit-form' was found for the '" . $this->entityTypeId . "' entity type");
     $entity->toUrl();
+  }
 
+  /**
+   * Tests the toUrl() method without specifying the $rel parameter.
+   *
+   * It should return the edit-form or canonical link templates by default if
+   * they are registered.
+   *
+   * @covers ::toUrl
+   */
+  public function testToUrlDefaultFallback(): void {
+    $values = ['id' => $this->entityId, 'langcode' => $this->langcode];
+    $entity = $this->getEntity(UrlTestEntity::class, $values);
     $this->registerLinkTemplate('edit-form');
     /** @var \Drupal\Core\Url $url */
     $url = $entity->toUrl();
-    $this->assertUrl('entity.test_entity.edit_form', ['test_entity' => $this->entityId], $entity, FALSE, $url);
+    $this->assertUrl('entity.test_entity.edit_form', ['test_entity' => $this->entityId], $entity, TRUE, $url);
 
     $this->registerLinkTemplate('canonical');
     /** @var \Drupal\Core\Url $url */
     $url = $entity->toUrl();
-    $this->assertUrl('entity.test_entity.canonical', ['test_entity' => $this->entityId], $entity, FALSE, $url);
+    $this->assertUrl('entity.test_entity.canonical', ['test_entity' => $this->entityId], $entity, TRUE, $url);
+
+    // Register multiple link templates with 2 that share the same path.
+    $this->entityType->getLinkTemplates()->willReturn([
+      'canonical' => "/test-entity/{test_entity}/canonical",
+      'edit-form' => "/test-entity/{test_entity}/edit-form",
+      'foobar' => "/test-entity/{test_entity}/canonical",
+    ]);
+    $url = $entity->toUrl();
+    $this->assertUrl('entity.test_entity.canonical', ['test_entity' => $this->entityId], $entity, TRUE, $url);
   }
 
   /**
@@ -165,7 +190,7 @@ class EntityUrlTest extends UnitTestCase {
    * @return array
    *   An array of test cases for testToUrlLinkTemplates().
    */
-  public function providerTestToUrlLinkTemplates() {
+  public static function providerTestToUrlLinkTemplates() {
     $test_cases = [];
 
     $test_cases['canonical'] = ['canonical', 'entity.test_entity.canonical'];
@@ -260,7 +285,7 @@ class EntityUrlTest extends UnitTestCase {
    * @return array
    *   An array of test cases for testToUrlLinkTemplateNoId().
    */
-  public function providerTestToUrlLinkTemplateNoId() {
+  public static function providerTestToUrlLinkTemplateNoId() {
     $test_cases = [];
 
     $test_cases['collection'] = ['collection', 'entity.test_entity.collection'];
@@ -353,7 +378,7 @@ class EntityUrlTest extends UnitTestCase {
    * @return array
    *   An array of test cases for testToUrlUriCallbackUndefined().
    */
-  public function providerTestToUrlUriCallbackUndefined() {
+  public static function providerTestToUrlUriCallbackUndefined() {
     $test_cases = [];
 
     $test_cases['no_callback'] = [[], NULL];
@@ -384,6 +409,9 @@ class EntityUrlTest extends UnitTestCase {
 
     /** @var \Drupal\Core\Url $url */
     $url = $entity->toUrl('canonical');
+    $this->assertUrl('<none>', [], $entity, TRUE, $url);
+
+    $url = $entity->toUrl();
     $this->assertUrl('<none>', [], $entity, TRUE, $url);
   }
 

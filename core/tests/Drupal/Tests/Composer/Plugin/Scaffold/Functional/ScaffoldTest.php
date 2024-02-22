@@ -8,6 +8,7 @@ use Composer\Util\Filesystem;
 use Drupal\Tests\Composer\Plugin\Scaffold\AssertUtilsTrait;
 use Drupal\Tests\Composer\Plugin\Scaffold\Fixtures;
 use Drupal\Tests\Composer\Plugin\Scaffold\ScaffoldTestResult;
+use Drupal\Tests\PhpUnitCompatibilityTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -20,6 +21,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ScaffoldTest extends TestCase {
   use AssertUtilsTrait;
+  use PhpUnitCompatibilityTrait;
 
   /**
    * The root of this project.
@@ -65,7 +67,7 @@ class ScaffoldTest extends TestCase {
     // a directory will be created in the system's temporary directory.
     $this->fixturesDir = getenv('SCAFFOLD_FIXTURE_DIR');
     if (!$this->fixturesDir) {
-      $this->fixturesDir = $this->fixtures->tmpDir($this->getName());
+      $this->fixturesDir = $this->fixtures->tmpDir($this->name());
     }
   }
 
@@ -135,7 +137,7 @@ class ScaffoldTest extends TestCase {
   /**
    * Data provider for testScaffoldWithExpectedException.
    */
-  public function scaffoldExpectedExceptionTestValues() {
+  public static function scaffoldExpectedExceptionTestValues() {
     return [
       [
         'drupal-drupal-missing-scaffold-file',
@@ -198,7 +200,7 @@ class ScaffoldTest extends TestCase {
     $this->assertAutoloadFileCorrect($result->docroot());
   }
 
-  public function scaffoldOverridingSettingsExcludingHtaccessValues() {
+  public static function scaffoldOverridingSettingsExcludingHtaccessValues() {
     return [
       [
         'drupal-composer-drupal-project',

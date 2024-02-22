@@ -63,6 +63,12 @@ class TemporaryJsonapiFileFieldUploader {
    * The amount of bytes to read in each iteration when streaming file data.
    *
    * @var int
+   *
+   * @deprecated in drupal:10.3.0 and is removed from drupal:11.0.0. Use
+   * \Drupal\file\Upload\InputStreamFileWriterInterface::DEFAULT_BYTES_TO_READ
+   * instead.
+   *
+   * @see https://www.drupal.org/node/3380607
    */
   const BYTES_TO_READ = 8192;
 
@@ -245,6 +251,13 @@ class TemporaryJsonapiFileFieldUploader {
     }
 
     $file->setFileUri($file_uri);
+
+    // Update the filename with any changes as a result of security or renaming
+    // due to an existing file.
+    // @todo Remove this duplication by replacing with FileUploadHandler. See
+    // https://www.drupal.org/project/drupal/issues/3401734
+    $file->setFilename($this->fileSystem->basename($file->getFileUri()));
+
     // Move the file to the correct location after validation. Use
     // FileSystemInterface::EXISTS_ERROR as the file location has already been
     // determined above in FileSystem::getDestinationFilename().

@@ -12,6 +12,7 @@ use Drupal\language\Entity\ConfigurableLanguage;
  * Tests the machine name transliteration functionality.
  *
  * @group javascript
+ * @group #slow
  */
 class MachineNameTransliterationTest extends WebDriverTestBase {
 
@@ -69,7 +70,7 @@ class MachineNameTransliterationTest extends WebDriverTestBase {
    *
    * @return array
    */
-  public function machineNameInputOutput(): array {
+  public static function machineNameInputOutput(): array {
     return [
       // cSpell:disable
       ['en', 'Bob', 'bob'],

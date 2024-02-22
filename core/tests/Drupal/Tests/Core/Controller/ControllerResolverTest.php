@@ -44,8 +44,7 @@ class ControllerResolverTest extends UnitTestCase {
     parent::setUp();
 
     $this->container = new ContainerBuilder();
-    $class_resolver = new ClassResolver();
-    $class_resolver->setContainer($this->container);
+    $class_resolver = new ClassResolver($this->container);
     $callable_resolver = new CallableResolver($class_resolver);
     $this->controllerResolver = new ControllerResolver($callable_resolver);
   }
@@ -64,7 +63,7 @@ class ControllerResolverTest extends UnitTestCase {
   /**
    * Provides test data for testCreateController().
    */
-  public function providerTestCreateController() {
+  public static function providerTestCreateController() {
     return [
       // Tests class::method.
       ['Drupal\Tests\Core\Controller\MockController::getResult', 'Drupal\Tests\Core\Controller\MockController', 'This is a regular controller.'],
@@ -112,7 +111,7 @@ class ControllerResolverTest extends UnitTestCase {
   /**
    * Provides test data for testGetController().
    */
-  public function providerTestGetController() {
+  public static function providerTestGetController() {
     return [
       // Tests passing a controller via the request.
       [['_controller' => 'Drupal\Tests\Core\Controller\MockContainerAware::getResult'], 'Drupal\Tests\Core\Controller\MockContainerAware', 'This is container aware.'],
@@ -135,7 +134,7 @@ class ControllerResolverTest extends UnitTestCase {
   /**
    * Provides test data for testGetControllerFromDefinition().
    */
-  public function providerTestGetControllerFromDefinition() {
+  public static function providerTestGetControllerFromDefinition() {
     return [
       // Tests a method on an object.
       [[new MockController(), 'getResult'], 'This is a regular controller.'],

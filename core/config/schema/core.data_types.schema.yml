@@ -126,6 +126,18 @@ date_format:
 color_hex:
   type: string
   label: 'Color'
+  constraints:
+    # TRICKY: this cannot reuse the Color::validateHex() logic because:
+    # 1. Color::validateHex() would not allow NULL, but this constraint does.
+    #    (Anything in config can be marked optional, so NULL must never trigger
+    #    a validation error) Color::validateHex() does not allow this.
+    # 2. The Regex constraint is something that an external tool (no matter
+    #    whether that's something generating/validating Drupal config or a
+    #    JSON:API/REST/GraphQL/… client) to also correctly validate this.
+    Regex:
+      # Regex copied from Color::validateHex()
+      pattern: '/^[#]?([0-9a-fA-F]{3}){1,2}$/'
+      message: "%value is not a valid hexadecimal color."
 
 # Machine-readable identifier that can only contain certain characters.
 machine_name:
@@ -198,6 +210,10 @@ filter:
     id:
       type: string
       label: 'ID'
+      constraints:
+        PluginExists:
+          manager: plugin.manager.filter
+          interface: 'Drupal\filter\Plugin\FilterInterface'
     provider:
       type: string
       label: 'Provider'
@@ -425,6 +441,10 @@ condition.plugin:
     id:
       type: string
       label: 'ID'
+      constraints:
+        PluginExists:
+          manager: plugin.manager.condition
+          interface: 'Drupal\Core\Condition\ConditionInterface'
     negate:
       type: boolean
       label: 'Negate'
@@ -499,6 +519,8 @@ field_config_base:
     bundle:
       type: string
       label: 'Bundle'
+      constraints:
+        EntityBundleExists: '%parent.entity_type'
     label:
       type: required_label
       label: 'Label'
@@ -525,6 +547,10 @@ field_config_base:
     field_type:
       type: string
       label: 'Field type'
+      constraints:
+        PluginExists:
+          manager: plugin.manager.field.field_type
+          interface: '\Drupal\Core\Field\FieldItemInterface'
 
 core.base_field_override.*.*.*:
   type: field_config_base
@@ -535,7 +561,7 @@ core.date_format.*:
   label: 'Date format'
   mapping:
     id:
-      type: string
+      type: machine_name
       label: 'ID'
     label:
       type: required_label
@@ -546,6 +572,15 @@ core.date_format.*:
     pattern:
       type: core_date_format_pattern.[%parent.locked]
       label: 'PHP date format'
+      constraints:
+        NotBlank: []
+        # A valid date format character must appear somewhere in the value.
+        # See https://www.php.net/manual/en/datetime.format.php
+        Regex:
+          pattern: '/[aABcdDeFgGhHiIjlLmMnNoOpPrsStTuUvwWxXyYzZ]/'
+          message: 'This is not a valid date format.'
+  constraints:
+    FullyValidatable: ~
 
 # Unlocked date formats should use the translatable type.
 core_date_format_pattern.0:
@@ -709,6 +744,13 @@ field.field_settings.entity_reference:
     handler:
       type: string
       label: 'Reference method'
+      constraints:
+        PluginExists:
+          manager: plugin.manager.entity_reference_selection
+          interface: 'Drupal\Core\Entity\EntityReferenceSelection\SelectionInterface'
+          # @todo Remove this line and explicitly require valid entity reference
+          # selection plugin IDs in https://drupal.org/i/3420198.
+          allowFallback: true
     handler_settings:
       type: entity_reference_selection.[%parent.handler]
       label: 'Entity reference selection plugin settings'

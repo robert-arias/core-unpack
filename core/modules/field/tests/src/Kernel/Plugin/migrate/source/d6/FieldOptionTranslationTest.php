@@ -4,7 +4,7 @@ namespace Drupal\Tests\field\Kernel\Plugin\migrate\source\d6;
 
 use Drupal\Tests\migrate\Kernel\MigrateSqlSourceTestBase;
 
-// cspell:ignore optionwidgets selectlist objectid objectindex
+// cspell:ignore optionwidgets selectlist objectid objectindex plid
 
 /**
  * Tests the field option translation source plugin.
@@ -22,7 +22,7 @@ class FieldOptionTranslationTest extends MigrateSqlSourceTestBase {
   /**
    * {@inheritdoc}
    */
-  public function providerSource() {
+  public static function providerSource() {
     $test = [];
 
     // The source data.

@@ -4,6 +4,8 @@ namespace Drupal\Tests\statistics\Kernel\Plugin\migrate\source;
 
 use Drupal\Tests\migrate\Kernel\MigrateSqlSourceTestBase;
 
+// cspell:ignore daycount totalcount
+
 /**
  * Tests the node_counter source plugin.
  *
@@ -21,7 +23,7 @@ class NodeCounterTest extends MigrateSqlSourceTestBase {
   /**
    * {@inheritdoc}
    */
-  public function providerSource() {
+  public static function providerSource() {
     $tests = [];
 
     // The source data.

@@ -2,7 +2,7 @@
 
 namespace Drupal\Tests\taxonomy\Kernel\Plugin\migrate\source\d7;
 
-// cspell:ignore ltlanguage objectid objectindex tdlanguage tsid
+// cspell:ignore ltlanguage objectid objectindex plid tdlanguage tsid
 
 /**
  * Tests D7 i18n term localized source plugin.
@@ -20,7 +20,7 @@ class TermLocalizedTranslationTest extends TermTest {
   /**
    * {@inheritdoc}
    */
-  public function providerSource() {
+  public static function providerSource() {
     $tests = parent::providerSource();
 
     for ($i = 1; $i < 4; $i++) {

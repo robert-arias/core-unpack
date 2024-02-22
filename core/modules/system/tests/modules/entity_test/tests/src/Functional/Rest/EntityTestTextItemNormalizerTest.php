@@ -7,6 +7,8 @@ use Drupal\Core\Language\LanguageInterface;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\Tests\rest\Functional\AnonResourceTestTrait;
 
+// cspell:ignore cádiz
+
 /**
  * @group rest
  * @group #slow
@@ -181,7 +183,7 @@ class EntityTestTextItemNormalizerTest extends EntityTestResourceTestBase {
     $this->assertEqualsCanonicalizing($expected_cache_tags, explode(' ', $response->getHeader('X-Drupal-Cache-Tags')[0]));
   }
 
-  public function providerTestGetWithFormat() {
+  public static function providerTestGetWithFormat() {
     return [
       'format specified (different from fallback format)' => [
         'pablo',

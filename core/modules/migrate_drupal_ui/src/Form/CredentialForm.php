@@ -14,8 +14,10 @@ use Drupal\migrate\Exception\RequirementsException;
 use Drupal\migrate\Plugin\Exception\BadPluginDefinitionException;
 use Drupal\migrate\Plugin\MigrationPluginManagerInterface;
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\TransferException;
+use Psr\Http\Client\ClientExceptionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+
+// cspell:ignore idconflict
 
 /**
  * Migrate Upgrade database credential form.
@@ -360,7 +362,7 @@ class CredentialForm extends MigrateUpgradeFormBase {
         try {
           $this->httpClient->head($source);
         }
-        catch (TransferException $e) {
+        catch (ClientExceptionInterface $e) {
           $msg .= ' ' . $this->t('The server reports the following message: %error.', ['%error' => $e->getMessage()]);
           $this->errors[$element['#name']] = $msg;
         }

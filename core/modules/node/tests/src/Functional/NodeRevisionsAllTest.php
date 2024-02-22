@@ -63,9 +63,6 @@ class NodeRevisionsAllTest extends NodeTestBase {
     // This must be different from user performing revert.
     $this->revisionUser = $this->drupalCreateUser();
 
-    $settings = get_object_vars($node);
-    $settings['revision'] = 1;
-
     $nodes = [];
     $logs = [];
 
@@ -183,7 +180,7 @@ class NodeRevisionsAllTest extends NodeTestBase {
 
     // Set the revision timestamp to an older date to make sure that the
     // confirmation message correctly displays the stored revision date.
-    $old_revision_date = REQUEST_TIME - 86400;
+    $old_revision_date = \Drupal::time()->getRequestTime() - 86400;
     Database::getConnection()->update('node_revision')
       ->condition('vid', $nodes[2]->getRevisionId())
       ->fields([

@@ -4,6 +4,8 @@ namespace Drupal\Tests\book\Kernel\Plugin\migrate\source;
 
 use Drupal\Tests\migrate\Kernel\MigrateSqlSourceTestBase;
 
+// cspell:ignore mlid plid
+
 /**
  * @covers \Drupal\book\Plugin\migrate\source\Book
  * @group book
@@ -18,7 +20,7 @@ class BookTest extends MigrateSqlSourceTestBase {
   /**
    * {@inheritdoc}
    */
-  public function providerSource() {
+  public static function providerSource() {
     $tests = [];
 
     // The source data.

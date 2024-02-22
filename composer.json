@@ -15,11 +15,11 @@
         "drupal/core-vendor-hardening": "self.version"
     },
     "require-dev": {
-        "behat/mink": "^1.10",
-        "behat/mink-browserkit-driver": "^2.1",
-        "behat/mink-selenium2-driver": "^1.4",
+        "behat/mink": "^1.11",
+        "behat/mink-browserkit-driver": "^2.2",
+        "behat/mink-selenium2-driver": "^1.7",
         "colinodell/psr-testlogger": "^1.2",
-        "composer/composer": "^2.6.4",
+        "composer/composer": "^2.7",
         "drupal/coder": "^8.3.10",
         "instaclick/php-webdriver": "^1.4.1",
         "justinrainbow/json-schema": "^5.2",
@@ -115,8 +115,8 @@
             "Drupal\\Composer\\Composer::generateMetapackages",
             "Drupal\\Composer\\Composer::generateComponentPackages"
         ],
-        "phpcs": "phpcs --standard=core/phpcs.xml.dist --parallel=$(nproc) --",
-        "phpcbf": "phpcbf --standard=core/phpcs.xml.dist --parallel=$(nproc) --"
+        "phpcs": "phpcs --standard=core/phpcs.xml.dist --parallel=\"$( (nproc || sysctl -n hw.logicalcpu || echo 4) 2>/dev/null)\" --",
+        "phpcbf": "phpcbf --standard=core/phpcs.xml.dist --parallel=\"$( (nproc || sysctl -n hw.logicalcpu || echo 4) 2>/dev/null)\" --"
     },
     "repositories": [
         {

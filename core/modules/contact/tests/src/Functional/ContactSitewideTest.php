@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\contact\Functional;
 
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Url;
 use Drupal\contact\Entity\ContactForm;
 use Drupal\Core\Mail\MailFormatHelper;
@@ -533,6 +532,10 @@ class ContactSitewideTest extends BrowserTestBase {
     $edit += $third_party_settings;
     $this->drupalGet('admin/structure/contact/add');
     $this->submitForm($edit, 'Save');
+
+    // Ensure the statically cached bundle info is aware of the contact form
+    // that was just created in the UI.
+    $this->container->get('entity_type.bundle.info')->clearCachedBundles();
   }
 
   /**
@@ -612,7 +615,7 @@ class ContactSitewideTest extends BrowserTestBase {
         $this->drupalGet("admin/structure/contact/manage/{$id}/delete");
         $this->submitForm([], 'Delete');
         $this->assertSession()->pageTextContains("The contact form {$contact_form->label()} has been deleted.");
-        $this->assertNull(ContactForm::load($id), new FormattableMarkup('Form %contact_form not found', ['%contact_form' => $contact_form->label()]));
+        $this->assertNull(ContactForm::load($id), "Form {$contact_form->label()} not found");
       }
     }
   }
