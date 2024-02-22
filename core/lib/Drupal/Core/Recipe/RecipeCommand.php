@@ -2,6 +2,9 @@
 
 namespace Drupal\Core\Recipe;
 
+use Drupal\Core\Config\Checkpoint\Checkpoint;
+use Drupal\Core\Config\ConfigImporter;
+use Drupal\Core\Config\StorageComparer;
 use Drupal\Core\DrupalKernel;
 use Drupal\Core\Site\Settings;
 use Symfony\Component\Console\Command\Command;
@@ -61,18 +64,53 @@ final class RecipeCommand extends Command {
     if (!is_string($recipe_path) || !is_dir($recipe_path)) {
       $io->error(sprintf('The supplied path %s is not a directory', $recipe_path));
     }
-
-    // Recipes have to be applied to installed sites.
+    // Recipes can only be applied to an already-installed site.
     $container = $this->boot()->getContainer();
+
+    $recipe = Recipe::createFromDirectory($recipe_path);
+    $backup_checkpoint = $container->get('config.storage.checkpoint')
+      ->checkpoint("Backup before the '$recipe->name' recipe.");
+    try {
+      RecipeRunner::processRecipe($recipe);
+      $io->success(sprintf('%s applied successfully', $recipe->name));
+      return 0;
+    }
+    catch (InvalidConfigException $e) {
+      $this->rollBackToCheckpoint($backup_checkpoint);
+      throw $e;
+    }
+  }
+
+  /**
+   * Rolls config back to a particular checkpoint.
+   *
+   * @param \Drupal\Core\Config\Checkpoint\Checkpoint $checkpoint
+   *   The checkpoint to roll back to.
+   */
+  private function rollBackToCheckpoint(Checkpoint $checkpoint): void {
+    $container = \Drupal::getContainer();
 
     /** @var \Drupal\Core\Config\Checkpoint\CheckpointStorageInterface $checkpoint_storage */
     $checkpoint_storage = $container->get('config.storage.checkpoint');
-    $recipe = Recipe::createFromDirectory($recipe_path);
-    $checkpoint_storage->checkpoint("Backup before the '$recipe->name' recipe.");
-    RecipeRunner::processRecipe($recipe);
+    $checkpoint_storage->setCheckpointToReadFrom($checkpoint);
 
-    $io->success(sprintf('%s applied successfully', $recipe->name));
-    return 0;
+    $storage_comparer = new StorageComparer($checkpoint_storage, $container->get('config.storage'));
+    $storage_comparer->reset();
+
+    $config_importer = new ConfigImporter(
+      $storage_comparer,
+      $container->get('event_dispatcher'),
+      $container->get('config.manager'),
+      $container->get('lock'),
+      $container->get('config.typed'),
+      $container->get('module_handler'),
+      $container->get('module_installer'),
+      $container->get('theme_handler'),
+      $container->get('string_translation'),
+      $container->get('extension.list.module'),
+      $container->get('extension.list.theme'),
+    );
+    $config_importer->import();
   }
 
   /**
@@ -91,7 +129,6 @@ final class RecipeCommand extends Command {
     Settings::initialize($kernel->getAppRoot(), $kernel->getSitePath(), $this->classLoader);
     $kernel->boot();
     $kernel->preHandle(Request::createFromGlobals());
-
     return $kernel;
   }
 

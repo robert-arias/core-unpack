@@ -196,6 +196,11 @@ parameters:
 			path: core/lib/Drupal/Core/Recipe/RecipeCommand.php
 
 		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 1
+			path: core/lib/Drupal/Core/Recipe/RecipeCommand.php
+
+		-
 			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeConfigStorageWrapper\\:\\:decode\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: core/lib/Drupal/Core/Recipe/RecipeConfigStorageWrapper.php

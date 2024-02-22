@@ -5,7 +5,6 @@ namespace Drupal\KernelTests\Core\Recipe;
 use Drupal\Core\Recipe\Recipe;
 use Drupal\Core\Recipe\RecipePreExistingConfigException;
 use Drupal\Core\Recipe\RecipeRunner;
-use Drupal\Core\Recipe\RecipeUnmetDependenciesException;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\NodeType;
 use Drupal\views\Entity\View;
@@ -75,18 +74,6 @@ class RecipeRunnerTest extends KernelTestBase {
     $this->assertGreaterThan(0, strlen($node_type_data['uuid']), 'The node type configuration has been assigned a UUID.');
     // cSpell:disable-next-line
     $this->assertSame('8Jlq8CmNXHVtNIHBHgFGpnAKthlUz0XoW_D0g56QXqY', $node_type_data['_core']['default_config_hash']);
-  }
-
-  public function testUnmetConfigurationDependencies(): void {
-    $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/unmet_config_dependencies');
-    try {
-      RecipeRunner::processRecipe($recipe);
-      $this->fail('Expected exception not thrown');
-    }
-    catch (RecipeUnmetDependenciesException $e) {
-      $this->assertSame("The configuration 'node.type.test' has unmet dependencies", $e->getMessage());
-      $this->assertSame('node.type.test', $e->configName);
-    }
   }
 
   public function testApplySameRecipe(): void {

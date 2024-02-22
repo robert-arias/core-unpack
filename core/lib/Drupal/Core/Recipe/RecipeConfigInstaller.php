@@ -23,7 +23,6 @@ final class RecipeConfigInstaller extends ConfigInstaller {
     // Build the list of possible configuration to create.
     $list = $storage->listAll();
 
-    $enabled_extensions = $this->getEnabledExtensions();
     $existing_config = $this->getActiveStorages()->listAll();
 
     // Filter the list of configuration to only include configuration that
@@ -39,8 +38,6 @@ final class RecipeConfigInstaller extends ConfigInstaller {
       return;
     }
 
-    $all_config = array_merge($existing_config, $list);
-    $all_config = array_combine($all_config, $all_config);
     $config_to_create = $storage->readMultiple($list);
 
     // Sort $config_to_create in the order of the least dependent first.
@@ -48,15 +45,20 @@ final class RecipeConfigInstaller extends ConfigInstaller {
     $dependency_manager->setData($config_to_create);
     $config_to_create = array_merge(array_flip($dependency_manager->sortAll()), $config_to_create);
 
-    foreach ($config_to_create as $config_name => $data) {
-      if (!$this->validateDependencies($config_name, $data, $enabled_extensions, $all_config)) {
-        throw new RecipeUnmetDependenciesException($config_name, sprintf("The configuration '%s' has unmet dependencies", $config_name));
-      }
-    }
-
     // Create the optional configuration if there is any left after filtering.
     if (!empty($config_to_create)) {
       $this->createConfiguration(StorageInterface::DEFAULT_COLLECTION, $config_to_create);
+    }
+
+    foreach (array_keys($config_to_create) as $name) {
+      // All config objects are mappings.
+      /** @var \Drupal\Core\Config\Schema\Mapping $typed_config */
+      $typed_config = $this->typedConfig->createFromNameAndData($name, $this->configFactory->get($name)->getRawData());
+      /** @var \Symfony\Component\Validator\ConstraintViolationList $violations */
+      $violations = $typed_config->validate();
+      if (count($violations) > 0) {
+        throw new InvalidConfigException($violations, $typed_config);
+      }
     }
   }
 
