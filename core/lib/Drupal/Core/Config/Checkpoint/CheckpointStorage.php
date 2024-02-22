@@ -13,6 +13,8 @@ use Drupal\Core\Config\StorableConfigBase;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
 use Drupal\Core\KeyValueStore\KeyValueStoreInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -27,7 +29,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * events triggered by the configuration system in order to work. It is the
  * responsibility of the caller to construct this class with the active storage.
  */
-final class CheckpointStorage implements CheckpointStorageInterface, EventSubscriberInterface {
+final class CheckpointStorage implements CheckpointStorageInterface, EventSubscriberInterface, LoggerAwareInterface {
+
+  use LoggerAwareTrait;
 
   /**
    * Used as prefix to a config checkpoint collection.
@@ -266,8 +270,9 @@ final class CheckpointStorage implements CheckpointStorageInterface, EventSubscr
         $active_checkpoint = $this->checkpoints->add($id, $label);
       }
       else {
-        // @todo https://www.drupal.org/project/distributions_recipes/issues/3408523
-        //   Decide on the correct behavior here.
+        $this->logger?->notice('A backup checkpoint was not created because nothing has changed since the "{active}" checkpoint was created.', [
+          'active' => $active_checkpoint->label,
+        ]);
       }
     }
     else {

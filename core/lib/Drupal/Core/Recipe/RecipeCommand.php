@@ -7,9 +7,12 @@ use Drupal\Core\Config\ConfigImporter;
 use Drupal\Core\Config\StorageComparer;
 use Drupal\Core\DrupalKernel;
 use Drupal\Core\Site\Settings;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LogLevel;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\HttpFoundation\Request;
@@ -67,8 +70,19 @@ final class RecipeCommand extends Command {
     // Recipes can only be applied to an already-installed site.
     $container = $this->boot()->getContainer();
 
+    /** @var \Drupal\Core\Config\Checkpoint\CheckpointStorageInterface $checkpoint_storage */
+    $checkpoint_storage = $container->get('config.storage.checkpoint');
     $recipe = Recipe::createFromDirectory($recipe_path);
-    $backup_checkpoint = $container->get('config.storage.checkpoint')
+    if ($checkpoint_storage instanceof LoggerAwareInterface) {
+      $logger = new ConsoleLogger($output, [
+        // The checkpoint storage logs a notice if it decides to not create a
+        // checkpoint, and we want to be sure those notices are seen even
+        // without additional verbosity.
+        LogLevel::NOTICE => OutputInterface::VERBOSITY_NORMAL,
+      ]);
+      $checkpoint_storage->setLogger($logger);
+    }
+    $backup_checkpoint = $checkpoint_storage
       ->checkpoint("Backup before the '$recipe->name' recipe.");
     try {
       RecipeRunner::processRecipe($recipe);

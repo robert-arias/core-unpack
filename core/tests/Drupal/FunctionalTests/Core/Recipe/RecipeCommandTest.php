@@ -61,6 +61,19 @@ class RecipeCommandTest extends BrowserTestBase {
       // Although the recipe command tried to create a checkpoint, it did not
       // actually happen, because of https://drupal.org/i/3408523.
     ]);
+
+    // Create a checkpoint so we can test what happens when a recipe does not
+    // create a checkpoint before applying.
+    \Drupal::service('config.storage.checkpoint')->checkpoint('Test log message');
+    $process = $this->applyRecipe('core/tests/fixtures/recipes/no_extensions');
+    $this->assertSame(0, $process->getExitCode());
+    $this->assertSame('', $process->getErrorOutput());
+    $this->assertCheckpointsExist([
+      "Backup before the 'Install node with config' recipe.",
+      "Backup before the 'Install two modules' recipe.",
+      "Test log message",
+    ]);
+    $this->assertStringContainsString('[notice] A backup checkpoint was not created because nothing has changed since the "Test log message" checkpoint was created.', $process->getOutput());
   }
 
   /**
