@@ -3,6 +3,7 @@
 namespace Drupal\Core\Recipe;
 
 use Drupal\Component\Assertion\Inspector;
+use Drupal\Core\Site\Settings;
 
 /**
  * @internal
@@ -35,7 +36,15 @@ final class RecipeDiscovery {
    *   Thrown when the recipe cannot be found.
    */
   public function getRecipe(string $name): Recipe {
-    foreach ($this->paths as $path) {
+    $paths = [
+      ...$this->paths,
+      DRUPAL_ROOT . '/recipes',
+      DRUPAL_ROOT . '/core/recipes',
+    ];
+    if (Settings::get('extension_discovery_scan_tests')) {
+      $paths[] = DRUPAL_ROOT . '/core/tests/fixtures/recipes';
+    }
+    foreach ($paths as $path) {
       if (file_exists($path . DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR . 'recipe.yml')) {
         return Recipe::createFromDirectory($path . DIRECTORY_SEPARATOR . $name);
       }
