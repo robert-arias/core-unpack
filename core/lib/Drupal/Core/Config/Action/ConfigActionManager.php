@@ -4,10 +4,14 @@ namespace Drupal\Core\Config\Action;
 
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ConfigManagerInterface;
+use Drupal\Core\Config\Schema\Mapping;
 use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\Core\Recipe\InvalidConfigException;
 
 /**
  * @defgroup config_action_api Config Action API
@@ -56,6 +60,10 @@ class ConfigActionManager extends DefaultPluginManager {
    *   The config manager.
    * @param \Drupal\Core\Config\StorageInterface $configStorage
    *   The active config storage.
+   * @param \Drupal\Core\Config\TypedConfigManagerInterface $typedConfig
+   *   The typed configuration manager service.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   The config factory service.
    */
   public function __construct(
     \Traversable $namespaces,
@@ -63,6 +71,8 @@ class ConfigActionManager extends DefaultPluginManager {
     ModuleHandlerInterface $module_handler,
     protected readonly ConfigManagerInterface $configManager,
     protected readonly StorageInterface $configStorage,
+    protected readonly TypedConfigManagerInterface $typedConfig,
+    protected readonly ConfigFactoryInterface $configFactory,
   ) {
     assert($namespaces instanceof \ArrayAccess, '$namespaces can be accessed like an array');
     // Enable this namespace to be searched for plugins.
@@ -103,6 +113,14 @@ class ConfigActionManager extends DefaultPluginManager {
     $action = $this->createInstance($action_id);
     foreach ($this->getConfigNamesMatchingExpression($configName) as $name) {
       $action->apply($name, $data);
+      $typed_config = $this->typedConfig->createFromNameAndData($name, $this->configFactory->get($name)->getRawData());
+      // All config objects are mappings.
+      assert($typed_config instanceof Mapping);
+      /** @var \Symfony\Component\Validator\ConstraintViolationList $violations */
+      $violations = $typed_config->validate();
+      if (count($violations) > 0) {
+        throw new InvalidConfigException($violations, $typed_config);
+      }
     }
   }
 

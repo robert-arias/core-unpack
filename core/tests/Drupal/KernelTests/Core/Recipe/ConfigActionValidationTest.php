@@ -1,0 +1,97 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\KernelTests\Core\Recipe;
+
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Recipe\InvalidConfigException;
+use Drupal\Core\Recipe\Recipe;
+use Drupal\Core\Recipe\RecipeRunner;
+use Drupal\KernelTests\KernelTestBase;
+
+/**
+ * @group Recipe
+ */
+class ConfigActionValidationTest extends KernelTestBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $modules = [
+    'block_content',
+    'link',
+    'node',
+    'shortcut',
+    'system',
+  ];
+
+  /**
+   * {@inheritdoc}
+   *
+   * This test requires that we save invalid config, so we can test that it gets
+   * validated after applying a recipe.
+   */
+  protected $strictConfigSchema = FALSE;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $this->installConfig('shortcut');
+    $this->installEntitySchema('shortcut');
+  }
+
+  /**
+   * @testWith ["block_content_type"]
+   *   ["node_type"]
+   *   ["shortcut_set"]
+   *   ["menu"]
+   */
+  public function testConfigActionsAreValidated(string $entity_type_id): void {
+    /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
+    $storage = $this->container->get(EntityTypeManagerInterface::class)
+      ->getStorage($entity_type_id);
+
+    /** @var \Drupal\Core\Config\Entity\ConfigEntityTypeInterface $entity_type */
+    $entity_type = $storage->getEntityType();
+    // If there is a label key, it's safe to assume that it's not allowed to be
+    // empty. We don't care whether it's immutable; we just care that the value
+    // the config action sets it to (an empty string) violates config schema.
+    $label_key = $entity_type->getKey('label');
+    $this->assertNotEmpty($label_key);
+    $entity = $storage->create([
+      $entity_type->getKey('id') => 'test',
+      $label_key => 'Test',
+    ]);
+    $entity->save();
+
+    $config_name = $entity->getConfigDependencyName();
+    $recipe_data = <<<YAML
+name: Config actions making bad decisions
+config:
+  actions:
+    $config_name:
+      simple_config_update:
+        $label_key: ''
+YAML;
+
+    $dir = uniqid('public://');
+    mkdir($dir);
+    file_put_contents($dir . '/recipe.yml', $recipe_data);
+
+    $recipe = Recipe::createFromDirectory($dir);
+    try {
+      RecipeRunner::processRecipe($recipe);
+      $this->fail('An exception should have been thrown.');
+    }
+    catch (InvalidConfigException $e) {
+      $this->assertCount(1, $e->violations);
+      $violation = $e->violations->get(0);
+      $this->assertSame($label_key, $violation->getPropertyPath());
+      $this->assertSame("This value should not be blank.", (string) $violation->getMessage());
+    }
+  }
+
+}
