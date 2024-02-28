@@ -5,6 +5,7 @@ namespace Drupal\Core\Config\Action;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\ConfigManagerInterface;
+use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 
@@ -53,8 +54,16 @@ class ConfigActionManager extends DefaultPluginManager {
    *   The module handler to invoke the alter hook with.
    * @param \Drupal\Core\Config\ConfigManagerInterface $configManager
    *   The config manager.
+   * @param \Drupal\Core\Config\StorageInterface $configStorage
+   *   The active config storage.
    */
-  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, protected readonly ConfigManagerInterface $configManager) {
+  public function __construct(
+    \Traversable $namespaces,
+    CacheBackendInterface $cache_backend,
+    ModuleHandlerInterface $module_handler,
+    protected readonly ConfigManagerInterface $configManager,
+    protected readonly StorageInterface $configStorage,
+  ) {
     assert($namespaces instanceof \ArrayAccess, '$namespaces can be accessed like an array');
     // Enable this namespace to be searched for plugins.
     $namespaces[__NAMESPACE__] = 'core/lib/Drupal/Core/Config/Action';
@@ -92,7 +101,59 @@ class ConfigActionManager extends DefaultPluginManager {
     }
     /** @var \Drupal\Core\Config\Action\ConfigActionPluginInterface $action */
     $action = $this->createInstance($action_id);
-    $action->apply($configName, $data);
+    foreach ($this->getConfigNamesMatchingExpression($configName) as $name) {
+      $action->apply($name, $data);
+    }
+  }
+
+  /**
+   * Gets the names of all active config objects that match an expression.
+   *
+   * @param string $expression
+   *   The expression to match. This may be the full name of a config object,
+   *   or it may contain wildcards (to target all config entities of a specific
+   *   type, or a subset thereof). For example:
+   *   - `user.role.*` would target all user roles.
+   *   - `user.role.anonymous` would target only the anonymous user role.
+   *   - `core.entity_view_display.node.*.default` would target the default
+   *     view display of every content type.
+   *   - `core.entity_form_display.*.*.default` would target the default form
+   *     display of every bundle of every entity type.
+   *   The expression MUST begin with the prefix of a config entity type --
+   *   for example, `field.field.` in the case of fields, or `user.role.` for
+   *   user roles. The prefix cannot contain wildcards.
+   *
+   * @return string[]
+   *   The names of all active config objects that match the expression.
+   *
+   * @throws \Drupal\Core\Config\Action\ConfigActionException
+   *   Thrown if the expression does not match any known config entity type's
+   *   prefix, or if the expression cannot be parsed.
+   */
+  private function getConfigNamesMatchingExpression(string $expression): array {
+    // If there are no wildcards, we can return the config name as-is.
+    if (!str_contains($expression, '.*')) {
+      return [$expression];
+    }
+
+    $entity_type = $this->configManager->getEntityTypeIdByName($expression);
+    if (empty($entity_type)) {
+      throw new ConfigActionException("No installed config entity type uses the prefix in the expression '$expression'. Either there is a typo in the expression or this recipe should install an additional module or depend on another recipe.");
+    }
+    /** @var \Drupal\Core\Config\Entity\ConfigEntityTypeInterface $entity_type */
+    $entity_type = $this->configManager->getEntityTypeManager()
+      ->getDefinition($entity_type);
+    $prefix = $entity_type->getConfigPrefix();
+
+    // Convert the expression to a regular expression. We assume that * should
+    // match the characters allowed by
+    // \Drupal\Core\Config\ConfigBase::validateName(), which is permissive.
+    $expression = str_replace('\\*', '[^.:?*<>"\'\/\\\\]+', preg_quote($expression));
+    $matches = @preg_grep("/^$expression$/", $this->configStorage->listAll("$prefix."));
+    if ($matches === FALSE) {
+      throw new ConfigActionException("The expression '$expression' could not be parsed.");
+    }
+    return $matches;
   }
 
   /**
