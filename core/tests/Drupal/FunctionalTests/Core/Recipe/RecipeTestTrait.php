@@ -36,6 +36,10 @@ trait RecipeTestTrait {
       ->setWorkingDirectory($this->getDrupalRoot())
       ->setEnv([
         'DRUPAL_DEV_SITE_PATH' => $this->siteDirectory,
+        // Ensure that the command boots Drupal into a state where it knows it's
+        // a test site.
+        // @see drupal_valid_test_ua()
+        'HTTP_USER_AGENT' => drupal_generate_test_ua($this->databasePrefix),
       ])
       ->setTimeout(500);
 

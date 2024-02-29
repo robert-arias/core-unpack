@@ -41,7 +41,7 @@ final class RecipeDiscovery {
       DRUPAL_ROOT . '/recipes',
       DRUPAL_ROOT . '/core/recipes',
     ];
-    if (Settings::get('extension_discovery_scan_tests')) {
+    if (Settings::get('extension_discovery_scan_tests') || drupal_valid_test_ua()) {
       $paths[] = DRUPAL_ROOT . '/core/tests/fixtures/recipes';
     }
     foreach ($paths as $path) {
@@ -49,7 +49,7 @@ final class RecipeDiscovery {
         return Recipe::createFromDirectory($path . DIRECTORY_SEPARATOR . $name);
       }
     }
-    throw new UnknownRecipeException($name, $this->paths, sprintf("Can not find the %s recipe, search paths: %s", $name, implode(', ', $this->paths)));
+    throw new UnknownRecipeException($name, $paths, sprintf("Can not find the %s recipe, search paths: %s", $name, implode(', ', $paths)));
   }
 
 }

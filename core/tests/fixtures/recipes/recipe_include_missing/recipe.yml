@@ -1,7 +1,0 @@
-name: 'Recipe include'
-type: 'Testing'
-recipes:
-  - recipe_include
-  - does_not_exist
-install:
-  - config_test

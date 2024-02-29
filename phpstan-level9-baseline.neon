@@ -564,3 +564,8 @@ parameters:
 			message: "#^Method Drupal\\\\Tests\\\\Core\\\\Recipe\\\\RecipeConfigStorageWrapperTest\\:\\:unsupportedMethods\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: core/tests/Drupal/Tests/Core/Recipe/RecipeConfigStorageWrapperTest.php
+
+		-
+			message: "#^Method Drupal\\\\KernelTests\\\\Core\\\\Recipe\\\\RecipeValidationTest\\:\\:providerRecipeValidation\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeValidationTest.php

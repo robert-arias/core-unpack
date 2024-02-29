@@ -4,9 +4,7 @@ namespace Drupal\KernelTests\Core\Recipe;
 
 use Drupal\Core\Recipe\Recipe;
 use Drupal\Core\Recipe\RecipeFileException;
-use Drupal\Core\Recipe\RecipeMissingExtensionsException;
 use Drupal\Core\Recipe\RecipePreExistingConfigException;
-use Drupal\Core\Recipe\UnknownRecipeException;
 use Drupal\KernelTests\KernelTestBase;
 
 /**
@@ -40,32 +38,12 @@ class RecipeTest extends KernelTestBase {
   }
 
   public function testCreateFromDirectoryNoRecipe(): void {
+    $dir = uniqid('public://');
+    mkdir($dir);
+
     $this->expectException(RecipeFileException::class);
-    $this->expectExceptionMessage('There is no core/tests/fixtures/recipes/no_recipe/recipe.yml file');
-    Recipe::createFromDirectory('core/tests/fixtures/recipes/no_recipe');
-  }
-
-  public function testCreateFromDirectoryNoRecipeName(): void {
-    $this->expectException(RecipeFileException::class);
-    $this->expectExceptionMessage('The core/tests/fixtures/recipes/no_name/recipe.yml has no name value.');
-    Recipe::createFromDirectory('core/tests/fixtures/recipes/no_name');
-  }
-
-  public function testCreateFromDirectoryMissingExtensions(): void {
-    $this->enableModules(['module_test']);
-
-    // Create a missing fake dependency.
-    // dblog will depend on Config, which depends on a non-existing module Foo.
-    // Nothing should be installed.
-    \Drupal::state()->set('module_test.dependency', 'missing dependency');
-
-    try {
-      Recipe::createFromDirectory('core/tests/fixtures/recipes/missing_extensions');
-      $this->fail('Expected exception not thrown');
-    }
-    catch (RecipeMissingExtensionsException $e) {
-      $this->assertSame(['does_not_exist_one', 'does_not_exist_two', 'foo'], $e->extensions);
-    }
+    $this->expectExceptionMessage('There is no ' . $dir . '/recipe.yml file');
+    Recipe::createFromDirectory($dir);
   }
 
   public function testPreExistingDifferentConfiguration(): void {
@@ -92,17 +70,6 @@ class RecipeTest extends KernelTestBase {
 
     $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/install_node_with_config');
     $this->assertSame('core/tests/fixtures/recipes/install_node_with_config/config', $recipe->config->recipeConfigDirectory);
-  }
-
-  public function testRecipeIncludeMissing(): void {
-    try {
-      Recipe::createFromDirectory('core/tests/fixtures/recipes/recipe_include_missing');
-    }
-    catch (UnknownRecipeException $e) {
-      $this->assertSame('does_not_exist', $e->recipe);
-      $this->assertSame(['core/tests/fixtures/recipes'], $e->searchPaths);
-      $this->assertSame('Can not find the does_not_exist recipe, search paths: core/tests/fixtures/recipes', $e->getMessage());
-    }
   }
 
 }

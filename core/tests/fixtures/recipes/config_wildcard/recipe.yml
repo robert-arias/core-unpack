@@ -6,3 +6,4 @@ install:
 config:
   import:
     config_test: '*'
+    tour: ~

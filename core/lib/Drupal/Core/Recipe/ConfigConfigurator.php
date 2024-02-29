@@ -22,8 +22,6 @@ final class ConfigConfigurator {
    *   The active configuration storage.
    */
   public function __construct(public readonly array $config, string $recipe_directory, StorageInterface $active_configuration) {
-    // @todo validate structure of $config['import'] and $config['actions'].
-
     $this->recipeConfigDirectory = is_dir($recipe_directory . '/config') ? $recipe_directory . '/config' : NULL;
     $recipe_storage = $this->getConfigStorage();
     foreach ($recipe_storage->listAll() as $config_name) {
@@ -87,12 +85,17 @@ final class ConfigConfigurator {
       /** @var \Drupal\Core\Extension\ThemeExtensionList $theme_list */
       $theme_list = \Drupal::service('extension.list.theme');
       foreach ($this->config['import'] as $extension => $config) {
+        // If the recipe explicitly does not want to import any config from this
+        // extension, skip it.
+        if ($config === NULL) {
+          continue;
+        }
         $path = match (TRUE) {
           $module_list->exists($extension) => $module_list->getPath($extension),
           $theme_list->exists($extension) => $theme_list->getPath($extension),
           default => throw new \RuntimeException("$extension is not a theme or module")
         };
-        $config = (array) ($config === '*' ? NULL : $config);
+        $config = $config === '*' ? [] : $config;
         $storages[] = new RecipeExtensionConfigStorage($path, $config);
       }
     }
