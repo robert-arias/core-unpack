@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\views_ui\Functional;
 
 use Drupal\Core\Menu\MenuTreeParameters;
@@ -217,6 +219,7 @@ class DisplayPathTest extends UITestBase {
       'administer menu',
       'link to any page',
       'access toolbar',
+      'access administration pages',
     ]);
     $this->drupalLogin($admin_user);
 

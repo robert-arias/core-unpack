@@ -2,7 +2,7 @@
 
 namespace Drupal\Core;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
  * This interface extends Symfony's KernelInterface and adds methods for
  * responding to modules being enabled or disabled during its lifetime.
  */
-interface DrupalKernelInterface extends HttpKernelInterface, ContainerAwareInterface {
+interface DrupalKernelInterface extends HttpKernelInterface {
 
   /**
    * Event fired when the service container finished initializing in subrequest.
@@ -120,6 +120,13 @@ interface DrupalKernelInterface extends HttpKernelInterface, ContainerAwareInter
    * @return \Symfony\Component\DependencyInjection\ContainerInterface
    */
   public function rebuildContainer();
+
+  /**
+   * Force a container reset.
+   *
+   * @return \Symfony\Component\DependencyInjection\ContainerInterface
+   */
+  public function resetContainer(): ContainerInterface;
 
   /**
    * Invalidate the service container for the next request.

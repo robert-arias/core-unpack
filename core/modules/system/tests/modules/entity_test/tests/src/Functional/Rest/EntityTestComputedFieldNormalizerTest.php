@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\entity_test\Functional\Rest;
 
 use Drupal\Core\Cache\Cache;
@@ -54,6 +56,12 @@ class EntityTestComputedFieldNormalizerTest extends EntityTestResourceTestBase {
     $expected['computed_test_cacheable_string_field'] = [
       [
         'value' => 'computed test cacheable string field',
+      ],
+    ];
+    // @see \Drupal\entity_test\Plugin\Field\ComputedTestCacheableIntegerItemList::computeValue().
+    $expected['computed_test_cacheable_integer_field'] = [
+      [
+        'value' => 0,
       ],
     ];
 

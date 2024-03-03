@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\update\Functional;
 
 use Drupal\Core\Utility\ProjectInfo;
@@ -345,7 +347,7 @@ class UpdateContribTest extends UpdateTestBase {
     // Make sure all the update_test_* themes are disabled.
     $extension_config = $this->config('core.extension');
     foreach ($extension_config->get('theme') as $theme => $weight) {
-      if (preg_match('/^update_test_/', $theme)) {
+      if (str_starts_with($theme, 'update_test_')) {
         $extension_config->clear("theme.$theme");
       }
     }
@@ -423,7 +425,7 @@ class UpdateContribTest extends UpdateTestBase {
       ],
     ]);
     $projects = \Drupal::service('update.manager')->getProjects();
-    $theme_data = \Drupal::service('theme_handler')->rebuildThemeData();
+    $theme_data = \Drupal::service('extension.list.theme')->reset()->getList();
     $project_info = new ProjectInfo();
     $project_info->processInfoList($projects, $theme_data, 'theme', TRUE);
 

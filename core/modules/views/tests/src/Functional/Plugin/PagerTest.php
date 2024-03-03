@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\views\Functional\Plugin;
 
 use Drupal\Tests\system\Functional\Cache\AssertPageCacheContextsAndTagsTrait;
@@ -398,8 +400,7 @@ class PagerTest extends ViewTestBase {
     $view->display_handler->setOption('pager', $pager);
     $view->save();
 
-    // Stable9 will be addressed in https://www.drupal.org/project/drupal/issues/3333418
-    $themes = ['stark', 'olivero', 'claro', 'starterkit_theme'];
+    $themes = ['stark', 'olivero', 'claro', 'starterkit_theme', 'stable9'];
     $this->container->get('theme_installer')->install($themes);
 
     foreach ($themes as $theme) {
@@ -426,7 +427,7 @@ class PagerTest extends ViewTestBase {
     $view->pager = NULL;
     $output = $view->render();
     $output = (string) \Drupal::service('renderer')->renderRoot($output);
-    $this->assertEquals(0, preg_match('/<ul class="pager">/', $output), 'The pager is not rendered.');
+    $this->assertStringNotContainsString('<ul class="pager">', $output);
   }
 
   /**

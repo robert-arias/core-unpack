@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\editor\Functional;
 
 use Drupal\editor\Entity\Editor;
@@ -181,10 +183,6 @@ class EditorLoadingTest extends BrowserTestBase {
     $this->assertSession()->elementsCount('css', 'select.js-filter-list', 1);
     $select = $this->assertSession()->elementExists('css', 'select.js-filter-list');
     $this->assertSame('edit-body-0-value', $select->getAttribute('data-editor-for'));
-
-    // Load the editor image dialog form and make sure it does not fatal.
-    $this->drupalGet('editor/dialog/image/full_html');
-    $this->assertSession()->statusCodeEquals(200);
 
     $this->drupalLogout();
 

@@ -17,6 +17,7 @@ use Drupal\Core\File\Exception\InvalidStreamWrapperException;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Lock\LockAcquiringException;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Render\Element;
@@ -289,6 +290,8 @@ function file_validate_image_resolution(FileInterface $file, $maximum_dimensions
         if ($image->scale($width, $height)) {
           $scaling = TRUE;
           $image->save();
+          // Update the file size now that the image has been resized.
+          $file->setSize($image->getFileSize());
           if (!empty($width) && !empty($height)) {
             $message = t('The image was resized to fit within the maximum allowed dimensions of %dimensions pixels. The new dimensions of the resized image are %new_widthx%new_height pixels.',
               [
@@ -708,6 +711,10 @@ function file_save_upload($form_field_name, $validators = [], $destination = FAL
     }
     catch (FileException $e) {
       \Drupal::messenger()->addError(t('The file %filename could not be uploaded because the name is invalid.', ['%filename' => $uploaded_file->getClientOriginalName()]));
+      $files[$i] = FALSE;
+    }
+    catch (LockAcquiringException $e) {
+      \Drupal::messenger()->addError(t('File already locked for writing.'));
       $files[$i] = FALSE;
     }
   }

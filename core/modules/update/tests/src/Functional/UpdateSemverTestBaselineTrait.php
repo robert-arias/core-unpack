@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\update\Functional;
 
 use Drupal\Core\Link;
@@ -121,8 +123,8 @@ trait UpdateSemverTestBaselineTrait {
           $this->refreshUpdateStatus([$this->updateProject => '9']);
           $this->standardTests();
           $this->assertUpdateTableTextNotContains('Security update required!');
-          $this->assertUpdateTableElementContains(Link::fromTextAndUrl('9.0.0', Url::fromUri("http://example.com/{$this->updateProject}-9-0-0-release"))->toString());
-          $this->assertUpdateTableElementContains(Link::fromTextAndUrl('Release notes', Url::fromUri("http://example.com/{$this->updateProject}-9-0-0-release"))->toString());
+          $this->assertUpdateTableElementContains((string) Link::fromTextAndUrl('9.0.0', Url::fromUri("http://example.com/{$this->updateProject}-9-0-0-release"))->toString());
+          $this->assertUpdateTableElementContains((string) Link::fromTextAndUrl('Release notes', Url::fromUri("http://example.com/{$this->updateProject}-9-0-0-release"))->toString());
           $this->assertUpdateTableTextNotContains('Up to date');
           $this->assertUpdateTableTextContains('Not supported!');
           $this->assertUpdateTableTextContains('Recommended version:');

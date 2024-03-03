@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\media\Functional\Rest;
 
 use Drupal\Component\Utility\NestedArray;
@@ -374,6 +376,9 @@ abstract class MediaResourceTestBase extends EntityResourceTestBase {
     $actual = $this->serializer->decode((string) $response->getBody(), static::$format);
     static::recursiveKSort($actual);
     $this->assertSame($expected, $actual);
+
+    // Make sure the role save below properly invalidates cache tags.
+    $this->refreshVariables();
 
     // To still run the complete test coverage for POSTing a Media entity, we
     // must revoke the additional permissions that we granted.

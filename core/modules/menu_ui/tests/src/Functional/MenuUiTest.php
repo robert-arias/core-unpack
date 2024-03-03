@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\menu_ui\Functional;
 
 use Drupal\block\Entity\Block;
@@ -727,10 +729,15 @@ class MenuUiTest extends BrowserTestBase {
     $this->drupalLogout();
     $this->drupalLogin($this->adminUser);
     $this->drupalGet('admin/structure/menu/manage/' . $item->getMenuName());
-    $this->assertSession()->pageTextNotContains($item->getTitle());
+    $this->assertSession()->linkExists($item->getTitle());
     // The cache contexts associated with the (in)accessible menu links are
     // bubbled. See DefaultMenuLinkTreeManipulators::menuLinkCheckAccess().
     $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Contexts', 'user.permissions');
+
+    // The menu link admin is able to administer the link but cannot access the
+    // route as is not granted with 'bypass node access' permission.
+    $this->clickLink($item->getTitle());
+    $this->assertSession()->statusCodeEquals(403);
   }
 
   /**
@@ -1131,21 +1138,21 @@ class MenuUiTest extends BrowserTestBase {
     $this->drupalGet('admin/help/menu');
     $this->assertSession()->statusCodeEquals($response);
     if ($response == 200) {
-      $this->assertSession()->pageTextContains('Menu', 'Menu help was displayed');
+      $this->assertSession()->pageTextContains('Menu');
     }
 
     // View menu build overview page.
     $this->drupalGet('admin/structure/menu');
     $this->assertSession()->statusCodeEquals($response);
     if ($response == 200) {
-      $this->assertSession()->pageTextContains('Menus', 'Menu build overview page was displayed');
+      $this->assertSession()->pageTextContains('Menus');
     }
 
     // View tools menu customization page.
     $this->drupalGet('admin/structure/menu/manage/' . $this->menu->id());
     $this->assertSession()->statusCodeEquals($response);
     if ($response == 200) {
-      $this->assertSession()->pageTextContains('Tools', 'Tools menu page was displayed');
+      $this->assertSession()->pageTextContains('Tools');
     }
 
     // View menu edit page for a static link.
@@ -1153,14 +1160,14 @@ class MenuUiTest extends BrowserTestBase {
     $this->drupalGet('admin/structure/menu/link/' . $item->getPluginId() . '/edit');
     $this->assertSession()->statusCodeEquals($response);
     if ($response == 200) {
-      $this->assertSession()->pageTextContains('Edit menu item', 'Menu edit page was displayed');
+      $this->assertSession()->pageTextContains('Edit menu item');
     }
 
     // View add menu page.
     $this->drupalGet('admin/structure/menu/add');
     $this->assertSession()->statusCodeEquals($response);
     if ($response == 200) {
-      $this->assertSession()->pageTextContains('Menus', 'Add menu page was displayed');
+      $this->assertSession()->pageTextContains('Menus');
     }
   }
 
@@ -1227,6 +1234,49 @@ class MenuUiTest extends BrowserTestBase {
     $this->drupalGet('admin/structure/menu/manage/' . $menu_2->id());
     $this->submitForm([], 'Save');
     $this->assertSession()->elementNotExists('xpath', '//div[contains(@class, "messages--error")]');
+  }
+
+  /**
+   * Tests the user login/logout links.
+   */
+  public function testUserLoginUserLogoutLinks() {
+    MenuLinkContent::create([
+      'menu' => 'tools',
+      'link' => [
+        'uri' => 'internal:/user/login',
+      ],
+      'title' => 'Login',
+    ])->save();
+    MenuLinkContent::create([
+      'menu' => 'tools',
+      'link' => [
+        'uri' => 'internal:/user/logout',
+      ],
+      'title' => 'Logout',
+    ])->save();
+
+    $assert = $this->assertSession();
+
+    $block = $this->drupalPlaceBlock('system_menu_block:tools');
+    $this->drupalGet('<front>');
+    $assert->linkExists('Login');
+    $assert->linkNotExists('Logout');
+
+    $this->drupalLogin($this->createUser());
+    $this->drupalGet('<front>');
+    $assert->linkNotExists('Login');
+    $assert->linkExists('Logout');
+
+    // Delete the block, we're now checking the Menu UI form.
+    $block->delete();
+
+    $this->drupalLogin($this->createUser(['administer menu']));
+    $this->drupalGet('admin/structure/menu/manage/tools');
+
+    $assert->linkExists('Logout');
+    // Check that the login link is accessible even the route is not.
+    $this->assertFalse(Url::fromRoute('user.login')->access($this->loggedInUser));
+    $assert->linkExists('Login');
   }
 
 }

@@ -1030,7 +1030,6 @@ PHP,
           $sneaky_plugin_id => ['configured_subset' => $configured_subset],
         ],
       ],
-      'image_upload' => [],
     ]);
 
     // Invalid subsets are allowed on unsaved Text Editor config entities,
@@ -1257,7 +1256,9 @@ PHP,
       'format' => 'dummy',
       'editor' => 'ckeditor5',
       'settings' => $text_editor_settings,
-      'image_upload' => [],
+      'image_upload' => [
+        'status' => FALSE,
+      ],
     ]);
     FilterFormat::create([
       'format' => 'dummy',
@@ -1593,7 +1594,7 @@ PHP,
    * @return \Generator
    *   Test scenarios.
    */
-  public function providerTestDerivedPluginDefinitions(): \Generator {
+  public static function providerTestDerivedPluginDefinitions(): \Generator {
     // Defaults inherited from CKEditor5AspectsOfCKEditor5Plugin.
     $ckeditor5_aspects_defaults = get_class_vars(CKEditor5AspectsOfCKEditor5Plugin::class);
     // Defaults inherited from DrupalAspectsOfCKEditor5Plugin.

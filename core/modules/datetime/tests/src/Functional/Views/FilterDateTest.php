@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\datetime\Functional\Views;
 
 use Drupal\Core\Datetime\DrupalDateTime;
@@ -160,22 +162,22 @@ class FilterDateTest extends ViewTestBase {
     $this->drupalGet($path);
 
     // Filter the Preview by 'empty'.
-    $this->getSession()->getPage()->findField($this->fieldName . '_value')->selectOption(1);
+    $this->getSession()->getPage()->findField($this->fieldName . '_value')->selectOption('1');
     $this->getSession()->getPage()->pressButton('Apply');
     $this->assertIds([4]);
 
     // Filter the Preview by 'not empty'.
-    $this->getSession()->getPage()->findField($this->fieldName . '_value')->selectOption(2);
+    $this->getSession()->getPage()->findField($this->fieldName . '_value')->selectOption('2');
     $this->getSession()->getPage()->pressButton('Apply');
     $this->assertIds([1, 2, 3]);
 
     // Filter the Preview by 'less than'.
-    $this->getSession()->getPage()->findField($this->fieldName . '_value')->selectOption(3);
+    $this->getSession()->getPage()->findField($this->fieldName . '_value')->selectOption('3');
     $this->getSession()->getPage()->pressButton('Apply');
     $this->assertIds([2, 3]);
 
     // Filter the Preview by 'between'.
-    $this->getSession()->getPage()->findField($this->fieldName . '_value')->selectOption(4);
+    $this->getSession()->getPage()->findField($this->fieldName . '_value')->selectOption('4');
     $this->getSession()->getPage()->pressButton('Apply');
     $this->assertIds([2]);
   }

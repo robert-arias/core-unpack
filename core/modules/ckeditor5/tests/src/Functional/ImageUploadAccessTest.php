@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\ckeditor5\Functional;
 
 use Drupal\Component\Utility\Crypt;
@@ -25,8 +27,14 @@ class ImageUploadAccessTest extends ImageUploadTest {
     $response = $this->uploadRequest($url, $test_image, 'test.jpg');
     $this->assertSame(404, $response->getStatusCode());
 
-    $editor = $this->createEditorWithUpload([
-      'status' => FALSE,
+    $editor = $this->createEditorWithUpload(['status' => FALSE]);
+
+    // Ensure that images cannot be uploaded when image upload is disabled.
+    $response = $this->uploadRequest($url, $test_image, 'test.jpg');
+    $this->assertSame(403, $response->getStatusCode());
+
+    $editor->setImageUploadSettings([
+      'status' => TRUE,
       'scheme' => 'public',
       'directory' => 'inline-images',
       'max_size' => '',
@@ -34,14 +42,7 @@ class ImageUploadAccessTest extends ImageUploadTest {
         'width' => 0,
         'height' => 0,
       ],
-    ]);
-
-    // Ensure that images cannot be uploaded when image upload is disabled.
-    $response = $this->uploadRequest($url, $test_image, 'test.jpg');
-    $this->assertSame(403, $response->getStatusCode());
-
-    $editor->setImageUploadSettings(['status' => TRUE] + $editor->getImageUploadSettings())
-      ->save();
+    ])->save();
     $response = $this->uploadRequest($url, $test_image, 'test.jpg');
     $this->assertSame(201, $response->getStatusCode());
 

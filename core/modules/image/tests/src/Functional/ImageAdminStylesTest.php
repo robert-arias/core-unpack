@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\image\Functional;
 
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
@@ -516,6 +518,40 @@ class ImageAdminStylesTest extends ImageFieldTestBase {
     $this->drupalGet('admin/config/media/image-styles');
     $this->clickLink('Edit');
     $this->assertSession()->pageTextContains("Select a new effect");
+  }
+
+  /**
+   * Tests the display of preview images using a private scheme.
+   */
+  public function testPreviewImageShowInPrivateScheme(): void {
+    $this->config('system.file')->set('default_scheme', 'private')->save();
+
+    /** @var \Drupal\Core\File\FileUrlGeneratorInterface $file_url_generator */
+    $file_url_generator = \Drupal::service('file_url_generator');
+
+    // Get the original preview image file in core config.
+    $original_path = $this->config('image.settings')->get('preview_image');
+    $style = ImageStyle::create(['name' => 'test_foo', 'label' => 'test foo']);
+    $style->save();
+
+    // Build the derivative preview image file with the Image Style.
+    // @see template_preprocess_image_style_preview()
+    $preview_file = $style->buildUri($original_path);
+    $style->createDerivative($original_path, $preview_file);
+
+    // Check if the derivative image exists.
+    $this->assertFileExists($preview_file);
+
+    // Generate itok token for the preview image.
+    $itok = $style->getPathToken('private://' . $original_path);
+
+    $url = $file_url_generator->generateAbsoluteString($preview_file);
+    $url .= '?itok=' . $itok;
+
+    // Check if the preview image with style is shown.
+    $this->drupalGet($url);
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->responseHeaderContains('Content-Type', 'image/png');
   }
 
 }

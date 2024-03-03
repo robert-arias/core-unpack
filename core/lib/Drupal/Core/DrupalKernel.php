@@ -551,24 +551,6 @@ class DrupalKernel implements DrupalKernelInterface, TerminableInterface {
 
   /**
    * {@inheritdoc}
-   *
-   * phpcs:ignore Drupal.Commenting.FunctionComment.VoidReturn
-   * @return void
-   */
-  public function setContainer(ContainerInterface $container = NULL) {
-    if (isset($this->container)) {
-      throw new \Exception('The container should not override an existing container.');
-    }
-    if ($this->booted) {
-      throw new \Exception('The container cannot be set after a booted kernel.');
-    }
-
-    $this->container = $container;
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
    */
   public function getCachedContainerDefinition() {
     $cache = $this->bootstrapContainer->get('cache.container')->get($this->getContainerCacheKey());
@@ -698,11 +680,8 @@ class DrupalKernel implements DrupalKernelInterface, TerminableInterface {
 
   /**
    * {@inheritdoc}
-   *
-   * phpcs:ignore Drupal.Commenting.FunctionComment.VoidReturn
-   * @return void
    */
-  public function terminate(Request $request, Response $response) {
+  public function terminate(Request $request, Response $response): void {
     if ($this->booted && $this->getHttpKernel() instanceof TerminableInterface) {
       // Only run terminate() when essential services have been set up properly
       // by preHandle() before.
@@ -947,22 +926,15 @@ class DrupalKernel implements DrupalKernelInterface, TerminableInterface {
       $all_messages = $this->container->get('messenger')->all();
     }
 
-    // If we haven't booted yet but there is a container, then we're asked to
-    // boot the container injected via setContainer().
-    // @see \Drupal\KernelTests\KernelTestBase::setUp()
-    if (isset($this->container) && !$this->booted) {
-      $container = $this->container;
-    }
-
     // If the module list hasn't already been set in updateModules and we are
     // not forcing a rebuild, then try and load the container from the cache.
     if (empty($this->moduleList) && !$this->containerNeedsRebuild) {
       $container_definition = $this->getCachedContainerDefinition();
     }
 
-    // If there is no container and no cached container definition, build a new
-    // one from scratch.
-    if (!isset($container) && !isset($container_definition)) {
+    // If there is no cached container definition, build a new container from
+    // scratch.
+    if (!isset($container_definition)) {
       $container = $this->compileContainer();
 
       // Only dump the container if dumping is allowed. This is useful for
@@ -1211,6 +1183,90 @@ class DrupalKernel implements DrupalKernelInterface, TerminableInterface {
     $this->moduleData = [];
     $this->containerNeedsRebuild = TRUE;
     return $this->initializeContainer();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function resetContainer(): ContainerInterface {
+    $session_started = FALSE;
+    $subrequest = FALSE;
+    $reload_module_handler = FALSE;
+
+    // Save the id of the currently logged in user.
+    if ($this->container->initialized('current_user')) {
+      $current_user_id = $this->container->get('current_user')->id();
+    }
+
+    if ($this->container->initialized('module_handler') && $this->container->get('module_handler')->isLoaded()) {
+      $reload_module_handler = TRUE;
+    }
+
+    // After rebuilding the container some objects will have stale services.
+    // Record a map of objects to service IDs prior to rebuilding the
+    // container in order to ensure
+    // \Drupal\Core\DependencyInjection\DependencySerializationTrait works as
+    // expected.
+    $this->container->get(ReverseContainer::class)->recordContainer();
+
+    // If there is a session, close and save it.
+    if ($this->container->initialized('session')) {
+      $session = $this->container->get('session');
+      if ($session->isStarted()) {
+        $session_started = TRUE;
+        $session->save();
+      }
+      unset($session);
+    }
+
+    $all_messages = $this->container->get('messenger')->all();
+
+    $persist = $this->getServicesToPersist($this->container);
+    $this->container->reset();
+    $this->persistServices($this->container, $persist);
+
+    $this->container->set('kernel', $this);
+
+    // Set the class loader which was registered as a synthetic service.
+    $this->container->set('class_loader', $this->classLoader);
+
+    if ($reload_module_handler) {
+      $this->container->get('module_handler')->reload();
+    }
+
+    if ($session_started) {
+      $this->container->get('session')->start();
+    }
+
+    // The request stack is preserved across container rebuilds. Re-inject the
+    // new session into the main request if one was present before.
+    if (($request_stack = $this->container->get('request_stack', ContainerInterface::NULL_ON_INVALID_REFERENCE))) {
+      if ($request = $request_stack->getMainRequest()) {
+        $subrequest = TRUE;
+        if ($request->hasSession()) {
+          $request->setSession($this->container->get('session'));
+        }
+      }
+    }
+
+    if (!empty($current_user_id)) {
+      $this->container->get('current_user')->setInitialAccountId($current_user_id);
+    }
+
+    // Re-add messages.
+    foreach ($all_messages as $type => $messages) {
+      foreach ($messages as $message) {
+        $this->container->get('messenger')->addMessage($message, $type);
+      }
+    }
+
+    // Allow other parts of the codebase to react on container reset in
+    // subrequest.
+    if (!empty($subrequest)) {
+      $this->container->get('event_dispatcher')->dispatch(new Event(), self::CONTAINER_INITIALIZE_SUBREQUEST_FINISHED);
+    }
+
+    return $this->container;
   }
 
   /**

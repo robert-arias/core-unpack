@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\comment\Functional\Rest;
 
 use Drupal\comment\Entity\Comment;
@@ -358,6 +360,9 @@ abstract class CommentResourceTestBase extends EntityResourceTestBase {
     $unserialized = $this->serializer->deserialize((string) $response->getBody(), get_class($this->entity), static::$format);
     $this->assertResourceResponse(201, FALSE, $response);
     $this->assertFalse($unserialized->isPublished());
+
+    // Make sure the role save below properly invalidates cache tags.
+    $this->refreshVariables();
 
     // Grant anonymous permission to skip comment approval.
     $this->grantPermissionsToTestedRole(['skip comment approval']);

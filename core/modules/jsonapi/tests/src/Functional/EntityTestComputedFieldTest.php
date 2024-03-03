@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\jsonapi\Functional;
 
 use Drupal\Core\Cache\Cache;
@@ -114,6 +116,7 @@ class EntityTestComputedFieldTest extends ResourceTestBase {
           'drupal_internal__id' => 1,
           'computed_string_field' => NULL,
           'computed_test_cacheable_string_field' => 'computed test cacheable string field',
+          'computed_test_cacheable_integer_field' => 0,
         ],
         'relationships' => [
           'computed_reference_field' => [

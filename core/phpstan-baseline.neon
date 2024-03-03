@@ -21,15 +21,6 @@ parameters:
 			path: includes/form.inc
 
 		-
-			message: """
-				#^Call to deprecated method getFromDriverName\\(\\) of class Drupal\\\\Core\\\\Extension\\\\DatabaseDriverList\\:
-				in drupal\\:10\\.2\\.0 and is removed from drupal\\:11\\.0\\.0\\. Use
-				  DatabaseDriverList\\:\\:get\\(\\) instead, passing a database driver namespace\\.$#
-			"""
-			count: 1
-			path: includes/install.core.inc
-
-		-
 			message: "#^Function install_config_download_translations\\(\\) should return string but return statement is missing\\.$#"
 			count: 1
 			path: includes/install.core.inc
@@ -48,15 +39,6 @@ parameters:
 			message: "#^Variable \\$custom_theme might not be defined\\.$#"
 			count: 1
 			path: includes/theme.maintenance.inc
-
-		-
-			message: """
-				#^Call to deprecated method registerLoader\\(\\) of class Doctrine\\\\Common\\\\Annotations\\\\AnnotationRegistry\\:
-				This method is deprecated and will be removed in
-				            doctrine/annotations 2\\.0\\. Annotations will be autoloaded in 2\\.0\\.$#
-			"""
-			count: 1
-			path: lib/Drupal/Component/Annotation/Plugin/Discovery/AnnotatedClassDiscovery.php
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\Component\\\\Datetime\\\\DateTimePlus\\:\\:getTimeZone\\(\\)\\.$#"
@@ -96,61 +78,6 @@ parameters:
 			message: "#^Variable \\$yi in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: lib/Drupal/Component/Diff/DiffFormatter.php
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Component\\\\Diff\\\\Engine\\\\DiffEngine\\:\\:\\$in_seq\\.$#"
-			count: 3
-			path: lib/Drupal/Component/Diff/Engine/DiffEngine.php
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Component\\\\Diff\\\\Engine\\\\DiffEngine\\:\\:\\$lcs\\.$#"
-			count: 4
-			path: lib/Drupal/Component/Diff/Engine/DiffEngine.php
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Component\\\\Diff\\\\Engine\\\\DiffEngine\\:\\:\\$seq\\.$#"
-			count: 7
-			path: lib/Drupal/Component/Diff/Engine/DiffEngine.php
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Component\\\\Diff\\\\Engine\\\\DiffEngine\\:\\:\\$xchanged\\.$#"
-			count: 6
-			path: lib/Drupal/Component/Diff/Engine/DiffEngine.php
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Component\\\\Diff\\\\Engine\\\\DiffEngine\\:\\:\\$xind\\.$#"
-			count: 2
-			path: lib/Drupal/Component/Diff/Engine/DiffEngine.php
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Component\\\\Diff\\\\Engine\\\\DiffEngine\\:\\:\\$xv\\.$#"
-			count: 5
-			path: lib/Drupal/Component/Diff/Engine/DiffEngine.php
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Component\\\\Diff\\\\Engine\\\\DiffEngine\\:\\:\\$ychanged\\.$#"
-			count: 5
-			path: lib/Drupal/Component/Diff/Engine/DiffEngine.php
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Component\\\\Diff\\\\Engine\\\\DiffEngine\\:\\:\\$yind\\.$#"
-			count: 2
-			path: lib/Drupal/Component/Diff/Engine/DiffEngine.php
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Component\\\\Diff\\\\Engine\\\\DiffEngine\\:\\:\\$yv\\.$#"
-			count: 5
-			path: lib/Drupal/Component/Diff/Engine/DiffEngine.php
-
-		-
-			message: "#^Variable \\$k might not be defined\\.$#"
-			count: 4
-			path: lib/Drupal/Component/Diff/Engine/DiffEngine.php
-
-		-
-			message: "#^Variable \\$seps might not be defined\\.$#"
-			count: 3
-			path: lib/Drupal/Component/Diff/Engine/DiffEngine.php
 
 		-
 			message: "#^Constructor of class Drupal\\\\Component\\\\FileCache\\\\NullFileCache has an unused parameter \\$cache_backend_class\\.$#"
@@ -238,30 +165,6 @@ parameters:
 			path: lib/Drupal/Core/Block/BlockManager.php
 
 		-
-			message: """
-				#^Class Drupal\\\\Core\\\\Cache\\\\CacheFactory implements deprecated interface Symfony\\\\Component\\\\DependencyInjection\\\\ContainerAwareInterface\\:
-				since Symfony 6\\.4, use dependency injection instead$#
-			"""
-			count: 1
-			path: lib/Drupal/Core/Cache/CacheFactory.php
-
-		-
-			message: """
-				#^Usage of deprecated trait Symfony\\\\Component\\\\DependencyInjection\\\\ContainerAwareTrait in class Drupal\\\\Core\\\\Cache\\\\CacheFactory\\:
-				since Symfony 6\\.4, use dependency injection instead$#
-			"""
-			count: 1
-			path: lib/Drupal/Core/Cache/CacheFactory.php
-
-		-
-			message: """
-				#^Usage of deprecated trait Symfony\\\\Component\\\\DependencyInjection\\\\ContainerAwareTrait in class Drupal\\\\Core\\\\Cache\\\\ChainedFastBackendFactory\\:
-				since Symfony 6\\.4, use dependency injection instead$#
-			"""
-			count: 1
-			path: lib/Drupal/Core/Cache/ChainedFastBackendFactory.php
-
-		-
 			message: "#^Constructor of class Drupal\\\\Core\\\\Cache\\\\NullBackend has an unused parameter \\$bin\\.$#"
 			count: 1
 			path: lib/Drupal/Core/Cache/NullBackend.php
@@ -277,15 +180,6 @@ parameters:
 			path: lib/Drupal/Core/Condition/ConditionManager.php
 
 		-
-			message: """
-				#^Fetching deprecated class constant RETURN_AFFECTED of class Drupal\\\\Core\\\\Database\\\\Database\\:
-				in drupal\\:9\\.4\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 4
-			path: lib/Drupal/Core/Config/DatabaseStorage.php
-
-		-
 			message: "#^Variable \\$value in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 2
 			path: lib/Drupal/Core/Config/Entity/Query/Condition.php
@@ -296,54 +190,9 @@ parameters:
 			path: lib/Drupal/Core/Config/ExtensionInstallStorage.php
 
 		-
-			message: """
-				#^Fetching deprecated class constant RETURN_AFFECTED of class Drupal\\\\Core\\\\Database\\\\Database\\:
-				in drupal\\:9\\.4\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 1
-			path: lib/Drupal/Core/Database/Connection.php
-
-		-
-			message: """
-				#^Fetching deprecated class constant RETURN_INSERT_ID of class Drupal\\\\Core\\\\Database\\\\Database\\:
-				in drupal\\:9\\.4\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 1
-			path: lib/Drupal/Core/Database/Connection.php
-
-		-
-			message: """
-				#^Fetching deprecated class constant RETURN_NULL of class Drupal\\\\Core\\\\Database\\\\Database\\:
-				in drupal\\:9\\.4\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 1
-			path: lib/Drupal/Core/Database/Connection.php
-
-		-
-			message: """
-				#^Fetching deprecated class constant RETURN_STATEMENT of class Drupal\\\\Core\\\\Database\\\\Database\\:
-				in drupal\\:9\\.4\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 2
-			path: lib/Drupal/Core/Database/Connection.php
-
-		-
 			message: "#^Variable \\$statement might not be defined\\.$#"
 			count: 1
 			path: lib/Drupal/Core/Database/Connection.php
-
-		-
-			message: """
-				#^Fetching deprecated class constant RETURN_AFFECTED of class Drupal\\\\Core\\\\Database\\\\Database\\:
-				in drupal\\:9\\.4\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 1
-			path: lib/Drupal/Core/Database/Query/Delete.php
 
 		-
 			message: "#^Method Drupal\\\\Core\\\\Database\\\\Query\\\\Delete\\:\\:execute\\(\\) should return int but return statement is missing\\.$#"
@@ -351,63 +200,9 @@ parameters:
 			path: lib/Drupal/Core/Database/Query/Delete.php
 
 		-
-			message: """
-				#^Fetching deprecated class constant RETURN_INSERT_ID of class Drupal\\\\Core\\\\Database\\\\Database\\:
-				in drupal\\:9\\.4\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 1
-			path: lib/Drupal/Core/Database/Query/Insert.php
-
-		-
-			message: """
-				#^Fetching deprecated class constant RETURN_AFFECTED of class Drupal\\\\Core\\\\Database\\\\Database\\:
-				in drupal\\:9\\.4\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 1
-			path: lib/Drupal/Core/Database/Query/Merge.php
-
-		-
 			message: "#^Method Drupal\\\\Core\\\\Database\\\\Query\\\\Merge\\:\\:__toString\\(\\) should return string but return statement is missing\\.$#"
 			count: 1
 			path: lib/Drupal/Core/Database/Query/Merge.php
-
-		-
-			message: """
-				#^Fetching deprecated class constant RETURN_STATEMENT of class Drupal\\\\Core\\\\Database\\\\Database\\:
-				in drupal\\:9\\.4\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 1
-			path: lib/Drupal/Core/Database/Query/Select.php
-
-		-
-			message: """
-				#^Fetching deprecated class constant RETURN_AFFECTED of class Drupal\\\\Core\\\\Database\\\\Database\\:
-				in drupal\\:9\\.4\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 1
-			path: lib/Drupal/Core/Database/Query/Truncate.php
-
-		-
-			message: """
-				#^Fetching deprecated class constant RETURN_AFFECTED of class Drupal\\\\Core\\\\Database\\\\Database\\:
-				in drupal\\:9\\.4\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 1
-			path: lib/Drupal/Core/Database/Query/Update.php
-
-		-
-			message: """
-				#^Fetching deprecated class constant RETURN_AFFECTED of class Drupal\\\\Core\\\\Database\\\\Database\\:
-				in drupal\\:9\\.4\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 1
-			path: lib/Drupal/Core/Database/Query/Upsert.php
 
 		-
 			message: "#^Variable \\$affected_rows might not be defined\\.$#"
@@ -424,24 +219,6 @@ parameters:
 			path: lib/Drupal/Core/DependencyInjection/ContainerBuilder.php
 
 		-
-			message: """
-				#^Call to deprecated method closing\\(\\) of class Drupal\\\\Component\\\\Diff\\\\WordLevelDiff\\:
-				in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 1
-			path: lib/Drupal/Core/Diff/DiffFormatter.php
-
-		-
-			message: """
-				#^Call to deprecated method orig\\(\\) of class Drupal\\\\Component\\\\Diff\\\\WordLevelDiff\\:
-				in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 1
-			path: lib/Drupal/Core/Diff/DiffFormatter.php
-
-		-
 			message: "#^Method Drupal\\\\Core\\\\DrupalKernel\\:\\:discoverServiceProviders\\(\\) should return array but return statement is missing\\.$#"
 			count: 1
 			path: lib/Drupal/Core/DrupalKernel.php
@@ -455,14 +232,6 @@ parameters:
 			message: "#^Variable \\$container_definition might not be defined\\.$#"
 			count: 1
 			path: lib/Drupal/Core/DrupalKernel.php
-
-		-
-			message: """
-				#^Interface Drupal\\\\Core\\\\DrupalKernelInterface extends deprecated interface Symfony\\\\Component\\\\DependencyInjection\\\\ContainerAwareInterface\\:
-				since Symfony 6\\.4, use dependency injection instead$#
-			"""
-			count: 1
-			path: lib/Drupal/Core/DrupalKernelInterface.php
 
 		-
 			message: "#^Method Drupal\\\\Core\\\\Entity\\\\ContentEntityConfirmFormBase\\:\\:save\\(\\) should return int but return statement is missing\\.$#"
@@ -558,15 +327,6 @@ parameters:
 			message: "#^Variable \\$relationship_specifier might not be defined\\.$#"
 			count: 5
 			path: lib/Drupal/Core/Entity/Query/Sql/Tables.php
-
-		-
-			message: """
-				#^Fetching deprecated class constant RETURN_INSERT_ID of class Drupal\\\\Core\\\\Database\\\\Database\\:
-				in drupal\\:9\\.4\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 2
-			path: lib/Drupal/Core/Entity/Sql/SqlContentEntityStorage.php
 
 		-
 			message: "#^Variable \\$revision_query might not be defined\\.$#"
@@ -749,15 +509,6 @@ parameters:
 			path: lib/Drupal/Core/Menu/MenuLinkManager.php
 
 		-
-			message: """
-				#^Fetching deprecated class constant RETURN_INSERT_ID of class Drupal\\\\Core\\\\Database\\\\Database\\:
-				in drupal\\:9\\.4\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
-				  replacement\\.$#
-			"""
-			count: 1
-			path: lib/Drupal/Core/Menu/MenuTreeStorage.php
-
-		-
 			message: "#^Variable \\$transaction in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
 			path: lib/Drupal/Core/Menu/MenuTreeStorage.php
@@ -822,14 +573,6 @@ parameters:
 			message: "#^Variable \\$index might not be defined\\.$#"
 			count: 3
 			path: lib/Drupal/Core/Site/SettingsEditor.php
-
-		-
-			message: """
-				#^Usage of deprecated trait Symfony\\\\Component\\\\DependencyInjection\\\\ContainerAwareTrait in class Drupal\\\\Core\\\\StackMiddleware\\\\Session\\:
-				since Symfony 6\\.4, use dependency injection instead$#
-			"""
-			count: 1
-			path: lib/Drupal/Core/StackMiddleware/Session.php
 
 		-
 			message: "#^Method Drupal\\\\Core\\\\Template\\\\AttributeValueBase\\:\\:render\\(\\) should return string but return statement is missing\\.$#"
@@ -1457,15 +1200,6 @@ parameters:
 			path: modules/migrate/src/MigrateException.php
 
 		-
-			message: """
-				#^Call to deprecated method registerLoader\\(\\) of class Doctrine\\\\Common\\\\Annotations\\\\AnnotationRegistry\\:
-				This method is deprecated and will be removed in
-				            doctrine/annotations 2\\.0\\. Annotations will be autoloaded in 2\\.0\\.$#
-			"""
-			count: 1
-			path: modules/migrate/src/Plugin/Discovery/AnnotatedClassDiscoveryAutomatedProviders.php
-
-		-
 			message: "#^Missing cache backend declaration for performance\\.$#"
 			count: 1
 			path: modules/migrate/src/Plugin/MigrateDestinationPluginManager.php
@@ -1616,15 +1350,6 @@ parameters:
 			path: modules/migrate_drupal_ui/tests/src/Functional/MultilingualReviewPageTestBase.php
 
 		-
-			message: """
-				#^Access to deprecated property \\$needsCleanup of class Drupal\\\\mysql\\\\Driver\\\\Database\\\\mysql\\\\Connection\\:
-				in drupal\\:10\\.2\\.0 and is removed from drupal\\:11\\.0\\.0\\. There's no
-				   replacement\\.$#
-			"""
-			count: 1
-			path: modules/mysql/src/Driver/Database/mysql/Connection.php
-
-		-
 			message: "#^Variable \\$last_insert_id might not be defined\\.$#"
 			count: 1
 			path: modules/mysql/src/Driver/Database/mysql/Insert.php
@@ -1720,15 +1445,6 @@ parameters:
 			path: modules/path/src/Plugin/Field/FieldType/PathItem.php
 
 		-
-			message: """
-				#^Call to deprecated method makeSequenceName\\(\\) of class Drupal\\\\Core\\\\Database\\\\Connection\\:
-				in drupal\\:10\\.2\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is
-				  no replacement\\.$#
-			"""
-			count: 1
-			path: modules/pgsql/src/Driver/Database/pgsql/Schema.php
-
-		-
 			message: "#^Variable \\$table_field might not be defined\\.$#"
 			count: 1
 			path: modules/pgsql/src/Driver/Database/pgsql/Select.php
@@ -1737,15 +1453,6 @@ parameters:
 			message: "#^Method Drupal\\\\pgsql\\\\Driver\\\\Database\\\\pgsql\\\\Upsert\\:\\:execute\\(\\) should return int but return statement is missing\\.$#"
 			count: 1
 			path: modules/pgsql/src/Driver/Database/pgsql/Upsert.php
-
-		-
-			message: """
-				#^Call to deprecated method makeSequenceName\\(\\) of class Drupal\\\\Core\\\\Database\\\\Connection\\:
-				in drupal\\:10\\.2\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is
-				  no replacement\\.$#
-			"""
-			count: 1
-			path: modules/pgsql/src/Update10101.php
 
 		-
 			message: "#^Variable \\$responsive_image_styles in empty\\(\\) always exists and is not falsy\\.$#"
@@ -2544,22 +2251,6 @@ parameters:
 			path: tests/Drupal/KernelTests/Core/Database/DriverSpecificKernelTestBase.php
 
 		-
-			message: """
-				#^Call to deprecated method expectError\\(\\) of class PHPUnit\\\\Framework\\\\TestCase\\:
-				https\\://github\\.com/sebastianbergmann/phpunit/issues/5062$#
-			"""
-			count: 3
-			path: tests/Drupal/KernelTests/Core/Database/StatementTest.php
-
-		-
-			message: """
-				#^Call to deprecated method expectErrorMessage\\(\\) of class PHPUnit\\\\Framework\\\\TestCase\\:
-				https\\://github\\.com/sebastianbergmann/phpunit/issues/5062$#
-			"""
-			count: 3
-			path: tests/Drupal/KernelTests/Core/Database/StatementTest.php
-
-		-
 			message: "#^Variable \\$title might not be defined\\.$#"
 			count: 2
 			path: tests/Drupal/KernelTests/Core/Entity/CreateSampleEntityTest.php
@@ -2629,15 +2320,6 @@ parameters:
 			"""
 			count: 1
 			path: tests/Drupal/Tests/BrowserTestBase.php
-
-		-
-			message: """
-				#^Call to deprecated method registerAutoloadNamespace\\(\\) of class Doctrine\\\\Common\\\\Annotations\\\\AnnotationRegistry\\:
-				This method is deprecated and will be removed in
-				            doctrine/annotations 2\\.0\\. Annotations will be autoloaded in 2\\.0\\.$#
-			"""
-			count: 1
-			path: tests/Drupal/Tests/Component/Annotation/Doctrine/DocParserTest.php
 
 		-
 			message: "#^Constructor of class Symfony\\\\Component\\\\ExpressionLanguage\\\\Expression has an unused parameter \\$expression\\.$#"
@@ -2756,24 +2438,6 @@ parameters:
 			"""
 			count: 1
 			path: tests/Drupal/Tests/Core/Database/ConditionTest.php
-
-		-
-			message: """
-				#^Call to deprecated method findCaller\\(\\) of class Drupal\\\\Core\\\\Database\\\\Log\\:
-				in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. Use
-				  Connection\\:\\:findCallerFromDebugBacktrace\\(\\)\\.$#
-			"""
-			count: 1
-			path: tests/Drupal/Tests/Core/Database/Stub/StubConnection.php
-
-		-
-			message: """
-				#^Fetching class constant class of deprecated class Drupal\\\\Core\\\\Database\\\\StatementWrapper\\:
-				in drupal\\:10\\.1\\.0 and is removed from drupal\\:11\\.0\\.0\\. Use
-				  \\\\Drupal\\\\Core\\\\Database\\\\StatementWrapperIterator instead\\.$#
-			"""
-			count: 1
-			path: tests/Drupal/Tests/Core/Database/Stub/StubConnection.php
 
 		-
 			message: """
@@ -2933,3 +2597,48 @@ parameters:
 			"""
 			count: 1
 			path: tests/Drupal/Tests/Listeners/DrupalListener.php
+
+		-
+			message: """
+				#^Class Drupal\\\\Tests\\\\TestSuites\\\\BuildTestSuite extends deprecated class Drupal\\\\Tests\\\\TestSuites\\\\TestSuiteBase\\:
+				in drupal\\:10\\.3\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
+				  replacement and test discovery will be handled differently in PHPUnit 10\\.$#
+			"""
+			count: 1
+			path: tests/TestSuites/BuildTestSuite.php
+
+		-
+			message: """
+				#^Class Drupal\\\\Tests\\\\TestSuites\\\\FunctionalJavascriptTestSuite extends deprecated class Drupal\\\\Tests\\\\TestSuites\\\\TestSuiteBase\\:
+				in drupal\\:10\\.3\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
+				  replacement and test discovery will be handled differently in PHPUnit 10\\.$#
+			"""
+			count: 1
+			path: tests/TestSuites/FunctionalJavascriptTestSuite.php
+
+		-
+			message: """
+				#^Class Drupal\\\\Tests\\\\TestSuites\\\\FunctionalTestSuite extends deprecated class Drupal\\\\Tests\\\\TestSuites\\\\TestSuiteBase\\:
+				in drupal\\:10\\.3\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
+				  replacement and test discovery will be handled differently in PHPUnit 10\\.$#
+			"""
+			count: 1
+			path: tests/TestSuites/FunctionalTestSuite.php
+
+		-
+			message: """
+				#^Class Drupal\\\\Tests\\\\TestSuites\\\\KernelTestSuite extends deprecated class Drupal\\\\Tests\\\\TestSuites\\\\TestSuiteBase\\:
+				in drupal\\:10\\.3\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
+				  replacement and test discovery will be handled differently in PHPUnit 10\\.$#
+			"""
+			count: 1
+			path: tests/TestSuites/KernelTestSuite.php
+
+		-
+			message: """
+				#^Class Drupal\\\\Tests\\\\TestSuites\\\\UnitTestSuite extends deprecated class Drupal\\\\Tests\\\\TestSuites\\\\TestSuiteBase\\:
+				in drupal\\:10\\.3\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
+				  replacement and test discovery will be handled differently in PHPUnit 10\\.$#
+			"""
+			count: 1
+			path: tests/TestSuites/UnitTestSuite.php
