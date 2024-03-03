@@ -53,7 +53,7 @@ final class Recipe {
   public static function createFromDirectory(string $path): static {
     $recipe_data = self::parse($path . '/recipe.yml');
 
-    $recipe_discovery = new RecipeDiscovery([dirname($path)]);
+    $recipe_discovery = static::getRecipeDiscovery(dirname($path));
     $recipes = new RecipeConfigurator(is_array($recipe_data['recipes']) ? $recipe_data['recipes'] : [], $recipe_discovery);
     $install = new InstallConfigurator($recipe_data['install'], \Drupal::service('extension.list.module'), \Drupal::service('extension.list.theme'));
     $config = new ConfigConfigurator($recipe_data['config'], $path, \Drupal::service('config.storage'));
@@ -125,7 +125,10 @@ final class Recipe {
               value: basename(dirname($file)),
               message: 'The {{ compared_value }} recipe cannot depend on itself.',
             ),
-            new Callback(self::validateRecipeExists(...)),
+            new Callback(
+              callback: self::validateRecipeExists(...),
+              payload: dirname(dirname($file))
+            ),
           ]),
         ]),
       ]),
@@ -216,18 +219,31 @@ final class Recipe {
    *   The machine name of the recipe to look for.
    * @param \Symfony\Component\Validator\Context\ExecutionContextInterface $context
    *   The validator execution context.
+   * @param string $recipeDirectory
+   *   The directory the contains the recipe being validated.
    */
-  private static function validateRecipeExists(string $name, ExecutionContextInterface $context): void {
+  private static function validateRecipeExists(string $name, ExecutionContextInterface $context, string $recipeDirectory): void {
     if (empty($name)) {
       return;
     }
-    $discovery = new RecipeDiscovery([]);
     try {
-      $discovery->getRecipe($name);
+      static::getRecipeDiscovery($recipeDirectory)->getRecipe($name);
     }
     catch (UnknownRecipeException) {
       $context->addViolation('The %name recipe does not exist.', ['%name' => $name]);
     }
+  }
+
+  /**
+   * Gets the recipe discovery object for a recipe.
+   *
+   * @param string $recipeDirectory
+   *   The directory the contains the recipe.
+   *
+   * @return \Drupal\Core\Recipe\RecipeDiscovery
+   */
+  private static function getRecipeDiscovery(string $recipeDirectory): RecipeDiscovery {
+    return new RecipeDiscovery([$recipeDirectory]);
   }
 
 }

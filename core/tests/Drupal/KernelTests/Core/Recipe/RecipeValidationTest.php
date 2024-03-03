@@ -170,7 +170,6 @@ YAML,
 name: Non-existent recipe
 recipes:
   - vaporware
-  - recipe_include
 YAML,
       [
         '[recipes][0]' => ['The vaporware recipe does not exist.'],

@@ -25,7 +25,7 @@ class RecipeDiscoveryTest extends KernelTestBase {
    * @dataProvider providerRecipeDiscovery
    */
   public function testRecipeDiscovery(string $recipe, string $name): void {
-    $discovery = new RecipeDiscovery([]);
+    $discovery = new RecipeDiscovery(['core/tests/fixtures/recipes']);
     $recipe = $discovery->getRecipe($recipe);
     $this->assertSame($name, $recipe->name);
   }
@@ -43,7 +43,7 @@ class RecipeDiscoveryTest extends KernelTestBase {
    * @dataProvider providerRecipeDiscoveryException
    */
   public function testRecipeDiscoveryException(string $recipe): void {
-    $discovery = new RecipeDiscovery([]);
+    $discovery = new RecipeDiscovery(['core/tests/fixtures/recipes']);
     try {
       $discovery->getRecipe($recipe);
       $this->fail('Expected exception not thrown');
@@ -52,9 +52,9 @@ class RecipeDiscoveryTest extends KernelTestBase {
       $root = $this->getDrupalRoot();
       $this->assertSame($recipe, $e->recipe);
       $this->assertSame([
+        'core/tests/fixtures/recipes',
         $root . '/recipes',
         $root . '/core/recipes',
-        $root . '/core/tests/fixtures/recipes',
       ], $e->searchPaths);
       $this->assertSame('Can not find the ' . $recipe . ' recipe, search paths: ' . implode(', ', $e->searchPaths), $e->getMessage());
     }
