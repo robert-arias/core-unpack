@@ -2,11 +2,10 @@ name: 'Config from module and recipe'
 type: 'Testing'
 install:
   - config_test
-  - tour
-  - tour_test
+  - shortcut
+  - system
 config:
   import:
     config_test: '*'
-    tour_test:
-      - tour.tour.tour-test
-      - tour.tour.tour-test2
+    shortcut:
+      - shortcut.set.default

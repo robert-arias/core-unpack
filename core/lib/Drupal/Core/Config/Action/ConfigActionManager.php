@@ -12,6 +12,7 @@ use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Recipe\InvalidConfigException;
+use Drupal\Core\Validation\Plugin\Validation\Constraint\FullyValidatableConstraint;
 
 /**
  * @defgroup config_action_api Config Action API
@@ -116,10 +117,17 @@ class ConfigActionManager extends DefaultPluginManager {
       $typed_config = $this->typedConfig->createFromNameAndData($name, $this->configFactory->get($name)->getRawData());
       // All config objects are mappings.
       assert($typed_config instanceof Mapping);
-      /** @var \Symfony\Component\Validator\ConstraintViolationList $violations */
-      $violations = $typed_config->validate();
-      if (count($violations) > 0) {
-        throw new InvalidConfigException($violations, $typed_config);
+      foreach ($typed_config->getConstraints() as $constraint) {
+        // Only validate the config if it has explicitly been marked as being
+        // validatable.
+        if ($constraint instanceof FullyValidatableConstraint) {
+          /** @var \Symfony\Component\Validator\ConstraintViolationList $violations */
+          $violations = $typed_config->validate();
+          if (count($violations) > 0) {
+            throw new InvalidConfigException($violations, $typed_config);
+          }
+          break;
+        }
       }
     }
   }

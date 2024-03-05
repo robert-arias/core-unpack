@@ -2,8 +2,9 @@ name: 'Config wildcard'
 type: 'Testing'
 install:
   - config_test
-  - tour
+  - shortcut
+  - system
 config:
   import:
     config_test: '*'
-    tour: ~
+    shortcut: ~
