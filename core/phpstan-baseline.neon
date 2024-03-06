@@ -1162,14 +1162,6 @@ parameters:
 			path: modules/media/src/OEmbed/UrlResolver.php
 
 		-
-			message: """
-				#^Usage of deprecated trait Symfony\\\\Component\\\\DependencyInjection\\\\ContainerAwareTrait in class Drupal\\\\media_library\\\\OpenerResolver\\:
-				since Symfony 6\\.4, use dependency injection instead$#
-			"""
-			count: 1
-			path: modules/media_library/src/OpenerResolver.php
-
-		-
 			message: "#^Variable \\$jpg_image might not be defined\\.$#"
 			count: 1
 			path: modules/media_library/tests/src/FunctionalJavascript/EmbeddedFormWidgetTest.php
@@ -1624,22 +1616,6 @@ parameters:
 			path: modules/system/tests/modules/plugin_test/src/Plugin/TestPluginManager.php
 
 		-
-			message: """
-				#^Class Drupal\\\\service_provider_test\\\\TestClass implements deprecated interface Symfony\\\\Component\\\\DependencyInjection\\\\ContainerAwareInterface\\:
-				since Symfony 6\\.4, use dependency injection instead$#
-			"""
-			count: 1
-			path: modules/system/tests/modules/service_provider_test/src/TestClass.php
-
-		-
-			message: """
-				#^Usage of deprecated trait Symfony\\\\Component\\\\DependencyInjection\\\\ContainerAwareTrait in class Drupal\\\\service_provider_test\\\\TestClass\\:
-				since Symfony 6\\.4, use dependency injection instead$#
-			"""
-			count: 1
-			path: modules/system/tests/modules/service_provider_test/src/TestClass.php
-
-		-
 			message: "#^Access to an undefined property Drupal\\\\Tests\\\\system\\\\Functional\\\\FileTransfer\\\\TestFileTransfer\\:\\:\\$connection\\.$#"
 			count: 5
 			path: modules/system/tests/src/Functional/FileTransfer/TestFileTransfer.php
@@ -1941,11 +1917,6 @@ parameters:
 			path: modules/views/src/Plugin/views/filter/Broken.php
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\views\\\\Plugin\\\\views\\\\filter\\\\FilterPluginBase\\:\\:operators\\(\\)\\.$#"
-			count: 2
-			path: modules/views/src/Plugin/views/filter/FilterPluginBase.php
-
-		-
 			message: "#^Variable \\$groups might not be defined\\.$#"
 			count: 1
 			path: modules/views/src/Plugin/views/filter/FilterPluginBase.php
@@ -2181,42 +2152,6 @@ parameters:
 			path: tests/Drupal/BuildTests/Composer/Template/ComposerProjectTemplatesTest.php
 
 		-
-			message: """
-				#^Usage of deprecated trait Drupal\\\\BuildTests\\\\Framework\\\\ExternalCommandRequirementsTrait in class Drupal\\\\BuildTests\\\\Framework\\\\Tests\\\\ClassRequiresAvailable\\:
-				in drupal\\:10\\.2\\.0 and is removed from drupal\\:11\\.0\\.0\\. Use
-				Drupal\\\\\\\\TestTools\\\\\\\\Extension\\\\\\\\RequiresComposerTrait instead\\.$#
-			"""
-			count: 1
-			path: tests/Drupal/BuildTests/Framework/Tests/ExternalCommandRequirementTest.php
-
-		-
-			message: """
-				#^Usage of deprecated trait Drupal\\\\BuildTests\\\\Framework\\\\ExternalCommandRequirementsTrait in class Drupal\\\\BuildTests\\\\Framework\\\\Tests\\\\ClassRequiresUnavailable\\:
-				in drupal\\:10\\.2\\.0 and is removed from drupal\\:11\\.0\\.0\\. Use
-				Drupal\\\\\\\\TestTools\\\\\\\\Extension\\\\\\\\RequiresComposerTrait instead\\.$#
-			"""
-			count: 1
-			path: tests/Drupal/BuildTests/Framework/Tests/ExternalCommandRequirementTest.php
-
-		-
-			message: """
-				#^Usage of deprecated trait Drupal\\\\BuildTests\\\\Framework\\\\ExternalCommandRequirementsTrait in class Drupal\\\\BuildTests\\\\Framework\\\\Tests\\\\MethodRequires\\:
-				in drupal\\:10\\.2\\.0 and is removed from drupal\\:11\\.0\\.0\\. Use
-				Drupal\\\\\\\\TestTools\\\\\\\\Extension\\\\\\\\RequiresComposerTrait instead\\.$#
-			"""
-			count: 1
-			path: tests/Drupal/BuildTests/Framework/Tests/ExternalCommandRequirementTest.php
-
-		-
-			message: """
-				#^Usage of deprecated trait Drupal\\\\BuildTests\\\\Framework\\\\ExternalCommandRequirementsTrait in class Drupal\\\\BuildTests\\\\Framework\\\\Tests\\\\UsesCommandRequirements\\:
-				in drupal\\:10\\.2\\.0 and is removed from drupal\\:11\\.0\\.0\\. Use
-				Drupal\\\\\\\\TestTools\\\\\\\\Extension\\\\\\\\RequiresComposerTrait instead\\.$#
-			"""
-			count: 1
-			path: tests/Drupal/BuildTests/Framework/Tests/ExternalCommandRequirementTest.php
-
-		-
 			message: "#^Variable \\$found might not be defined\\.$#"
 			count: 1
 			path: tests/Drupal/KernelTests/Core/Cache/ApcuBackendTest.php
@@ -2425,14 +2360,6 @@ parameters:
 
 		-
 			message: """
-				#^Usage of deprecated trait Symfony\\\\Component\\\\DependencyInjection\\\\ContainerAwareTrait in class Drupal\\\\Tests\\\\Core\\\\Controller\\\\MockContainerAware\\:
-				since Symfony 6\\.4, use dependency injection instead$#
-			"""
-			count: 1
-			path: tests/Drupal/Tests/Core/Controller/ControllerResolverTest.php
-
-		-
-			message: """
 				#^Call to deprecated method expectError\\(\\) of class PHPUnit\\\\Framework\\\\TestCase\\:
 				https\\://github\\.com/sebastianbergmann/phpunit/issues/5062$#
 			"""
@@ -2564,14 +2491,6 @@ parameters:
 		-
 			message: """
 				#^Class Drupal\\\\Tests\\\\Core\\\\Utility\\\\MockContainerAware implements deprecated interface Symfony\\\\Component\\\\DependencyInjection\\\\ContainerAwareInterface\\:
-				since Symfony 6\\.4, use dependency injection instead$#
-			"""
-			count: 1
-			path: tests/Drupal/Tests/Core/Utility/CallableResolverTest.php
-
-		-
-			message: """
-				#^Usage of deprecated trait Symfony\\\\Component\\\\DependencyInjection\\\\ContainerAwareTrait in class Drupal\\\\Tests\\\\Core\\\\Utility\\\\MockContainerAware\\:
 				since Symfony 6\\.4, use dependency injection instead$#
 			"""
 			count: 1
