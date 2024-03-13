@@ -16,7 +16,7 @@ class RecipeValidationTest extends KernelTestBase {
   /**
    * Data provider for ::testRecipeValidation().
    *
-   * @return array[]
+   * @return \Generator
    *   The test cases.
    */
   public static function providerRecipeValidation(): iterable {
