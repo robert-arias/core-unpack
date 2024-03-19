@@ -108,7 +108,7 @@ cspell:
       done
       echo "Spellchecking the following directories:"
       echo  ${DIRECTORIES}
-    - yarn --cwd=./core run -s cspell -c .cspell.json --root .. ${DIRECTORIES}
+    - yarn run cspell -c .cspell.json --root .. ${DIRECTORIES}
 
 test:
   stage: test
