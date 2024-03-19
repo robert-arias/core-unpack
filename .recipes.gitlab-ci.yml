@@ -98,6 +98,7 @@ cspell:
   before_script:
     - cd core
     - corepack enable
+    - yarn install
   script:
     # Build up a list of the directories in the required format.
     - |
