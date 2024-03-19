@@ -291,19 +291,6 @@ YAML,
         ],
       ],
     ];
-    // @todo Uncomment this in https://drupal.org/i/3423523.
-    // @codingStandardsIgnoreStart
-//     yield 'non-existent config action' => [
-//       <<<YAML
-//name: Non-existent config action
-//config:
-//   actions:
-//     user.role.anonymous:
-//       some_non_existent_action: '*'
-//YAML,
-//       [],
-//     ];
-     // @codingStandardsIgnoreEnd
   }
 
   /**

@@ -2,6 +2,7 @@
 
 namespace Drupal\KernelTests\Core\Recipe;
 
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Recipe\Recipe;
 use Drupal\Core\Recipe\RecipePreExistingConfigException;
 use Drupal\Core\Recipe\RecipeRunner;
@@ -191,6 +192,29 @@ class RecipeRunnerTest extends KernelTestBase {
     $this->assertSame('Created by test', $config_test_entity->label());
     $this->assertSame('Set by recipe', $config_test_entity->getProtectedProperty());
     $this->assertSame('not bar', $this->config('config_test.system')->get('foo'));
+  }
+
+  public function testInvalidConfigAction() :void {
+    $recipe_data = <<<YAML
+name: Invalid config action
+install:
+  - config_test
+config:
+  actions:
+    config_test.dynamic.recipe:
+      ensure_exists:
+        label: 'Created by recipe'
+      setBody: 'Description set by recipe'
+YAML;
+
+    $dir = uniqid('public://');
+    mkdir($dir);
+    file_put_contents($dir . '/recipe.yml', $recipe_data);
+
+    $recipe = Recipe::createFromDirectory($dir);
+    $this->expectException(PluginNotFoundException::class);
+    $this->expectExceptionMessage('The "setBody" plugin does not exist.');
+    RecipeRunner::processRecipe($recipe);
   }
 
 }

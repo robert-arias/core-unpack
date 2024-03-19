@@ -89,7 +89,7 @@ final class RecipeCommand extends Command {
       $io->success(sprintf('%s applied successfully', $recipe->name));
       return 0;
     }
-    catch (InvalidConfigException $e) {
+    catch (\Throwable $e) {
       $this->rollBackToCheckpoint($backup_checkpoint);
       throw $e;
     }
