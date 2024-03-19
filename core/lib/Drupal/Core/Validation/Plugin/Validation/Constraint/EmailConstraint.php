@@ -20,21 +20,15 @@ class EmailConstraint extends Email {
   /**
    * {@inheritdoc}
    */
-  public function __construct($options = []) {
-    $options += ['mode' => 'strict'];
-    parent::__construct($options);
+  public function __construct(...$args) {
+    $this->mode = static::VALIDATION_MODE_STRICT;
+    parent::__construct(...$args);
   }
 
   /**
    * {@inheritdoc}
-   *
-   * @return string
-   *   The name of the class that validates this constraint.
-   *
-   * @todo Add method return type declaration.
-   * @see https://www.drupal.org/project/drupal/issues/3425150
    */
-  public function validatedBy() {
+  public function validatedBy(): string {
     return EmailValidator::class;
   }
 

@@ -172,13 +172,16 @@ class LocaleProjectStorage implements LocaleProjectStorageInterface {
       $this->all = TRUE;
     }
     if (!$this->sorted) {
-      uksort($this->cache, function ($a, $b) {
+      // Work around PHP 8.3.0 - 8.3.3 bug by assigning $this->cache to a local
+      // variable, see https://github.com/php/php-src/pull/13285.
+      $cache = $this->cache;
+      uksort($this->cache, function ($a, $b) use ($cache) {
         // Sort by weight, if available, and then by key. This allows locale
         // projects to set a weight, if required, and keeps the order consistent
-        // regardless of whether the list is built from code or retrieved from
+        // regardless of whether the list is built from code or retrieve from
         // the database.
-        $sort = ($this->cache[$a]['weight'] ?? 0) <=> ($this->cache[$b]['weight'] ?? 0);
-        return $sort === 0 ? $a <=> $b : $sort;
+        $sort = (int) ($cache[$a]['weight'] ?? 0) <=> (int) ($cache[$b]['weight'] ?? 0);
+        return $sort ?: strcmp($a, $b);
       });
       $this->sorted = TRUE;
     }

@@ -168,6 +168,17 @@ bytes:
   constraints:
     Callback: ['\Drupal\Component\Utility\Bytes', 'validateConstraint']
 
+weight:
+  type: integer
+  label: 'Weight'
+  constraints:
+    Range:
+      # @see PHP_INT_MIN (32-bit)
+      min: -2147483648
+      # @see PHP_INT_MAX (32-bit)
+      max: 2147483647
+    FullyValidatable: ~
+
 # Complex extended data types:
 
 # Root of a configuration object.
@@ -229,7 +240,7 @@ filter:
       type: boolean
       label: 'Status'
     weight:
-      type: integer
+      type: weight
       label: 'Weight'
     settings:
       type: filter_settings.[%parent.id]
@@ -483,7 +494,7 @@ display_variant.plugin:
       type: required_label
       label: 'Label'
     weight:
-      type: integer
+      type: weight
       label: 'Weight'
     uuid:
       type: uuid
@@ -605,17 +616,34 @@ core_date_format_pattern.1:
 field.storage_settings.*:
   type: mapping
   label: 'Settings'
+  # By default, a field type has no settings, so this can safely be considered
+  # fully validatable. A `FOO` field type that has one or more settings is
+  # required to create a `field.storage_settings.FOO` config schema type, and
+  # cannot possibly forget to do that, because validation errors would be
+  # triggered if it ever tried to save a setting, since this mapping allows no
+  # key-value pairs at all.
+  constraints:
+    FullyValidatable: ~
 
 field.field_settings.*:
   type: mapping
   label: 'Settings'
+  # By default, a field type has no settings, so this can safely be considered
+  # fully validatable. A `FOO` field type that has one or more settings is
+  # required to create a `field.field_settings.FOO` config schema type, and
+  # cannot possibly forget to do that, because validation errors would be
+  # triggered if it ever tried to save a setting, since this mapping allows no
+  # key-value pairs at all.
+  constraints:
+    FullyValidatable: ~
 
 field.value.*:
   type: mapping
   label: 'Default value'
 
 # Schema for the configuration of the String field type.
-
+# This field type has no field instance settings, so no specific config schema type.
+# @see `type: field.field_settings.*`
 field.storage_settings.string:
   type: mapping
   label: 'String settings'
@@ -629,10 +657,6 @@ field.storage_settings.string:
     is_ascii:
       type: boolean
       label: 'Contains US ASCII characters only'
-
-field.field_settings.string:
-  type: mapping
-  label: 'String settings'
 
 field.value.string:
   type: mapping
@@ -652,10 +676,6 @@ field.storage_settings.string_long:
       type: boolean
       label: 'Case sensitive'
 
-field.field_settings.string_long:
-  type: mapping
-  label: 'String (long) settings'
-
 field.value.string_long:
   type: mapping
   label: 'Default value'
@@ -665,17 +685,15 @@ field.value.string_long:
       label: 'Value'
 
 # Schema for the configuration of the Password field type.
-
+# This field type has no field instance settings, so no specific config schema type.
+# @see `type: field.field_settings.*`
 field.storage_settings.password:
   type: field.storage_settings.string
   label: 'Password settings'
 
-field.field_settings.password:
-  type: mapping
-  label: 'Password settings'
-
 # Schema for the configuration of the URI field type.
-
+# This field type has no field instance settings, so no specific config schema type.
+# @see `type: field.field_settings.*`
 field.storage_settings.uri:
   type: field.storage_settings.string
   label: 'URI settings'
@@ -687,10 +705,6 @@ field.storage_settings.uri:
       type: boolean
       label: 'Case sensitive'
 
-field.field_settings.uri:
-  type: mapping
-  label: 'URI settings'
-
 field.value.uri:
   type: mapping
   label: 'Default value'
@@ -700,15 +714,10 @@ field.value.uri:
       label: 'Value'
 
 # Schema for the configuration of the Created field type.
-
-field.storage_settings.created:
-  type: mapping
-  label: 'Created timestamp settings'
-
-field.field_settings.created:
-  type: mapping
-  label: 'Created timestamp settings'
-
+# This field type has no field storage settings, so no specific config schema type.
+# @see `type: field.storage_settings.*`
+# This field type has no field instance settings, so no specific config schema type.
+# @see `type: field.field_settings.*`
 field.value.created:
   type: mapping
   label: 'Default value'
@@ -718,15 +727,10 @@ field.value.created:
       label: 'Value'
 
 # Schema for the configuration of the Changed field type.
-
-field.storage_settings.changed:
-  type: mapping
-  label: 'Changed timestamp settings'
-
-field.field_settings.changed:
-  type: mapping
-  label: 'Changed timestamp settings'
-
+# This field type has no field storage settings, so no specific config schema type.
+# @see `type: field.storage_settings.*`
+# This field type has no field instance settings, so no specific config schema type.
+# @see `type: field.field_settings.*`
 field.value.changed:
   type: mapping
   label: 'Default value'
@@ -794,11 +798,8 @@ field.value.boolean:
       label: 'Value'
 
 # Schema for the configuration of the Email field type.
-
-field.storage_settings.email:
-  type: mapping
-  label: 'Email settings'
-
+# This field type has no field storage settings, so no specific config schema type.
+# @see `type: field.storage_settings.*`
 field.field_settings.email:
   type: mapping
   label: 'Email settings'

@@ -340,6 +340,10 @@ ckeditor5_link:
   ckeditor5:
     plugins:
       - link.Link
+    config:
+      link:
+        # @see https://ckeditor.com/docs/ckeditor5/latest/features/link.html#adding-default-link-protocol-to-external-links
+        defaultProtocol: 'https://'
   drupal:
     label: Link
     library: core/ckeditor5.link
@@ -388,8 +392,8 @@ ckeditor5_linkMedia:
 ckeditor5_list:
   ckeditor5:
     plugins:
-      - list.DocumentList
-      - list.DocumentListProperties
+      - list.List
+      - list.ListProperties
     config:
       list:
         properties:

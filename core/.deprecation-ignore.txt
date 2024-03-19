@@ -19,21 +19,9 @@
 %Method "Twig\\TokenParser\\TokenParserInterface::[^"]+" might add "[^"]+" as a native return type declaration in the future. Do the same in (child class|implementation) "[^"]+" now to avoid errors or add an explicit @return annotation to suppress this message%
 %Method "WebDriver\\Service\\CurlServiceInterface::[^"]+" might add "[^"]+" as a native return type declaration in the future. Do the same in implementation "[^"]+" now to avoid errors or add an explicit @return annotation to suppress this message%
 
-# Skip root namespace native DebugClassLoader forward compatibility warnings.
-# These mostly refer to PHP native classes, could be fixed for PHP 8.1.
-%Method "[^\\]+::\w+\(\)" might add "[^"]+" as a native return type declaration in the future. Do the same in (child class|implementation) "[^"]+" now to avoid errors or add an explicit @return annotation to suppress this message%
-
 # The following deprecation is listed for Twig 2 compatibility when unit
 # testing using \Symfony\Component\ErrorHandler\DebugClassLoader.
 %The "Twig\\Environment::getTemplateClass\(\)" method is considered internal\. It may change without further notice\. You should not extend it from "Drupal\\Core\\Template\\TwigEnvironment"\.%
-
-# Skip deprecations warning for overriding Symfony properties in validation
-# constraints. See https://www.drupal.org/project/drupal/issues/3425150.
-%The "Symfony\\Component\\Validator\\Constraints\\[^"]+::\$[^"]+" property is considered final. You should not override it in "[^"]+"%
-
-# Drupal 11.
-%Drupal\\Core\\Form\\FormBuilder::getForm\(\).* will require a new "mixed \.\.\. \$args" argument in the next major version of its interface%
-%Drupal\\Core\\Form\\FormBuilder::submitForm\(\).* will require a new "mixed \.\.\. \$args" argument in the next major version of its interface%
 
 # PHPUnit 9.
 %"PHPUnit\\Framework\\TestListener".*is deprecated%
@@ -45,11 +33,12 @@
 %Expecting E_WARNING and E_USER_WARNING is deprecated and will no longer be possible in PHPUnit 10%
 %Expecting E_ERROR and E_USER_ERROR is deprecated and will no longer be possible in PHPUnit 10%
 
-# Symfony 7.
-%Method "Symfony\\Contracts\\Service\\ResetInterface::reset\(\)" might add "void" as a native return type declaration in the future. Do the same in implementation "Drupal\\Component\\DependencyInjection\\Container" now to avoid errors or add an explicit @return annotation to suppress this message.%
-
-# Temporarily for testing Symfony 6.4.
+# Symfony 6.4.
 %Since symfony/dependency-injection 6.4: "Symfony\\Component\\DependencyInjection\\ContainerAwareTrait" is deprecated, use dependency injection instead.%
-%The ".*" class uses "Symfony\\Component\\DependencyInjection\\ContainerAwareTrait" that is deprecated since Symfony 6.4, use dependency injection instead.%
-%The ".*" class implements "Symfony\\Component\\DependencyInjection\\ContainerAwareInterface" that is deprecated since Symfony 6.4, use dependency injection instead.%
-%The ".*" interface extends "Symfony\\Component\\DependencyInjection\\ContainerAwareInterface" that is deprecated since Symfony 6.4, use dependency injection instead.%
+%The "Drupal\\Core\\Logger\\LoggerChannelFactory" class implements "Symfony\\Component\\DependencyInjection\\ContainerAwareInterface" that is deprecated since Symfony 6.4, use dependency injection instead.%
+%The "Drupal\\Core\\Logger\\LoggerChannelFactory" class uses "Symfony\\Component\\DependencyInjection\\ContainerAwareTrait" that is deprecated since Symfony 6.4, use dependency injection instead.%
+%The "Drupal\\Core\\Queue\\QueueFactory" class implements "Symfony\\Component\\DependencyInjection\\ContainerAwareInterface" that is deprecated since Symfony 6.4, use dependency injection instead.%
+%The "Drupal\\Core\\Queue\\QueueFactory" class uses "Symfony\\Component\\DependencyInjection\\ContainerAwareTrait" that is deprecated since Symfony 6.4, use dependency injection instead.%
+%The "Drupal\\Tests\\Core\\Controller\\MockContainerAware" class implements "Symfony\\Component\\DependencyInjection\\ContainerAwareInterface" that is deprecated since Symfony 6.4, use dependency injection instead.%
+%The "Drupal\\Tests\\Core\\DependencyInjection\\DependencySerializationTestDummy" class implements "Symfony\\Component\\DependencyInjection\\ContainerAwareInterface" that is deprecated since Symfony 6.4, use dependency injection instead.%
+%The "Drupal\\Tests\\Core\\Utility\\MockContainerAware" class implements "Symfony\\Component\\DependencyInjection\\ContainerAwareInterface" that is deprecated since Symfony 6.4, use dependency injection instead.%

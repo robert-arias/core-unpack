@@ -72,6 +72,22 @@ class BlockContentListTest extends BlockContentTestBase {
   }
 
   /**
+   * Tests the region value when a new block is saved.
+   */
+  public function testBlockRegionPlacement(): void {
+    $this->drupalLogin($this->drupalCreateUser($this->permissions));
+    $this->drupalGet("admin/structure/block/library/stark", ['query' => ['region' => 'content']]);
+
+    $this->clickLink('Add content block');
+    $this->assertSession()->statusCodeEquals(200);
+    $edit = [
+      'info[0][value]' => 'foo',
+    ];
+    $this->submitForm($edit, 'Save');
+    $this->assertSession()->fieldValueEquals('region', 'content');
+  }
+
+  /**
    * Tests the content block listing page with different permissions.
    */
   public function testListing() {
@@ -138,7 +154,7 @@ class BlockContentListTest extends BlockContentTestBase {
     $this->assertSession()->linkByHrefExists('admin/content/block/' . $block->id() . '/delete');
     $this->clickLink('Delete');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->titleEquals("Are you sure you want to delete the content block $new_label? | Drupal");
+    $this->assertSession()->titleEquals("Are you sure you want to delete the content block $new_label? | $new_label | Drupal");
     $this->submitForm([], 'Delete');
 
     // Verify that the text of the label and machine name does not appear in

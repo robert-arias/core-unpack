@@ -1,4 +1,5 @@
 bartik
+corepack
 dblog
 dependee
 dependee's
@@ -8,6 +9,7 @@ druplicon
 drush
 langcode
 langcodes
+lullabot
 olivero
 olivero's
 simpletest

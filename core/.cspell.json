@@ -8,6 +8,7 @@
       ".*ignore",
       "composer.lock",
       "assets/vendor/**",
+      "misc/jquery.form.js",
       "lib/Drupal/Component/Diff/**",
       "lib/Drupal/Component/Transliteration/data/**",
       "lib/Drupal/Core/File/MimeType/ExtensionMimeTypeGuesser.php",
@@ -36,6 +37,8 @@
       "MAINTAINERS.txt",
       "package.json",
       "yarn.lock",
+      ".yarnrc.yml",
+      ".yarn/*",
       "misc/cspell/dictionary.txt",
       "phpstan*"
     ],
