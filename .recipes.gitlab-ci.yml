@@ -97,7 +97,7 @@ cspell:
   stage: test
   before_script:
     - cd core
-    - yarn install
+    - corepack enable
   script:
     # Build up a list of the directories in the required format.
     - |
