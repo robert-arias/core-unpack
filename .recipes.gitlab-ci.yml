@@ -187,6 +187,7 @@ build-patch:
     - if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
     -   git add recipe-$CI_COMMIT_BRANCH.patch
     -   git commit -m "Update recipe $CI_COMMIT_BRANCH patch $CI_COMMIT_SHORT_SHA $CI_COMMIT_MESSAGE"
+    -   git pull --rebase
     -   git push origin patch -o ci.skip
     - fi
   artifacts:
