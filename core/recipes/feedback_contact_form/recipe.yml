@@ -1,0 +1,14 @@
+name: 'Website feedback contact form'
+description: 'Provides a website feedback contact form.'
+type: 'Contact form'
+install:
+  - contact
+config:
+  import:
+    contact:
+      - contact.form.personal
+  actions:
+    user.role.anonymous:
+      grantPermission: 'access site-wide contact form'
+    user.role.authenticated:
+      grantPermission: 'access site-wide contact form'

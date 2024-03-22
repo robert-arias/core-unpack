@@ -49,8 +49,7 @@ class RollbackTest extends BrowserTestBase {
 
     /** @var string $recipe_fixture */
     $recipe_fixture = realpath(__DIR__ . "/../../../../fixtures/recipes/$recipe_fixture");
-    $process = $this->applyRecipe($recipe_fixture);
-    $this->assertGreaterThan(0, $process->getExitCode());
+    $process = $this->applyRecipe($recipe_fixture, 1);
     $this->assertStringContainsString("There were validation errors in $expected_invalid_config_name:", $process->getErrorOutput());
     $this->assertCheckpointsExist([
       "Backup before the '" . Recipe::createFromDirectory($recipe_fixture)->name . "' recipe.",

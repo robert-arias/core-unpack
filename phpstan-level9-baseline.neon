@@ -366,6 +366,11 @@ parameters:
 			path: core/lib/Drupal/Core/Recipe/UnknownRecipeException.php
 
 		-
+			message: "#^PHPDoc tag @var for variable \\$sync_data has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/tests/Drupal/FunctionalTests/Core/Recipe/StandardRecipeTest.php
+
+		-
 			message: "#^Cannot access offset 'admin_label' on mixed\\.$#"
 			count: 3
 			path: core/tests/Drupal/KernelTests/Core/Config/Action/ConfigActionTest.php

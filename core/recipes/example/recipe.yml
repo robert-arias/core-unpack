@@ -27,7 +27,7 @@ config:
     # Import all configuration that is provided by the text module and any
     # optional configuration that depends on the text module that is provided by
     # modules already installed.
-    text: *
+    text: '*'
 
   # Configuration actions may be defined. The structure here should be
   # entity_type.ID.action. Below the user role entity type with an ID of
@@ -41,6 +41,6 @@ config:
         - 'delete any article content'
         - 'edit any article content'
 
-content:
+content: {}
 # A Drupal recipe can have a content directory. All content in this
 # directory will be created after the configuration is installed.

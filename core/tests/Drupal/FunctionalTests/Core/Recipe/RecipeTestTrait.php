@@ -18,11 +18,14 @@ trait RecipeTestTrait {
    *
    * @param string $path
    *   The path of the recipe to apply. Must be a directory.
+   * @param int $expected_exit_code
+   *   The expected exit code of the `drupal recipe` process. Defaults to 0,
+   *   which indicates that no error occurred.
    *
    * @return \Symfony\Component\Process\Process
    *   The `drupal recipe` command process, after having run.
    */
-  protected function applyRecipe(string $path): Process {
+  protected function applyRecipe(string $path, int $expected_exit_code = 0): Process {
     assert($this instanceof BrowserTestBase);
     $this->assertDirectoryExists($path);
 
@@ -44,6 +47,7 @@ trait RecipeTestTrait {
       ->setTimeout(500);
 
     $process->run();
+    $this->assertSame($expected_exit_code, $process->getExitCode(), $process->getErrorOutput());
     // Applying a recipe:
     // - creates new checkpoints, hence the "state" service in the test runner
     //   is outdated

@@ -54,8 +54,7 @@ class RecipeCommandTest extends BrowserTestBase {
     ]);
 
     // Ensure recipes that fail have an exception message.
-    $process = $this->applyRecipe('core/tests/fixtures/recipes/invalid_config');
-    $this->assertSame(1, $process->getExitCode());
+    $process = $this->applyRecipe('core/tests/fixtures/recipes/invalid_config', 1);
     $this->assertStringContainsString("There were validation errors in core.date_format.invalid", $process->getErrorOutput());
     $this->assertCheckpointsExist([
       "Backup before the 'Install node with config' recipe.",

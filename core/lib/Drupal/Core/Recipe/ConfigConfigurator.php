@@ -32,6 +32,9 @@ final class ConfigConfigurator {
           unset($active_data['dependencies']);
         }
         $recipe_data = $recipe_storage->read($config_name);
+        if (empty($recipe_data['dependencies'])) {
+          unset($recipe_data['dependencies']);
+        }
         // Ensure we don't get a false mismatch due to differing key order.
         // @todo When https://www.drupal.org/project/drupal/issues/3230826 is
         //   fixed in core, use that API instead to sort the config data.
