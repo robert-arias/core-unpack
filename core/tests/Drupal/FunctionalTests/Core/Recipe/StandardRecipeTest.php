@@ -24,10 +24,6 @@ class StandardRecipeTest extends StandardTest {
   public function testStandard(): void {
     // Install some modules that Standard has optional integrations with.
     \Drupal::service('module_installer')->install(['media_library', 'content_moderation']);
-    // The standard config is sorted incorrectly. Save the config to make schema
-    // sort apply.
-    // @todo remove once https://www.drupal.org/i/3433042 lands
-    $this->config('core.entity_view_display.node.article.teaser')->save();
 
     // Export all the configuration so we can compare later.
     $this->copyConfig(\Drupal::service('config.storage'), \Drupal::service('config.storage.sync'));
