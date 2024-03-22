@@ -183,9 +183,6 @@ class MappingTest extends KernelTestBase {
       'block.settings.extra_field_block:*:*:*' => [
         'formatter',
       ],
-      'block.settings.page_title_block' => [
-        'base_route_title',
-      ],
       'block.settings.system_branding_block' => [
         'use_site_logo',
         'use_site_name',
@@ -217,7 +214,10 @@ class MappingTest extends KernelTestBase {
         'theme',
         'profile',
       ],
-      ['_core'],
+      [
+        '_core',
+        'profile',
+      ],
       [],
     ];
 
