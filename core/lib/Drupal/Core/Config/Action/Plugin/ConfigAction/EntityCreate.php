@@ -2,22 +2,23 @@
 
 namespace Drupal\Core\Config\Action\Plugin\ConfigAction;
 
+use Drupal\Core\Config\Action\Attribute\ConfigAction;
 use Drupal\Core\Config\Action\ConfigActionException;
 use Drupal\Core\Config\Action\ConfigActionPluginInterface;
 use Drupal\Core\Config\Action\Exists;
+use Drupal\Core\Config\Action\Plugin\ConfigAction\Deriver\EntityCreateDeriver;
 use Drupal\Core\Config\ConfigManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @ConfigAction(
- *   id = "entity_create",
- *   deriver = "\Drupal\Core\Config\Action\Plugin\ConfigAction\Deriver\EntityCreateDeriver",
- * )
- *
  * @internal
  *   This API is experimental.
  */
+#[ConfigAction(
+  id: 'entity_create',
+  deriver: EntityCreateDeriver::class,
+)]
 final class EntityCreate implements ConfigActionPluginInterface, ContainerFactoryPluginInterface {
 
   /**

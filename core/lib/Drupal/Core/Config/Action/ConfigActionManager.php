@@ -4,6 +4,7 @@ namespace Drupal\Core\Config\Action;
 
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Config\Action\Attribute\ConfigAction;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ConfigManagerInterface;
 use Drupal\Core\Config\Schema\Mapping;
@@ -79,7 +80,7 @@ class ConfigActionManager extends DefaultPluginManager {
     // Enable this namespace to be searched for plugins.
     $namespaces[__NAMESPACE__] = 'core/lib/Drupal/Core/Config/Action';
 
-    parent::__construct('Plugin/ConfigAction', $namespaces, $module_handler, 'Drupal\Core\Config\Action\ConfigActionPluginInterface', 'Drupal\Core\Config\Action\Annotation\ConfigAction');
+    parent::__construct('Plugin/ConfigAction', $namespaces, $module_handler, ConfigActionPluginInterface::class, ConfigAction::class);
 
     $this->alterInfo('config_action');
     $this->setCacheBackend($cache_backend, 'config_action');

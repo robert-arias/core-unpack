@@ -2,9 +2,11 @@
 
 namespace Drupal\Core\Config\Action\Plugin\ConfigAction;
 
+use Drupal\Core\Config\Action\Attribute\ConfigAction;
 use Drupal\Core\Config\Action\ConfigActionPluginInterface;
 use Drupal\Core\Config\Action\EntityMethodException;
 use Drupal\Core\Config\Action\Exists;
+use Drupal\Core\Config\Action\Plugin\ConfigAction\Deriver\EntityMethodDeriver;
 use Drupal\Core\Config\ConfigManagerInterface;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -27,16 +29,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * - If $data is an array and the method accepts more than one argument, $data
  *   will be unpacked into the method arguments.
  *
- * @ConfigAction(
- *   id = "entity_method",
- *   deriver = "\Drupal\Core\Config\Action\Plugin\ConfigAction\Deriver\EntityMethodDeriver",
- * )
- *
  * @internal
  *   This API is experimental.
  *
  * @see \Drupal\Core\Config\Action\Attribute\ActionMethod
  */
+#[ConfigAction(
+  id: 'entity_method',
+  deriver: EntityMethodDeriver::class,
+)]
 final class EntityMethod implements ConfigActionPluginInterface, ContainerFactoryPluginInterface {
 
   /**

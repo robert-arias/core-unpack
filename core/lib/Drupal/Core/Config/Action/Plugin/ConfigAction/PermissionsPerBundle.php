@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Drupal\Core\Config\Action\Plugin\ConfigAction;
 
 use Drupal\Component\Assertion\Inspector;
+use Drupal\Core\Config\Action\Attribute\ConfigAction;
 use Drupal\Core\Config\Action\ConfigActionException;
 use Drupal\Core\Config\Action\ConfigActionPluginInterface;
+use Drupal\Core\Config\Action\Plugin\ConfigAction\Deriver\PermissionsPerBundleDeriver;
 use Drupal\Core\Config\ConfigManagerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -14,15 +16,14 @@ use Drupal\user\RoleInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @ConfigAction(
- *   id = "permissions_per_bundle",
- *   deriver = "\Drupal\Core\Config\Action\Plugin\ConfigAction\Deriver\PermissionsPerBundleDeriver",
- *   entity_types = {"user_role"}
- * )
- *
  * @internal
  *   This API is experimental.
  */
+#[ConfigAction(
+  id: 'permissions_per_bundle',
+  entity_types: ['user_role'],
+  deriver: PermissionsPerBundleDeriver::class,
+)]
 final class PermissionsPerBundle implements ConfigActionPluginInterface, ContainerFactoryPluginInterface {
 
   public function __construct(

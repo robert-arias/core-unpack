@@ -2,21 +2,22 @@
 
 namespace Drupal\Core\Config\Action\Plugin\ConfigAction;
 
+use Drupal\Core\Config\Action\Attribute\ConfigAction;
 use Drupal\Core\Config\Action\ConfigActionException;
 use Drupal\Core\Config\Action\ConfigActionPluginInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @ConfigAction(
- *   id = "simple_config_update",
- *   admin_label = @Translation("Simple configuration update")
- * )
- *
  * @internal
  *   This API is experimental.
  */
+#[ConfigAction(
+  id: 'simple_config_update',
+  admin_label: new TranslatableMarkup('Simple configuration update'),
+)]
 final class SimpleConfigUpdate implements ConfigActionPluginInterface, ContainerFactoryPluginInterface {
 
   /**

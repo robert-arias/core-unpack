@@ -4,28 +4,28 @@ declare(strict_types=1);
 
 namespace Drupal\field\Plugin\ConfigAction;
 
+use Drupal\Core\Config\Action\Attribute\ConfigAction;
 use Drupal\Core\Config\Action\ConfigActionException;
 use Drupal\Core\Config\Action\ConfigActionPluginInterface;
 use Drupal\Core\Config\ConfigManagerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\field\FieldStorageConfigInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Adds a field to all bundles of its target entity type.
  *
- * @ConfigAction(
- *   id = "field_storage_config:addToAllBundles",
- *   label = @Translation("Add a field to all bundles"),
- *   entity_types = {"field_storage_config"},
- *   description = @Translation("Add this field on every bundle of its target entity type.")
- * )
- *
  * @internal
  *   This API is experimental.
  */
+#[ConfigAction(
+  id: 'field_storage_config:addToAllBundles',
+  admin_label: new TranslatableMarkup('Add a field to all bundles'),
+  entity_types: ['field_storage_config'],
+)]
 final class AddToAllBundles implements ConfigActionPluginInterface, ContainerFactoryPluginInterface {
 
   public function __construct(
