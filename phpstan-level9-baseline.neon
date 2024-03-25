@@ -366,6 +366,21 @@ parameters:
 			path: core/lib/Drupal/Core/Recipe/UnknownRecipeException.php
 
 		-
+			message: "#^Method Drupal\\\\content_moderation\\\\Plugin\\\\ConfigAction\\\\AddModeration\\:\\:create\\(\\) has parameter \\$configuration with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/modules/content_moderation/src/Plugin/ConfigAction/AddModeration.php
+
+		-
+			message: "#^Method Drupal\\\\content_moderation\\\\Plugin\\\\ConfigAction\\\\AddModerationDeriver\\:\\:getDerivativeDefinitions\\(\\) has parameter \\$base_plugin_definition with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/modules/content_moderation/src/Plugin/ConfigAction/AddModerationDeriver.php
+
+		-
+			message: "#^Method Drupal\\\\content_moderation\\\\Plugin\\\\ConfigAction\\\\AddModerationDeriver\\:\\:getDerivativeDefinitions\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/modules/content_moderation/src/Plugin/ConfigAction/AddModerationDeriver.php
+
+		-
 			message: "#^PHPDoc tag @var for variable \\$sync_data has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: core/tests/Drupal/FunctionalTests/Core/Recipe/StandardRecipeTest.php
