@@ -196,11 +196,6 @@ parameters:
 			path: core/lib/Drupal/Core/Recipe/InstallConfigurator.php
 
 		-
-			message: "#^Property Drupal\\\\Core\\\\Recipe\\\\InstallConfigurator\\:\\:\\$modules \\(array\\<string\\>\\) does not accept array\\<int, int\\|string\\>\\.$#"
-			count: 1
-			path: core/lib/Drupal/Core/Recipe/InstallConfigurator.php
-
-		-
 			message: "#^Parameter \\#1 \\$path of static method Drupal\\\\Core\\\\Recipe\\\\Recipe\\:\\:createFromDirectory\\(\\) expects string, mixed given\\.$#"
 			count: 1
 			path: core/lib/Drupal/Core/Recipe/RecipeCommand.php
