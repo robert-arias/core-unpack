@@ -259,6 +259,8 @@ YAML,
     yield 'config actions list is valid' => [
       <<<YAML
 name: 'Correct config actions list'
+install:
+  - config_test
 config:
   actions:
     config_test.dynamic.recipe:
@@ -288,6 +290,7 @@ YAML,
         '[config][actions][0]' => [
           'This value should be of type array.',
           'This value should not be blank.',
+          'Config actions cannot be applied to 0 because the 0 extension is not installed, and is not installed by this recipe or any of the recipes it depends on.',
         ],
       ],
     ];

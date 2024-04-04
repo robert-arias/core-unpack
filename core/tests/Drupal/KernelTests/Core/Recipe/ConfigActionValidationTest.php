@@ -7,6 +7,7 @@ namespace Drupal\KernelTests\Core\Recipe;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Recipe\InvalidConfigException;
 use Drupal\Core\Recipe\Recipe;
+use Drupal\Core\Recipe\RecipeFileException;
 use Drupal\Core\Recipe\RecipeRunner;
 use Drupal\KernelTests\KernelTestBase;
 
@@ -91,6 +92,49 @@ YAML;
       $violation = $e->violations->get(0);
       $this->assertSame($label_key, $violation->getPropertyPath());
       $this->assertSame("This value should not be blank.", (string) $violation->getMessage());
+    }
+  }
+
+  /**
+   * Tests validating that config actions' dependencies are present.
+   *
+   * Tests that the all of the config listed in a recipe's config actions are
+   * provided by extensions that will be installed by the recipe, or one of its
+   * dependencies (no matter how deeply nested).
+   *
+   * @testWith ["direct_dependency"]
+   *   ["indirect_dependency_one_level_down"]
+   *   ["indirect_dependency_two_levels_down"]
+   */
+  public function testConfigActionDependenciesAreValidated(string $name): void {
+    Recipe::createFromDirectory("core/tests/fixtures/recipes/config_actions_dependency_validation/$name");
+  }
+
+  /**
+   * Tests config action validation for missing dependency.
+   */
+  public function testConfigActionMissingDependency(): void {
+    $recipe_data = <<<YAML
+name: Config actions making bad decisions
+config:
+  actions:
+    random.config:
+      simple_config_update:
+        label: ''
+YAML;
+
+    $dir = uniqid('public://');
+    mkdir($dir);
+    file_put_contents($dir . '/recipe.yml', $recipe_data);
+    try {
+      Recipe::createFromDirectory($dir);
+      $this->fail('An exception should have been thrown.');
+    }
+    catch (RecipeFileException $e) {
+      $this->assertIsObject($e->violations);
+      $this->assertCount(1, $e->violations);
+      $this->assertSame('[config][actions][random.config]', $e->violations[0]->getPropertyPath());
+      $this->assertSame("Config actions cannot be applied to random.config because the random extension is not installed, and is not installed by this recipe or any of the recipes it depends on.", (string) $e->violations[0]->getMessage());
     }
   }
 

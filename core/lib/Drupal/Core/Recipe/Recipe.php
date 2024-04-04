@@ -82,6 +82,11 @@ final class Recipe {
     if (!$recipe_contents) {
       throw new RecipeFileException($file, "$file does not exist or could not be read.");
     }
+    // Certain parts of our validation need to be able to scan for other
+    // recipes.
+    // @see ::validateRecipeExists()
+    // @see ::validateConfigActions()
+    $discovery = self::getRecipeDiscovery(dirname($file, 2));
 
     $constraints = new Collection([
       'name' => new Required([
@@ -127,7 +132,7 @@ final class Recipe {
             ),
             new Callback(
               callback: self::validateRecipeExists(...),
-              payload: dirname(dirname($file))
+              payload: $discovery,
             ),
           ]),
         ]),
@@ -162,6 +167,10 @@ final class Recipe {
             new All([
               new Type('array'),
               new NotBlank(),
+              new Callback(
+                callback: self::validateConfigActions(...),
+                payload: $discovery,
+              ),
             ]),
           ]),
         ]),
@@ -219,15 +228,15 @@ final class Recipe {
    *   The machine name of the recipe to look for.
    * @param \Symfony\Component\Validator\Context\ExecutionContextInterface $context
    *   The validator execution context.
-   * @param string $recipeDirectory
-   *   The directory the contains the recipe being validated.
+   * @param \Drupal\Core\Recipe\RecipeDiscovery $discovery
+   *   A discovery object to find other recipes.
    */
-  private static function validateRecipeExists(string $name, ExecutionContextInterface $context, string $recipeDirectory): void {
+  private static function validateRecipeExists(string $name, ExecutionContextInterface $context, RecipeDiscovery $discovery): void {
     if (empty($name)) {
       return;
     }
     try {
-      static::getRecipeDiscovery($recipeDirectory)->getRecipe($name);
+      $discovery->getRecipe($name);
     }
     catch (UnknownRecipeException) {
       $context->addViolation('The %name recipe does not exist.', ['%name' => $name]);
@@ -244,6 +253,45 @@ final class Recipe {
    */
   private static function getRecipeDiscovery(string $recipeDirectory): RecipeDiscovery {
     return new RecipeDiscovery([$recipeDirectory]);
+  }
+
+  /**
+   * Validates that the corresponding extension is enabled for a config action.
+   *
+   * @param mixed $value
+   *   The config action; not used.
+   * @param \Symfony\Component\Validator\Context\ExecutionContextInterface $context
+   *   The validator execution context.
+   * @param \Drupal\Core\Recipe\RecipeDiscovery $discovery
+   *   A discovery object to find other recipes.
+   */
+  private static function validateConfigActions(mixed $value, ExecutionContextInterface $context, RecipeDiscovery $discovery): void {
+    $config_name = str_replace(['[config][actions]', '[', ']'], '', $context->getPropertyPath());
+    [$config_provider] = explode('.', $config_name);
+    if ($config_provider === 'core') {
+      return;
+    }
+
+    $recipe_being_validated = $context->getRoot();
+    assert(is_array($recipe_being_validated));
+
+    $configurator = new RecipeConfigurator($recipe_being_validated['recipes'] ?? [], $discovery);
+
+    // The config provider must either be an already-installed module or theme,
+    // or an extension being installed by this recipe or a recipe it depends on.
+    $all_extensions = [
+      ...array_keys(\Drupal::service('extension.list.module')->getAllInstalledInfo()),
+      ...array_keys(\Drupal::service('extension.list.theme')->getAllInstalledInfo()),
+      ...$recipe_being_validated['install'] ?? [],
+      ...$configurator->listAllExtensions(),
+    ];
+
+    if (!in_array($config_provider, $all_extensions, TRUE)) {
+      $context->addViolation('Config actions cannot be applied to %config_name because the %config_provider extension is not installed, and is not installed by this recipe or any of the recipes it depends on.', [
+        '%config_name' => $config_name,
+        '%config_provider' => $config_provider,
+      ]);
+    }
   }
 
 }
