@@ -1138,30 +1138,20 @@ abstract class ArgumentPluginBase extends HandlerBase implements CacheableDepend
    */
   public function getPlugin($type = 'argument_default', $name = NULL) {
     $options = [];
-    switch ($type) {
-      case 'argument_default':
-        if (!isset($this->options['default_argument_type'])) {
-          return;
-        }
-        $plugin_name = $this->options['default_argument_type'];
-        $options_name = 'default_argument_options';
-        break;
-
-      case 'argument_validator':
-        if (!isset($this->options['validate']['type'])) {
-          return;
-        }
-        $plugin_name = $this->options['validate']['type'];
-        $options_name = 'validate_options';
-        break;
-
-      case 'style':
-        if (!isset($this->options['summary']['format'])) {
-          return;
-        }
-        $plugin_name = $this->options['summary']['format'];
-        $options_name = 'summary_options';
+    $plugin_name = match ($type) {
+      'argument_default' => $this->options['default_argument_type'] ?? NULL,
+      'argument_validator' => $this->options['validate']['type'] ?? NULL,
+      'style' => $this->options['summary']['format'] ?? NULL,
+    };
+    if ($plugin_name === NULL) {
+      return NULL;
     }
+
+    $options_name = match ($type) {
+      'argument_default' => 'default_argument_options',
+      'argument_validator' => 'validate_options',
+      'style' => 'summary_options',
+    };
 
     if (!$name) {
       $name = $plugin_name;
@@ -1400,6 +1390,21 @@ abstract class ArgumentPluginBase extends HandlerBase implements CacheableDepend
    */
   public function getContextDefinition() {
     return $this->getPlugin('argument_validator')->getContextDefinition();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function adminSummary() {
+    // If an argument default has been set, show which argument default has been
+    // set.
+    if ($this->options['default_action'] === 'default') {
+      $plugin = $this->getPlugin();
+      if ($plugin) {
+        return $this->t('Default: @plugin_title', ['@plugin_title' => $plugin->pluginTitle()]);
+      }
+    }
+    return '';
   }
 
 }

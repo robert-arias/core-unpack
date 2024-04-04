@@ -225,7 +225,7 @@ default:
 'PHP 8.3 SQLite 3':
   <<: [ *default-stage, *run-on-mr ]
   variables:
-    _TARGET_PHP: "8.2"
+    _TARGET_PHP: "8.3"
     _TARGET_DB: "sqlite-3"
 
 # Jobs running on commits.
@@ -448,6 +448,8 @@ default:
       - 100
       # `drush pm:install config_inspector …` fails (implies failure during module installation)
       - 101
+      # Temporarily allow this to fail as there's are bugs with adding/removing/modifying config schemas.
+      - 1
   script:
     # Revert back to the tip of the branch this MR started from.
     - git checkout -f $CI_MERGE_REQUEST_DIFF_BASE_SHA
@@ -455,7 +457,7 @@ default:
     - composer require drush/drush drupal/config_inspector || exit 100
     # Install Drupal's Standard install profile + all core modules + the config inspector module.
     - php core/scripts/drupal install standard
-    - ls core/modules | xargs vendor/bin/drush pm:install --yes
+    - ls core/modules | grep -v help_topics | xargs vendor/bin/drush pm:install --yes
     - vendor/bin/drush pm:install config_inspector --yes --quiet || exit 101
     # Compute statistics for coverage of validatable config for HEAD.
     - vendor/bin/drush config:inspect --statistics > HEAD.json

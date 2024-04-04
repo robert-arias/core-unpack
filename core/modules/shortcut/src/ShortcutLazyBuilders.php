@@ -2,8 +2,10 @@
 
 namespace Drupal\shortcut;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Security\TrustedCallbackInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 
 /**
@@ -23,8 +25,12 @@ class ShortcutLazyBuilders implements TrustedCallbackInterface {
    *
    * @param \Drupal\Core\Render\RendererInterface $renderer
    *   The renderer service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The entity type manager.
+   * @param \Drupal\Core\Session\AccountInterface $currentUser
+   *   The current user.
    */
-  public function __construct(RendererInterface $renderer) {
+  public function __construct(RendererInterface $renderer, protected EntityTypeManagerInterface $entityTypeManager, protected AccountInterface $currentUser) {
     $this->renderer = $renderer;
   }
 
@@ -45,7 +51,8 @@ class ShortcutLazyBuilders implements TrustedCallbackInterface {
    *   A renderable array of shortcut links.
    */
   public function lazyLinks(bool $show_configure_link = TRUE) {
-    $shortcut_set = shortcut_current_displayed_set();
+    $shortcut_set = $this->entityTypeManager->getStorage('shortcut_set')
+      ->getDisplayedToUser($this->currentUser);
 
     $links = shortcut_renderable_links();
 
@@ -63,6 +70,7 @@ class ShortcutLazyBuilders implements TrustedCallbackInterface {
       'shortcuts' => $links,
       'configure' => $configure_link,
     ];
+
     $this->renderer->addCacheableDependency($build, $shortcut_set);
 
     return $build;

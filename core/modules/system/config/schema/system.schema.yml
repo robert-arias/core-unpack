@@ -58,6 +58,8 @@ system.maintenance:
 system.cron:
   type: config_object
   label: 'Cron settings'
+  constraints:
+    FullyValidatable: ~
   mapping:
     threshold:
       type: mapping
@@ -66,11 +68,19 @@ system.cron:
         requirements_warning:
           type: integer
           label: 'Requirements warning period'
+          constraints:
+            # @see system_requirements()
+            Range:
+              min: 60
         requirements_error:
           type: integer
           label: 'Requirements error period'
+          constraints:
+            # @see system_requirements()
+            Range:
+              min: 300
     logging:
-      type: integer
+      type: boolean
       label: 'Detailed cron logging'
 
 system.date:
@@ -111,6 +121,8 @@ system.date:
 system.diff:
   type: config_object
   label: 'Diff settings'
+  constraints:
+    FullyValidatable: ~
   mapping:
     context:
       type: mapping
@@ -119,9 +131,17 @@ system.diff:
         lines_leading:
           type: integer
           label: 'Number of leading lines in a diff'
+          constraints:
+            # @see \Drupal\Component\Diff\DiffFormatter
+            Range:
+              min: 0
         lines_trailing:
           type: integer
           label: 'Number of trailing lines in a diff'
+          constraints:
+            # @see \Drupal\Component\Diff\DiffFormatter
+            Range:
+              min: 0
 
 system.logging:
   type: config_object

@@ -564,7 +564,9 @@ services:
   Drupal\Core\Site\Settings: '@settings'
   state:
     class: Drupal\Core\State\State
-    arguments: ['@keyvalue']
+    arguments: ['@keyvalue', '@cache.bootstrap', '@lock']
+    tags:
+      - { name: needs_destruction }
   Drupal\Core\State\StateInterface: '@state'
   queue:
     class: Drupal\Core\Queue\QueueFactory
@@ -632,6 +634,8 @@ services:
   module_handler:
     class: Drupal\Core\Extension\ModuleHandler
     arguments: ['%app.root%', '%container.modules%', '@cache.bootstrap']
+    tags:
+      - { name: needs_destruction }
   Drupal\Core\Extension\ModuleHandlerInterface: '@module_handler'
   module_installer:
     class: Drupal\Core\Extension\ModuleInstaller
@@ -714,7 +718,7 @@ services:
   Drupal\Core\Entity\EntityTypeManagerInterface: '@entity_type.manager'
   entity_type.repository:
     class: Drupal\Core\Entity\EntityTypeRepository
-    arguments: ['@entity_type.manager']
+    arguments: ['@entity_type.manager', '@entity_type.bundle.info']
   Drupal\Core\Entity\EntityTypeRepositoryInterface: '@entity_type.repository'
   entity_type.bundle.info:
     class: Drupal\Core\Entity\EntityTypeBundleInfo
@@ -881,8 +885,7 @@ services:
     arguments: ['@request_stack']
   Drupal\Core\Routing\RouteMatchInterface: '@current_route_match'
   event_dispatcher:
-    class: Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher
-    arguments: ['@service_container']
+    class: Symfony\Component\EventDispatcher\EventDispatcher
   Psr\EventDispatcher\EventDispatcherInterface: '@event_dispatcher'
   Symfony\Contracts\EventDispatcher\EventDispatcherInterface: '@event_dispatcher'
   controller_resolver:
@@ -1063,7 +1066,7 @@ services:
     arguments: ['@router.route_provider', '@router.builder']
   router.route_preloader:
     class: Drupal\Core\Routing\RoutePreloader
-    arguments: ['@router.route_provider', '@state', '@cache.bootstrap']
+    arguments: ['@router.route_provider', '@state']
   url_generator.non_bubbling:
     class: Drupal\Core\Routing\UrlGenerator
     arguments: ['@router.route_provider', '@path_processor_manager', '@route_processor_manager', '@request_stack', '%filter_protocols%']
@@ -1211,7 +1214,7 @@ services:
     arguments: ['@resolver_manager.entity']
   ajax_response.subscriber:
     class: Drupal\Core\EventSubscriber\AjaxResponseSubscriber
-    arguments: ['@ajax_response.attachments_processor']
+    autowire: true
   form_ajax_subscriber:
     class: Drupal\Core\Form\EventSubscriber\FormAjaxSubscriber
     arguments: ['@form_ajax_response_builder', '@string_translation', '@messenger']
@@ -1401,9 +1404,6 @@ services:
     autowire: true
   redirect_leading_slashes_subscriber:
     class: Drupal\Core\EventSubscriber\RedirectLeadingSlashesSubscriber
-  request_close_subscriber:
-    class: Drupal\Core\EventSubscriber\RequestCloseSubscriber
-    arguments: ['@module_handler']
   config_import_subscriber:
     class: Drupal\Core\EventSubscriber\ConfigImportSubscriber
     tags:
@@ -1588,13 +1588,24 @@ services:
     tags:
       - { name: service_collector, call: addAccessPolicy, tag: access_policy }
   Drupal\Core\Session\AccessPolicyChainInterface: '@access_policy_processor'
+  access_policy.super_user:
+    class: Drupal\Core\Session\SuperUserAccessPolicy
+    tags:
+      - { name: access_policy }
+  Drupal\Core\Session\SuperUserAccessPolicy: '@access_policy.super_user'
+  access_policy.user_roles:
+    class: Drupal\Core\Session\UserRolesAccessPolicy
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: access_policy }
+  Drupal\Core\Session\UserRolesAccessPolicy: '@access_policy.user_roles'
   permission_checker:
     class: Drupal\Core\Session\PermissionChecker
-    arguments: ['@entity_type.manager']
+    arguments: ['@access_policy_processor']
   Drupal\Core\Session\PermissionCheckerInterface: '@permission_checker'
   user_permissions_hash_generator:
     class: Drupal\Core\Session\PermissionsHashGenerator
-    arguments: ['@private_key', '@cache.bootstrap', '@cache.static', '@entity_type.manager']
+    arguments: ['@private_key', '@cache.static', '@access_policy_processor']
   Drupal\Core\Session\PermissionsHashGeneratorInterface: '@user_permissions_hash_generator'
   current_user:
     class: Drupal\Core\Session\AccountProxy
@@ -1685,7 +1696,7 @@ services:
       - { name: needs_destruction }
   library.discovery.parser:
     class: Drupal\Core\Asset\LibraryDiscoveryParser
-    arguments: ['%app.root%', '@module_handler', '@theme.manager', '@stream_wrapper_manager', '@library.libraries_directory_file_finder', '@extension.path.resolver']
+    arguments: ['%app.root%', '@module_handler', '@theme.manager', '@stream_wrapper_manager', '@library.libraries_directory_file_finder', '@extension.path.resolver', '@plugin.manager.sdc']
   Drupal\Core\Asset\LibraryDiscoveryParser: '@library.discovery.parser'
   library.libraries_directory_file_finder:
     class: Drupal\Core\Asset\LibrariesDirectoryFileFinder
@@ -1714,6 +1725,10 @@ services:
     arguments: ['@renderer', '@url_generator', '@theme.manager', '@date.formatter', '@file_url_generator']
     tags:
       - { name: twig.extension, priority: 100 }
+  Drupal\Core\Template\ComponentsTwigExtension:
+    arguments: ['@plugin.manager.sdc', '@Drupal\Core\Theme\Component\ComponentValidator']
+    tags:
+      - { name: twig.extension, priority: 101 }
   twig.extension.debug:
     class: Twig\Extension\DebugExtension
     tags:
@@ -1846,3 +1861,32 @@ services:
     class: Drupal\Core\Pager\PagerParameters
     arguments: ['@request_stack']
   Drupal\Core\Pager\PagerParametersInterface: '@pager.parameters'
+  Drupal\Core\Theme\Component\SchemaCompatibilityChecker: {}
+  Drupal\Core\Theme\Component\ComponentValidator:
+    calls:
+      - [setValidator, []]
+  Drupal\Core\Theme\ComponentNegotiator:
+    arguments:
+      - '@theme.manager'
+      - '@extension.list.module'
+  plugin.manager.sdc:
+    public: true
+    class: Drupal\Core\Theme\ComponentPluginManager
+    arguments:
+      - '@module_handler'
+      - '@theme_handler'
+      - '@cache.discovery'
+      - '@config.factory'
+      - '@theme.manager'
+      - '@Drupal\Core\Theme\ComponentNegotiator'
+      - '@file_system'
+      - '@Drupal\Core\Theme\Component\SchemaCompatibilityChecker'
+      - '@Drupal\Core\Theme\Component\ComponentValidator'
+      - '%app.root%'
+  Drupal\Core\Theme\ComponentPluginManager: '@plugin.manager.sdc'
+  Drupal\Core\Template\Loader\ComponentLoader:
+    arguments:
+      - '@plugin.manager.sdc'
+      - '@logger.channel.default'
+    tags:
+      - { name: twig.loader, priority: 5 }
