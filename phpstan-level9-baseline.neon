@@ -366,6 +366,11 @@ parameters:
 			path: core/lib/Drupal/Core/Recipe/UnknownRecipeException.php
 
 		-
+			message: "#^Method Drupal\\\\ckeditor5\\\\Plugin\\\\ConfigAction\\\\AddItemToToolbar\\:\\:create\\(\\) has parameter \\$configuration with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: core/modules/ckeditor5/src/Plugin/ConfigAction/AddItemToToolbar.php
+
+		-
 			message: "#^Method Drupal\\\\content_moderation\\\\Plugin\\\\ConfigAction\\\\AddModeration\\:\\:create\\(\\) has parameter \\$configuration with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: core/modules/content_moderation/src/Plugin/ConfigAction/AddModeration.php

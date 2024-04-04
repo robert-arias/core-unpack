@@ -18,8 +18,8 @@ variables:
   MYSQL_DATABASE: mysql
   MYSQL_USER: drupaltestbot
   MYSQL_PASSWORD: drupaltestbotpw
-  TEST_DIRECTORIES: "core/tests/Drupal/Tests/Core/Recipe core/tests/Drupal/KernelTests/Core/Recipe core/tests/Drupal/FunctionalTests/Core/Recipe core/tests/Drupal/KernelTests/Core/Config/Action core/tests/Drupal/KernelTests/Core/Config/Storage/Checkpoint core/tests/Drupal/Tests/Core/Config/Checkpoint core/tests/Drupal/Tests/Core/Config/Action core/modules/content_moderation/tests/src/Kernel/ConfigAction"
-  CODE_DIRECTORIES: "core/lib/Drupal/Core/Recipe core/lib/Drupal/Core/Config/Action core/modules/config/tests/config_action_duplicate_test core/tests/fixtures/recipes core/lib/Drupal/Core/Config/Checkpoint core/modules/content_moderation/src/Plugin/ConfigAction"
+  TEST_DIRECTORIES: "core/tests/Drupal/Tests/Core/Recipe core/tests/Drupal/KernelTests/Core/Recipe core/tests/Drupal/FunctionalTests/Core/Recipe core/tests/Drupal/KernelTests/Core/Config/Action core/tests/Drupal/KernelTests/Core/Config/Storage/Checkpoint core/tests/Drupal/Tests/Core/Config/Checkpoint core/tests/Drupal/Tests/Core/Config/Action core/modules/content_moderation/tests/src/Kernel/ConfigAction core/modules/ckeditor5/tests/src/Kernel/ConfigAction"
+  CODE_DIRECTORIES: "core/lib/Drupal/Core/Recipe core/lib/Drupal/Core/Config/Action core/modules/config/tests/config_action_duplicate_test core/tests/fixtures/recipes core/lib/Drupal/Core/Config/Checkpoint core/modules/content_moderation/src/Plugin/ConfigAction core/modules/ckeditor5/src/Plugin/ConfigAction core/modules/ckeditor5/tests/src/Kernel/ConfigAction"
   ALL_DIRECTORIES: "${CODE_DIRECTORIES} ${TEST_DIRECTORIES}"
 
 default:
