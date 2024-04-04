@@ -11,7 +11,7 @@ workflow:
     - if: $CI_COMMIT_BRANCH =~ /^1[01](\.\d+)?\.x$/
 
 variables:
-  _TARGET_PHP: "8.1"
+  _TARGET_PHP: "8.3"
   _TARGET_DB: "mysql-5.7"
   _CONFIG_DOCKERHUB_ROOT: "drupalci"
   MYSQL_ROOT_PASSWORD: root
