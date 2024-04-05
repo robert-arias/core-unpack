@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\Core\Config\Checkpoint;
 
 use Drupal\Component\Datetime\Time;
+use Drupal\Core\Cache\NullBackend;
 use Drupal\Core\Config\Checkpoint\Checkpoint;
 use Drupal\Core\Config\Checkpoint\LinearHistory;
 use Drupal\Core\Config\Checkpoint\CheckpointStorage;
@@ -14,6 +15,7 @@ use Drupal\Core\Config\MemoryStorage;
 use Drupal\Core\Config\StorageCopyTrait;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\KeyValueStore\KeyValueMemoryFactory;
+use Drupal\Core\Lock\NullLockBackend;
 use Drupal\Core\State\State;
 use Drupal\Tests\UnitTestCase;
 use Drupal\TestTools\Random;
@@ -49,7 +51,7 @@ class CheckpointStorageTest extends UnitTestCase {
     // Set up a memory storage we can manipulate to set fixtures.
     $this->memory = new MemoryStorage();
     $keyValueMemoryFactory = new KeyValueMemoryFactory();
-    $state = new State($keyValueMemoryFactory);
+    $state = new State($keyValueMemoryFactory, new NullBackend('test'), new NullLockBackend());
     $time = new Time();
     $checkpoints = new LinearHistory($state, $time);
     $this->storage = new CheckpointStorage($this->memory, $checkpoints, $keyValueMemoryFactory);
