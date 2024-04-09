@@ -87,27 +87,43 @@ final class Importer implements LoggerAwareInterface {
       // If a file exists in the same folder, copy it to the designated
       // target URI.
       if ($entity instanceof FileInterface) {
-        /** @var string $uri */
-        $uri = $entity->getFileUri();
-        $file_source = $path . '/' . $entity->getFilename();
-        if (file_exists($file_source)) {
-          $target_directory = dirname($uri);
-          $this->fileSystem->prepareDirectory($target_directory, FileSystemInterface::CREATE_DIRECTORY);
-          // @todo https://drupal.org/i/3437068 Don't copy the file if it
-          //   already exists.
-          $new_uri = $this->fileSystem->copy($file_source, $uri);
-          $entity->setFileUri($new_uri);
-        }
-        else {
-          $this->logger?->warning("File entity %name was imported, but the associated file (@path) was not found.", [
-            '%name' => $entity->getFilename(),
-            '@path' => $file_source,
-          ]);
-        }
+        $this->copyFileAssociatedWithEntity($path, $entity);
       }
       $entity->save();
     }
     $this->accountSwitcher->switchBack();
+  }
+
+  private function copyFileAssociatedWithEntity(string $path, FileInterface $entity): void {
+    $destination = $entity->getFileUri();
+    assert(is_string($destination));
+
+    // If the source file doesn't exist, there's nothing we can do.
+    $source = $path . '/' . basename($destination);
+    if (!file_exists($source)) {
+      $this->logger?->warning("File entity %name was imported, but the associated file (@path) was not found.", [
+        '%name' => $entity->label(),
+        '@path' => $source,
+      ]);
+      return;
+    }
+
+    if (file_exists($destination)) {
+      $source_hash = hash_file('sha256', $source);
+      assert(is_string($source_hash));
+      $destination_hash = hash_file('sha256', $destination);
+      assert(is_string($destination_hash));
+
+      // If we already have the file, we don't need to do anything else.
+      if (hash_equals($source_hash, $destination_hash)) {
+        return;
+      }
+    }
+
+    $target_directory = dirname($destination);
+    $this->fileSystem->prepareDirectory($target_directory, FileSystemInterface::CREATE_DIRECTORY);
+    $uri = $this->fileSystem->copy($source, $destination);
+    $entity->setFileUri($uri);
   }
 
   /**

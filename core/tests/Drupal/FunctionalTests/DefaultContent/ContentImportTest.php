@@ -163,6 +163,21 @@ class ContentImportTest extends BrowserTestBase {
     $this->assertSame('druplicon.png', $file->getFilename());
     $this->assertSame('d8404562-efcc-40e3-869e-40132d53fe0b', $file->uuid());
 
+    // Another file entity referencing an existing file should have the same
+    // file URI -- in other words, it should have reused the existing file.
+    $duplicate_file = $entity_repository->loadEntityByUuid('file', '23a7f61f-1db3-407d-a6dd-eb4731995c9f');
+    $this->assertInstanceOf(FileInterface::class, $duplicate_file);
+    $this->assertSame('druplicon-duplicate.png', $duplicate_file->getFilename());
+    $this->assertSame($file->getFileUri(), $duplicate_file->getFileUri());
+
+    // Another file entity that references a file with the same name as, but
+    // different contents than, an existing file, should be imported and the
+    // file should be renamed.
+    $different_file = $entity_repository->loadEntityByUuid('file', 'a6b79928-838f-44bd-a8f0-44c2fff9e4cc');
+    $this->assertInstanceOf(FileInterface::class, $different_file);
+    $this->assertSame('druplicon-different.png', $different_file->getFilename());
+    $this->assertStringEndsWith('/druplicon_0.png', (string) $different_file->getFileUri());
+
     // Our node should have a menu link, and it should use the path alias we
     // included with the recipe.
     $menu_link = $entity_repository->loadEntityByUuid('menu_link_content', '3434bd5a-d2cd-4f26-bf79-a7f6b951a21b');
