@@ -17,6 +17,9 @@ use Drupal\Core\DefaultContent\Finder;
  *
  * @internal
  *   This API is experimental.
+ *
+ * @todo https://www.drupal.org/i/3439717 Determine if there is a better to
+ *   inject and re-inject services.
  */
 final class RecipeRunner {
 
@@ -93,7 +96,6 @@ final class RecipeRunner {
    *   The config configurator from the recipe.
    */
   protected static function processConfiguration(ConfigConfigurator $config): void {
-    // @todo sort out this monstrosity.
     $config_installer = new RecipeConfigInstaller(
       \Drupal::service('config.factory'),
       \Drupal::service('config.storage'),

@@ -276,8 +276,8 @@ final class CheckpointStorage implements CheckpointStorageInterface, EventSubscr
       }
     }
     else {
-      // @todo https://www.drupal.org/project/distributions_recipes/issues/3408525
-      //   Consider options for generating a real fingerprint.
+      // @todo https://www.drupal.org/i/3408525 Consider options for generating
+      //   a real fingerprint.
       $id = hash('sha1', random_bytes(32));
       $active_checkpoint = $this->checkpoints->add($id, $label);
     }

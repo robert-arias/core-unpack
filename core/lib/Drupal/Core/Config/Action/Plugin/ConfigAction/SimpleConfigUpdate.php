@@ -43,7 +43,8 @@ final class SimpleConfigUpdate implements ConfigActionPluginInterface, Container
    */
   public function apply(string $configName, mixed $value): void {
     $config = $this->configFactory->getEditable($configName);
-    // @todo Should we error if this is a config entity?
+    // @todo https://www.drupal.org/i/3439713 Should we error if this is a
+    //   config entity?
     if ($config->isNew()) {
       throw new ConfigActionException(sprintf('Config %s does not exist so can not be updated', $configName));
     }

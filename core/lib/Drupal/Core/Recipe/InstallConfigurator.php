@@ -59,8 +59,8 @@ final class InstallConfigurator {
     }
 
     // Add modules that other modules depend on.
-    // @todo should recipes do this? I think so. It allows modules to add
-    //   dependencies and recipes continue to work
+    // @todo https://www.drupal.org/i/3439715 Should recipes allow modules to
+    //   add dependencies and recipes continue to work?
     foreach ($modules as $module) {
       if ($module_data[$module]->requires) {
         $modules = array_merge($modules, array_keys($module_data[$module]->requires));

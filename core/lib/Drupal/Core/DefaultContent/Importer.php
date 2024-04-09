@@ -93,8 +93,8 @@ final class Importer implements LoggerAwareInterface {
         if (file_exists($file_source)) {
           $target_directory = dirname($uri);
           $this->fileSystem->prepareDirectory($target_directory, FileSystemInterface::CREATE_DIRECTORY);
-          // @todo Don't copy the file if it already exists in
-          //   https://drupal.org/i/3437068.
+          // @todo https://drupal.org/i/3437068 Don't copy the file if it
+          //   already exists.
           $new_uri = $this->fileSystem->copy($file_source, $uri);
           $entity->setFileUri($new_uri);
         }

@@ -138,7 +138,8 @@ final class Recipe {
           ]),
         ]),
       ]),
-      // @todo Validate the corresponding `import` in https://www.drupal.org/project/distributions_recipes/issues/3424603
+      // @todo https://www.drupal.org/i/3424603 Validate the corresponding
+      //   import.
       'install' => new Optional([
         new All([
           new Type('string'),
@@ -151,7 +152,8 @@ final class Recipe {
           // Each entry in the `import` list can either be `*` (import all of
           // the extension's config), or a list of config names to import from
           // the extension.
-          // @todo Validate config file name, if given.
+          // @todo https://www.drupal.org/i/3439716 Validate config file name,
+          //   if given.
           'import' => new Optional([
             new All([
               new AtLeastOneOf([

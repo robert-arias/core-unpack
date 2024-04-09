@@ -93,7 +93,8 @@ class StandardRecipeTest extends StandardTest {
     $sync = \Drupal::service('config.storage.sync');
     /** @var \Drupal\Core\Config\StorageInterface $active */
     $active = \Drupal::service('config.storage');
-    // @todo think about the _core unset some more...
+    // @todo https://www.drupal.org/i/3439749 Determine if the the _core unset
+    //   is correct.
     foreach ($active->listAll() as $name) {
       /** @var mixed[] $active_data */
       $active_data = $active->read($name);
@@ -139,7 +140,7 @@ class StandardRecipeTest extends StandardTest {
   /**
    * {@inheritdoc}
    *
-   * @todo Remove this override in https://www.drupal.org/node/2941757.
+   * @todo https://www.drupal.org/i/3439750 Remove this.
    */
   protected function rebuildContainer(): void {
     // Compare the module list before and after the container is rebuilt, to

@@ -26,7 +26,8 @@ final class ConfigConfigurator {
     $recipe_storage = $this->getConfigStorage();
     foreach ($recipe_storage->listAll() as $config_name) {
       if ($active_data = $active_configuration->read($config_name)) {
-        // @todo investigate if there is any generic code in core for this.
+        // @todo https://www.drupal.org/i/3439714 Investigate if there is any
+        //   generic code in core for this.
         unset($active_data['uuid'], $active_data['_core']);
         if (empty($active_data['dependencies'])) {
           unset($active_data['dependencies']);
