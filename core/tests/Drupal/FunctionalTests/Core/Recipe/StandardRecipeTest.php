@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\FunctionalTests\Core\Recipe;
 
 use Drupal\contact\Entity\ContactForm;
+use Drupal\shortcut\Entity\Shortcut;
 use Drupal\Tests\standard\Functional\StandardTest;
 use Drupal\user\RoleInterface;
 
@@ -128,6 +129,9 @@ class StandardRecipeTest extends StandardTest {
     // installed.
     $expected_list['update'] = ['core.extension'];
     $this->assertSame($expected_list, $comparer->getChangelist());
+
+    // Standard ships two shortcuts; ensure they exist.
+    $this->assertCount(2, Shortcut::loadMultiple());
 
     parent::testStandard();
   }

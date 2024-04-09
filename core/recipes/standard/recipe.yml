@@ -32,6 +32,7 @@ install:
   - toolbar
   - field_ui
   - views_ui
+  - link
   - shortcut
 config:
   import:

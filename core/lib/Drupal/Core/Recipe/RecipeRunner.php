@@ -5,6 +5,8 @@ namespace Drupal\Core\Recipe;
 use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Config\InstallStorage;
 use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\DefaultContent\Importer;
+use Drupal\Core\DefaultContent\Finder;
 
 /**
  * Applies a recipe.
@@ -117,8 +119,11 @@ final class RecipeRunner {
     }
   }
 
-  protected static function processContent(ContentConfigurator $content): void {
-    // @todo https://www.drupal.org/project/distributions_recipes/issues/3292287
+  protected static function processContent(Finder $content): void {
+    /** @var \Drupal\Core\DefaultContent\Importer $importer */
+    $importer = \Drupal::service(Importer::class);
+    $importer->setLogger(\Drupal::logger('recipe'));
+    $importer->importContent($content);
   }
 
 }

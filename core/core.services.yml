@@ -1890,3 +1890,5 @@ services:
       - '@logger.channel.default'
     tags:
       - { name: twig.loader, priority: 5 }
+  Drupal\Core\DefaultContent\Importer:
+    autowire: true
