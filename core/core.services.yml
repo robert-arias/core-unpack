@@ -70,6 +70,8 @@ services:
     class: Drupal\Core\Config\Action\ConfigActionManager
     parent: default_plugin_manager
     arguments: ['@config.manager', '@config.storage', '@config.typed', '@config.factory']
+  Drupal\Core\DefaultContent\Importer:
+    autowire: true
   # Simple cache contexts, directly derived from the request context.
   cache_context.ip:
     class: Drupal\Core\Cache\Context\IpCacheContext
@@ -1890,5 +1892,3 @@ services:
       - '@logger.channel.default'
     tags:
       - { name: twig.loader, priority: 5 }
-  Drupal\Core\DefaultContent\Importer:
-    autowire: true
