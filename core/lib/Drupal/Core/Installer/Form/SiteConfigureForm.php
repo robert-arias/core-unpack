@@ -3,13 +3,15 @@
 namespace Drupal\Core\Installer\Form;
 
 use Drupal\Core\Datetime\TimeZoneFormHelper;
+use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Extension\ModuleInstallerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Locale\CountryManagerInterface;
 use Drupal\Core\Site\Settings;
-use Drupal\user\UserStorageInterface;
 use Drupal\user\UserInterface;
+use Drupal\user\UserStorageInterface;
+use Drupal\user\UserNameValidator;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -18,6 +20,17 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @internal
  */
 class SiteConfigureForm extends ConfigFormBase {
+
+  use DeprecatedServicePropertyTrait;
+
+  /**
+   * Defines deprecated injected properties.
+   *
+   * @var array
+   */
+  protected array $deprecatedProperties = [
+    'countryManager' => 'country_manager',
+  ];
 
   /**
    * The site path.
@@ -41,13 +54,6 @@ class SiteConfigureForm extends ConfigFormBase {
   protected $moduleInstaller;
 
   /**
-   * The country manager.
-   *
-   * @var \Drupal\Core\Locale\CountryManagerInterface
-   */
-  protected $countryManager;
-
-  /**
    * The app root.
    *
    * @var string
@@ -65,15 +71,25 @@ class SiteConfigureForm extends ConfigFormBase {
    *   The user storage.
    * @param \Drupal\Core\Extension\ModuleInstallerInterface $module_installer
    *   The module installer.
-   * @param \Drupal\Core\Locale\CountryManagerInterface $country_manager
-   *   The country manager.
+   * @param \Drupal\Core\Locale\CountryManagerInterface|\Drupal\user\UserNameValidator $userNameValidator
+   *   The user validator.
    */
-  public function __construct($root, $site_path, UserStorageInterface $user_storage, ModuleInstallerInterface $module_installer, CountryManagerInterface $country_manager) {
+  public function __construct(
+    $root,
+    $site_path,
+    UserStorageInterface $user_storage,
+    ModuleInstallerInterface $module_installer,
+    protected CountryManagerInterface|UserNameValidator $userNameValidator,
+  ) {
     $this->root = $root;
     $this->sitePath = $site_path;
     $this->userStorage = $user_storage;
     $this->moduleInstaller = $module_installer;
-    $this->countryManager = $country_manager;
+    if ($userNameValidator instanceof CountryManagerInterface) {
+      @trigger_error('Calling ' . __METHOD__ . '() with the $userNameValidator argument as CountryManagerInterface is deprecated in drupal:10.3.0 and must be UserNameValidator in drupal:11.0.0. See https://www.drupal.org/node/3431205', E_USER_DEPRECATED);
+      $userNameValidator = \Drupal::service('user.name_validator');
+    }
+    $this->userNameValidator = $userNameValidator;
   }
 
   /**
@@ -85,7 +101,7 @@ class SiteConfigureForm extends ConfigFormBase {
       $container->getParameter('site.path'),
       $container->get('entity_type.manager')->getStorage('user'),
       $container->get('module_installer'),
-      $container->get('country_manager')
+      $container->get('user.name_validator'),
     );
   }
 
@@ -190,16 +206,6 @@ class SiteConfigureForm extends ConfigFormBase {
       '#title' => $this->t('Regional settings'),
       '#access' => empty($install_state['config_install_path']),
     ];
-    $countries = $this->countryManager->getList();
-    $form['regional_settings']['site_default_country'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Default country'),
-      '#empty_value' => '',
-      '#default_value' => $this->config('system.date')->get('country.default'),
-      '#options' => $countries,
-      '#weight' => 0,
-      '#access' => empty($install_state['config_install_path']),
-    ];
     // Use the default site timezone if one is already configured, or fall back
     // to the system timezone if set (and avoid throwing a warning in
     // PHP >=5.4).
@@ -217,7 +223,7 @@ class SiteConfigureForm extends ConfigFormBase {
     $form['update_notifications'] = [
       '#type' => 'fieldgroup',
       '#title' => $this->t('Update notifications'),
-      '#description' => $this->t('When checking for updates, anonymous information about your site is sent to <a href="@drupal">Drupal.org</a>.', ['@drupal' => 'https://drupal.org']),
+      '#description' => $this->t('When checking for updates, your site automatically sends anonymous information to Drupal.org. See the <a href="@update-module-docs" target="_blank">Update module documentation</a> for details.', ['@update-module-docs' => 'https://www.drupal.org/node/178772']),
       '#access' => empty($install_state['config_install_path']),
     ];
     $form['update_notifications']['enable_update_status_module'] = [
@@ -253,8 +259,9 @@ class SiteConfigureForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    if ($error = user_validate_name($form_state->getValue(['account', 'name']))) {
-      $form_state->setErrorByName('account][name', $error);
+    $violations = $this->userNameValidator->validateName($form_state->getValue(['account', 'name']));
+    if ($violations->count() > 0) {
+      $form_state->setErrorByName('account][name', $violations[0]->getMessage());
     }
   }
 
@@ -272,7 +279,6 @@ class SiteConfigureForm extends ConfigFormBase {
 
       $this->config('system.date')
         ->set('timezone.default', (string) $form_state->getValue('date_default_timezone'))
-        ->set('country.default', (string) $form_state->getValue('site_default_country'))
         ->save(TRUE);
     }
 
