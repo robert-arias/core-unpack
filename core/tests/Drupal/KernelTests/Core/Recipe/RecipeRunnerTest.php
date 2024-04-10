@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\KernelTests\Core\Recipe;
 
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
