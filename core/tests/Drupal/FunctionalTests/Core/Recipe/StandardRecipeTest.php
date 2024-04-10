@@ -7,6 +7,7 @@ namespace Drupal\FunctionalTests\Core\Recipe;
 use Drupal\contact\Entity\ContactForm;
 use Drupal\shortcut\Entity\Shortcut;
 use Drupal\Tests\standard\Functional\StandardTest;
+use Drupal\user\Entity\User;
 use Drupal\user\RoleInterface;
 
 /**
@@ -72,6 +73,7 @@ class StandardRecipeTest extends StandardTest {
 
     // Add a Home link to the main menu as Standard expects "Main navigation"
     // block on the page.
+    User::load(1)->addRole('administrator')->save();
     $this->drupalLogin($this->rootUser);
     $this->drupalGet('admin/structure/menu/manage/main/add');
     $this->submitForm([
