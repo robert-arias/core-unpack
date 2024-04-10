@@ -324,4 +324,16 @@ class ConfigTest extends ConfigEntityBase implements ConfigTestInterface {
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function toArray() {
+    $properties = parent::toArray();
+    // Only export the 'array_property' is there is data.
+    if (empty($properties['array_property'])) {
+      unset($properties['array_property']);
+    }
+    return $properties;
+  }
+
 }

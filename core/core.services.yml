@@ -394,11 +394,11 @@ services:
   config.storage.checkpoint:
     class: Drupal\Core\Config\Checkpoint\CheckpointStorage
     arguments: [ '@config.storage', '@config.checkpoints', '@keyvalue' ]
-    tags:
-      - { name: event_subscriber }
+  Drupal\Core\Config\Checkpoint\CheckpointStorageInterface: '@config.storage.checkpoint'
   config.checkpoints:
     class: Drupal\Core\Config\Checkpoint\LinearHistory
     arguments: [ '@state', '@datetime.time' ]
+  Drupal\Core\Config\Checkpoint\CheckpointListInterface: '@config.checkpoints'
   config.import_transformer:
     class: Drupal\Core\Config\ImportStorageTransformer
     arguments: ['@event_dispatcher', '@database', '@lock', '@lock.persistent']
