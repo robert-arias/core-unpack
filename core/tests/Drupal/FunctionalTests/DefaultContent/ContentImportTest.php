@@ -145,7 +145,6 @@ class ContentImportTest extends BrowserTestBase {
     $this->assertSame('550f86ad-aa11-4047-953f-636d42889f85', $tag->uuid());
     // The tag carries a field with serialized data, so ensure it came through
     // properly.
-    // @phpstan-ignore-next-line
     $this->assertSame('a:2:{i:0;s:2:"Hi";i:1;s:6:"there!";}', $tag->field_serialized_stuff->value);
     $owner = $node->getOwner();
     $this->assertSame('Naomi Malone', $owner->getAccountName());

@@ -421,6 +421,11 @@ parameters:
 			path: core/tests/Drupal/FunctionalTests/Core/Recipe/StandardRecipeTest.php
 
 		-
+			message: "#^Access to an undefined property Drupal\\\\taxonomy\\\\TermInterface\\:\\:\\$field_serialized_stuff\\.$#"
+			count: 1
+			path: core/tests/Drupal/FunctionalTests/DefaultContent/ContentImportTest.php
+
+		-
 			message: "#^Cannot access offset 'admin_label' on mixed\\.$#"
 			count: 3
 			path: core/tests/Drupal/KernelTests/Core/Config/Action/ConfigActionTest.php
