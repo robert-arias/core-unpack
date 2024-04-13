@@ -9,12 +9,15 @@ use Drupal\Core\Recipe\InvalidConfigException;
 use Drupal\Core\Recipe\Recipe;
 use Drupal\Core\Recipe\RecipeFileException;
 use Drupal\Core\Recipe\RecipeRunner;
+use Drupal\FunctionalTests\Core\Recipe\RecipeTestTrait;
 use Drupal\KernelTests\KernelTestBase;
 
 /**
  * @group Recipe
  */
 class ConfigActionValidationTest extends KernelTestBase {
+
+  use RecipeTestTrait;
 
   /**
    * {@inheritdoc}
@@ -78,11 +81,7 @@ config:
         $label_key: ''
 YAML;
 
-    $dir = uniqid('public://');
-    mkdir($dir);
-    file_put_contents($dir . '/recipe.yml', $recipe_data);
-
-    $recipe = Recipe::createFromDirectory($dir);
+    $recipe = $this->createRecipe($recipe_data);
     try {
       RecipeRunner::processRecipe($recipe);
       $this->fail('An exception should have been thrown.');
@@ -123,11 +122,8 @@ config:
         label: ''
 YAML;
 
-    $dir = uniqid('public://');
-    mkdir($dir);
-    file_put_contents($dir . '/recipe.yml', $recipe_data);
     try {
-      Recipe::createFromDirectory($dir);
+      $this->createRecipe($recipe_data);
       $this->fail('An exception should have been thrown.');
     }
     catch (RecipeFileException $e) {

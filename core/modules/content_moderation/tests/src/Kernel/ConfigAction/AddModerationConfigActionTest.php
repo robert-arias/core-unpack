@@ -8,6 +8,7 @@ use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Config\Action\ConfigActionException;
 use Drupal\Core\Recipe\Recipe;
 use Drupal\Core\Recipe\RecipeRunner;
+use Drupal\FunctionalTests\Core\Recipe\RecipeTestTrait;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\Tests\node\Traits\ContentTypeCreationTrait;
 use Drupal\Tests\taxonomy\Traits\TaxonomyTestTrait;
@@ -22,6 +23,9 @@ use Drupal\workflows\Entity\Workflow;
 class AddModerationConfigActionTest extends KernelTestBase {
 
   use ContentTypeCreationTrait;
+  use RecipeTestTrait {
+    createRecipe as traitCreateRecipe;
+  }
   use TaxonomyTestTrait;
 
   /**
@@ -88,9 +92,6 @@ class AddModerationConfigActionTest extends KernelTestBase {
   }
 
   private function createRecipe(string $config_name): Recipe {
-    $dir = uniqid('public://');
-    mkdir($dir);
-
     $recipe = <<<YAML
 name: 'Add entity types and bundles to workflow'
 recipes:
@@ -103,8 +104,7 @@ config:
         - b
       addTaxonomyVocabularies: '*'
 YAML;
-    file_put_contents($dir . '/recipe.yml', $recipe);
-    return Recipe::createFromDirectory($dir);
+    return $this->traitCreateRecipe($recipe);
   }
 
 }

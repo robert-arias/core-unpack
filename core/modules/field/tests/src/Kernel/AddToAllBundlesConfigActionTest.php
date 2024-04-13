@@ -8,9 +8,9 @@ use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Config\Action\ConfigActionException;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Recipe\Recipe;
 use Drupal\Core\Recipe\RecipeRunner;
 use Drupal\field\Entity\FieldConfig;
+use Drupal\FunctionalTests\Core\Recipe\RecipeTestTrait;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\NodeType;
 
@@ -21,6 +21,8 @@ use Drupal\node\Entity\NodeType;
  * @group field
  */
 class AddToAllBundlesConfigActionTest extends KernelTestBase {
+
+  use RecipeTestTrait;
 
   /**
    * {@inheritdoc}
@@ -139,11 +141,7 @@ config:
         description: Set by config actions.
         fail_if_exists: $fail_if_exists
 YAML;
-    $dir = uniqid('public://');
-    mkdir($dir);
-    file_put_contents($dir . '/recipe.yml', $contents);
-
-    $recipe = Recipe::createFromDirectory($dir);
+    $recipe = $this->createRecipe($contents);
     RecipeRunner::processRecipe($recipe);
   }
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\FunctionalTests\Core\Recipe;
 
+use Drupal\Component\Serialization\Yaml;
+use Drupal\Core\Recipe\Recipe;
 use Drupal\Tests\BrowserTestBase;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
@@ -12,6 +14,27 @@ use Symfony\Component\Process\Process;
  * Contains helper methods for interacting with recipes in functional tests.
  */
 trait RecipeTestTrait {
+
+  /**
+   * Creates a recipe in a temporary directory.
+   *
+   * @param string|array<mixed> $data
+   *   The contents of recipe.yml. If passed as an array, will be encoded to
+   *   YAML.
+   *
+   * @return \Drupal\Core\Recipe\Recipe
+   *   The recipe object.
+   */
+  protected function createRecipe(string|array $data): Recipe {
+    if (is_array($data)) {
+      $data = Yaml::encode($data);
+    }
+    $dir = uniqid('public://');
+    mkdir($dir);
+    file_put_contents($dir . '/recipe.yml', $data);
+
+    return Recipe::createFromDirectory($dir);
+  }
 
   /**
    * Applies a recipe to the site.

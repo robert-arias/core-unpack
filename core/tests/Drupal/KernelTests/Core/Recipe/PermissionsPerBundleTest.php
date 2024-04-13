@@ -7,8 +7,8 @@ namespace Drupal\KernelTests\Core\Recipe;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Config\Action\ConfigActionException;
-use Drupal\Core\Recipe\Recipe;
 use Drupal\Core\Recipe\RecipeRunner;
+use Drupal\FunctionalTests\Core\Recipe\RecipeTestTrait;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 use Drupal\Tests\node\Traits\ContentTypeCreationTrait;
@@ -27,6 +27,7 @@ class PermissionsPerBundleTest extends KernelTestBase {
 
   use ContentTypeCreationTrait;
   use MediaTypeCreationTrait;
+  use RecipeTestTrait;
   use TaxonomyTestTrait;
   use UserCreationTrait;
 
@@ -223,10 +224,7 @@ YAML;
    *   The contents of `recipe.yml`.
    */
   private function applyRecipeFromString(string $recipe_data): void {
-    $dir = uniqid('public://');
-    mkdir($dir);
-    file_put_contents($dir . '/recipe.yml', $recipe_data);
-    $recipe = Recipe::createFromDirectory($dir);
+    $recipe = $this->createRecipe($recipe_data);
     RecipeRunner::processRecipe($recipe);
   }
 

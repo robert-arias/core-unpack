@@ -6,11 +6,11 @@ namespace Drupal\KernelTests\Core\Recipe;
 
 use Drupal\Core\Config\Action\ConfigActionException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Recipe\Recipe;
 use Drupal\Core\Recipe\RecipeRunner;
 use Drupal\entity_test\Entity\EntityTestBundle;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\FunctionalTests\Core\Recipe\RecipeTestTrait;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\Tests\node\Traits\ContentTypeCreationTrait;
 
@@ -22,6 +22,7 @@ use Drupal\Tests\node\Traits\ContentTypeCreationTrait;
 class WildcardConfigActionsTest extends KernelTestBase {
 
   use ContentTypeCreationTrait;
+  use RecipeTestTrait;
 
   /**
    * {@inheritdoc}
@@ -96,10 +97,7 @@ config:
       setLabel: 'Changed by config action'
 YAML;
 
-    $dir = uniqid('public://');
-    mkdir($dir);
-    file_put_contents($dir . '/recipe.yml', $contents);
-    $recipe = Recipe::createFromDirectory($dir);
+    $recipe = $this->createRecipe($contents);
     RecipeRunner::processRecipe($recipe);
 
     $changed = $this->container->get(EntityTypeManagerInterface::class)
@@ -127,11 +125,7 @@ config:
       simple_config_update:
         label: 'Changed by config action'
 YAML;
-
-    $dir = uniqid('public://');
-    mkdir($dir);
-    file_put_contents($dir . '/recipe.yml', $contents);
-    $recipe = Recipe::createFromDirectory($dir);
+    $recipe = $this->createRecipe($contents);
 
     $this->expectException(ConfigActionException::class);
     $this->expectExceptionMessage($expected_exception_message);

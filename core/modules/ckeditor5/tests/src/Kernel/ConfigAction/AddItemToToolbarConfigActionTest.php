@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\ckeditor5\Kernel\ConfigAction;
 
-use Drupal\Component\Serialization\Yaml;
 use Drupal\Core\Config\Action\ConfigActionException;
 use Drupal\Core\Recipe\InvalidConfigException;
-use Drupal\Core\Recipe\Recipe;
 use Drupal\Core\Recipe\RecipeRunner;
 use Drupal\editor\Entity\Editor;
+use Drupal\FunctionalTests\Core\Recipe\RecipeTestTrait;
 use Drupal\KernelTests\KernelTestBase;
 
 /**
@@ -18,6 +17,8 @@ use Drupal\KernelTests\KernelTestBase;
  * @group Recipe
  */
 class AddItemToToolbarConfigActionTest extends KernelTestBase {
+
+  use RecipeTestTrait;
 
   /**
    * {@inheritdoc}
@@ -120,23 +121,6 @@ YAML;
     $this->expectException(ConfigActionException::class);
     $this->expectExceptionMessage('The editor:addItemToToolbar config action only works with editors that use CKEditor 5.');
     RecipeRunner::processRecipe($this->createRecipe($recipe));
-  }
-
-  /**
-   * @param string|array<mixed> $contents
-   *   The contents of recipe.yml, as either a YAML string or an array to encode
-   *   to YAML.
-   *
-   * @return \Drupal\Core\Recipe\Recipe
-   */
-  private function createRecipe(string|array $contents): Recipe {
-    if (is_array($contents)) {
-      $contents = Yaml::encode($contents);
-    }
-    $dir = uniqid('public://');
-    mkdir($dir);
-    file_put_contents($dir . '/recipe.yml', $contents);
-    return Recipe::createFromDirectory($dir);
   }
 
 }

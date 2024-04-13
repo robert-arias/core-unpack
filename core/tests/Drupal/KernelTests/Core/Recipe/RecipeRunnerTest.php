@@ -8,6 +8,7 @@ use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Recipe\Recipe;
 use Drupal\Core\Recipe\RecipePreExistingConfigException;
 use Drupal\Core\Recipe\RecipeRunner;
+use Drupal\FunctionalTests\Core\Recipe\RecipeTestTrait;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\NodeType;
 use Drupal\views\Entity\View;
@@ -17,6 +18,8 @@ use Drupal\views\Entity\View;
  * @group Recipe
  */
 class RecipeRunnerTest extends KernelTestBase {
+
+  use RecipeTestTrait;
 
   public function testModuleInstall(): void {
     // Test the state prior to applying the recipe.
@@ -209,11 +212,7 @@ config:
       setBody: 'Description set by recipe'
 YAML;
 
-    $dir = uniqid('public://');
-    mkdir($dir);
-    file_put_contents($dir . '/recipe.yml', $recipe_data);
-
-    $recipe = Recipe::createFromDirectory($dir);
+    $recipe = $this->createRecipe($recipe_data);
     $this->expectException(PluginNotFoundException::class);
     $this->expectExceptionMessage('The "setBody" plugin does not exist.');
     RecipeRunner::processRecipe($recipe);
