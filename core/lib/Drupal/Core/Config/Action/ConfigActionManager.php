@@ -45,6 +45,9 @@ use Drupal\Core\Validation\Plugin\Validation\Constraint\FullyValidatableConstrai
  * - \Drupal\Core\Config\Action\Plugin\ConfigAction\SimpleConfigUpdate allows
  *   you to update simple configuration using a config action.
  * @}
+ *
+ * @internal
+ *   This API is experimental.
  */
 class ConfigActionManager extends DefaultPluginManager {
 

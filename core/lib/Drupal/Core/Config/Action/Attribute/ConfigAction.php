@@ -15,6 +15,9 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  *
  * @ingroup config_action_api
  *
+ * @internal
+ *   This API is experimental.
+ *
  * @see \Drupal\Core\Config\Action\ConfigActionPluginInterface
  * @see \Drupal\Core\Config\Action\ConfigActionManager
  * @see plugin_api

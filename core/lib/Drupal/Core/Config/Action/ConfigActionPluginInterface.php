@@ -2,6 +2,10 @@
 
 namespace Drupal\Core\Config\Action;
 
+/**
+ * @internal
+ *   This API is experimental.
+ */
 interface ConfigActionPluginInterface {
 
   /**

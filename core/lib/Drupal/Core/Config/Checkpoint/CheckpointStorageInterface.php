@@ -6,6 +6,9 @@ use Drupal\Core\Config\StorageInterface;
 
 /**
  * Provides an interface for checkpoint storages.
+ *
+ * @internal
+ *   This API is experimental.
  */
 interface CheckpointStorageInterface extends StorageInterface {
 

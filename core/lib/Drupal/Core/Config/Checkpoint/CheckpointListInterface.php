@@ -5,6 +5,9 @@ namespace Drupal\Core\Config\Checkpoint;
 /**
  * Maintains a list of checkpoints.
  *
+ * @internal
+ *   This API is experimental.
+ *
  * @see \Drupal\Core\Config\Checkpoint\Checkpoint
  *
  * @phpstan-extends \IteratorAggregate<string, \Drupal\Core\Config\Checkpoint\Checkpoint>

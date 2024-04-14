@@ -6,6 +6,9 @@ namespace Drupal\Core\Config\Checkpoint;
 
 /**
  * A value object to store information about a checkpoint.
+ *
+ * @internal
+ *   This API is experimental.
  */
 final class Checkpoint {
 

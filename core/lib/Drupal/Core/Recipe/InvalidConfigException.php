@@ -9,6 +9,9 @@ use Symfony\Component\Validator\ConstraintViolationList;
 
 /**
  * Thrown if config created or changed by a recipe fails validation.
+ *
+ * @internal
+ *   This API is experimental.
  */
 final class InvalidConfigException extends \RuntimeException {
 

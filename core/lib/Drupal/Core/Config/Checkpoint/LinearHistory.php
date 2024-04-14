@@ -9,6 +9,9 @@ use Drupal\Core\State\StateInterface;
 
 /**
  * A chronological list of Checkpoint objects.
+ *
+ * @internal
+ *   This API is experimental.
  */
 final class LinearHistory implements CheckpointListInterface {
 

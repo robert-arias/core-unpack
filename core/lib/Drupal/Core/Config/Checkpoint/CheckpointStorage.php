@@ -28,6 +28,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * This class cannot be used to checkpoint another storage since it relies on
  * events triggered by the configuration system in order to work. It is the
  * responsibility of the caller to construct this class with the active storage.
+ *
+ * @internal
+ *   This API is experimental.
  */
 final class CheckpointStorage implements CheckpointStorageInterface, EventSubscriberInterface, LoggerAwareInterface {
 

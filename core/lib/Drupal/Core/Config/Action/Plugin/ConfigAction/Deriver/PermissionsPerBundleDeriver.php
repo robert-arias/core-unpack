@@ -10,6 +10,10 @@ use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * @internal
+ *   This API is experimental.
+ */
 final class PermissionsPerBundleDeriver extends DeriverBase implements ContainerDeriverInterface {
 
   public function __construct(

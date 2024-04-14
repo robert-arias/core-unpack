@@ -4,6 +4,9 @@ namespace Drupal\Core\Recipe;
 
 /**
  * Exception thrown when a recipe has configuration that exists already.
+ *
+ * @internal
+ *   This API is experimental.
  */
 class RecipePreExistingConfigException extends \RuntimeException {
 
