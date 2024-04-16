@@ -2,10 +2,8 @@ name: 'Basic page'
 description: "Provides Basic page content type and related configuration. Use <em>basic pages</em> for your static content, such as an 'About us' page."
 type: 'Content type'
 install:
-  - field
   - node
   - path
-  - text
 config:
   import:
     node:

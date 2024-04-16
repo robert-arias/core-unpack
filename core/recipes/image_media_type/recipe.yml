@@ -2,9 +2,6 @@ name: 'Image media type'
 description: 'Provides "Image" media type and related configuration. Use local images for reusable media.'
 type: 'Media type'
 install:
-  - field
-  - file
-  - media
   - media_library
   - path
   - views

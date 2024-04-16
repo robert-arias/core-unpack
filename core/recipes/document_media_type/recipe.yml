@@ -2,10 +2,6 @@ name: 'Document media type'
 description: 'Provides "Document" media type and related configuration to enable uploaded files or documents, such as a PDF.'
 type: 'Media type'
 install:
-  - field
-  - file
-  - image
-  - media
   - media_library
   - path
   - views

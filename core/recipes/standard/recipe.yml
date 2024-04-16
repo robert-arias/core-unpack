@@ -17,8 +17,6 @@ recipes:
   # Provides a fallback text format which is available to all users.
   - restricted_html_format
 install:
-  - field
-  - file
   - image
   - help
   - search
@@ -32,7 +30,6 @@ install:
   - toolbar
   - field_ui
   - views_ui
-  - link
   - shortcut
 config:
   import:

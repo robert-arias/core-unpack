@@ -2,10 +2,7 @@ name: 'Audio media'
 description: 'Provides "Audio" media type and related configuration. A locally hosted audio file.'
 type: 'Media type'
 install:
-  - field
-  - file
   - image
-  - media
   - media_library
   - path
   - views

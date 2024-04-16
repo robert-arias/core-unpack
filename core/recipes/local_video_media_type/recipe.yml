@@ -2,10 +2,6 @@ name: 'Local video media'
 description: 'Provides a media type for self-hosted video files.'
 type: 'Media type'
 install:
-  - field
-  - file
-  - image
-  - media
   - media_library
   - path
   - views

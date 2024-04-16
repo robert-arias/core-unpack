@@ -3,8 +3,6 @@ description: 'Provides "Basic block" custom block type and related configuration
 type: 'Block type'
 install:
   - block_content
-  - field
-  - text
   - views
 config:
   import:

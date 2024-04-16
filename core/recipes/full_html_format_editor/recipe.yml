@@ -3,5 +3,3 @@ description: 'Provides "Full HTML" text format along with WYSIWYG editor and rel
 type: 'Text format editor'
 install:
   - ckeditor5
-  - editor
-  - filter
