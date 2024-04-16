@@ -8,6 +8,8 @@ install:
   - views
 config:
   import:
+    file:
+      - views.view.files
     media_library:
       - core.entity_view_display.media.audio.media_library
       - core.entity_view_mode.media.media_library

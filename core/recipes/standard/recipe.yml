@@ -3,6 +3,7 @@ description: 'Provides a standard site with commonly used features pre-configure
 type: 'Site'
 recipes:
   - basic_block_type
+  - basic_shortcuts
   - article_comment
   - article_tags
   - feedback_contact_form
@@ -10,16 +11,17 @@ recipes:
   - page_content_type
   - basic_html_format_editor
   - full_html_format_editor
+  - content_search
   - core_recommended_performance
   - core_recommended_maintenance
   - core_recommended_admin_theme
   - core_recommended_front_end_theme
+  - user_picture
   # Provides a fallback text format which is available to all users.
   - restricted_html_format
 install:
   - image
   - help
-  - search
   - history
   - config
   - contextual
@@ -35,8 +37,6 @@ config:
   import:
     claro:
       - block.block.claro_help
-    file:
-      - views.view.files
     help:
       - search.page.help_search
       - block.block.claro_help_search
@@ -44,9 +44,6 @@ config:
       - image.style.large
       - image.style.thumbnail
     node:
-      - core.entity_view_mode.node.search_index
-      - core.entity_view_mode.node.search_result
-      - search.page.node_search
       - views.view.archive
       - views.view.content
       - views.view.content_recent
@@ -63,58 +60,23 @@ config:
       - views.view.user_admin_people
       - views.view.who_s_new
       - views.view.who_s_online
-    shortcut:
-      - shortcut.set.default
   actions:
-    core.menu.static_menu_link_overrides:
-      simple_config_update:
-        definitions:
-          contact__site_page:
-            menu_name: footer
-            parent: ''
-            weight: 0
-            expanded: false
-            enabled: true
     node.settings:
       simple_config_update:
         # @todo Remove `langcode` once https://drupal.org/i/3427564 lands.
         langcode: en
         use_admin_theme: true
     user.role.authenticated:
-      grantPermissions:
-        - 'access shortcuts'
-        - 'delete own files'
-        - 'search content'
+      grantPermission: 'delete own files'
     user.role.content_editor:
-      grantPermissions:
-        - 'access administration pages'
-        - 'access content overview'
-        - 'access contextual links'
-        - 'access files overview'
-        - 'access toolbar'
-        - 'administer url aliases'
-        - 'create url aliases'
-        - 'delete own files'
-        - 'revert all revisions'
-        - 'view all revisions'
-        - 'view own unpublished content'
-        - 'view the administration theme'
-        - 'create article content'
-        - 'delete article revisions'
-        - 'delete own article content'
-        - 'edit own article content'
-        - 'create page content'
-        - 'delete page revisions'
-        - 'delete own page content'
-        - 'edit own page content'
-        - 'edit own comments'
-        - 'create terms in tags'
-        - 'edit terms in tags'
+      grantPermissionsForEachNodeType:
+        - 'create %bundle content'
+        - 'delete %bundle revisions'
+        - 'delete own %bundle content'
+        - 'edit own %bundle content'
     user.role.anonymous:
-      grantPermissions:
-        # This recipe assumes all published content should be publicly accessible.
-        - 'access content'
-        - 'search content'
+      # This recipe assumes all published content should be publicly accessible.
+      grantPermission: 'access content'
     user.settings:
       simple_config_update:
         verify_mail: true
