@@ -7,6 +7,7 @@ use Drupal\Core\Config\InstallStorage;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\DefaultContent\Importer;
 use Drupal\Core\DefaultContent\Finder;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Applies a recipe.
@@ -32,6 +33,9 @@ final class RecipeRunner {
     static::processInstall($recipe->install, $recipe->config->getConfigStorage());
     static::processConfiguration($recipe->config);
     static::processContent($recipe->content);
+
+    $event = new RecipeAppliedEvent($recipe);
+    \Drupal::service(EventDispatcherInterface::class)->dispatch($event);
   }
 
   /**
