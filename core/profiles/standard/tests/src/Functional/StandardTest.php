@@ -187,8 +187,7 @@ class StandardTest extends BrowserTestBase {
 
     // Make sure the optional image styles are installed after enabling
     // the responsive_image module.
-    \Drupal::service('module_installer')->install(['responsive_image']);
-    $this->rebuildContainer();
+    $this->installResponsiveImage();
     $this->drupalGet('admin/config/media/image-styles');
     $this->assertSession()->pageTextContains('Max 325x325');
     $this->assertSession()->pageTextContains('Max 650x650');
@@ -310,6 +309,15 @@ class StandardTest extends BrowserTestBase {
 
     $this->drupalGet('admin');
     $this->assertSession()->statusCodeEquals(403);
+  }
+
+  /**
+   * Installs the responsive image module.
+   */
+  protected function installResponsiveImage(): void {
+    // Install responsive_image module.
+    \Drupal::service('module_installer')->install(['responsive_image']);
+    $this->rebuildContainer();
   }
 
 }

@@ -141,24 +141,11 @@ class StandardRecipeTest extends StandardTest {
 
   /**
    * {@inheritdoc}
-   *
-   * @todo https://www.drupal.org/i/3439750 Remove this.
    */
-  protected function rebuildContainer(): void {
-    // Compare the module list before and after the container is rebuilt, to
-    // determine if any modules were installed.
-    $modules_before = array_keys($this->container->get('module_handler')->getModuleList());
-    parent::rebuildContainer();
-    $modules_after = array_keys($this->container->get('module_handler')->getModuleList());
-
-    // If responsive_image was installed, apply the recipe that provides the
-    // responsive image styles. We cannot just do this unconditionally, because
-    // the parent class explicitly asserts that the image styles don't exist
-    // if responsive_image is not installed.
-    $installed = array_diff($modules_after, $modules_before);
-    if (in_array('responsive_image', $installed, TRUE)) {
-      $this->applyRecipe('core/recipes/standard_responsive_images');
-    }
+  protected function installResponsiveImage(): void {
+    // Overrides StandardTest::installResponsiveImage() in order to use the
+    // recipe.
+    $this->applyRecipe('core/recipes/standard_responsive_images');
   }
 
 }
