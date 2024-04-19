@@ -54,8 +54,19 @@ final class Importer implements LoggerAwareInterface {
    * @param \Drupal\Core\DefaultContent\Finder $content
    *   The content finder, which has information on the entities to create
    *   in the necessary dependency order.
+   * @param \Drupal\Core\DefaultContent\Existing $existing
+   *   (optional) What to do if one of the entities being imported already
+   *   exists, by UUID:
+   *   - \Drupal\Core\DefaultContent\Existing::Error: Throw an exception.
+   *   - \Drupal\Core\DefaultContent\Existing::Skip: Leave the existing entity
+   *     as-is.
+   *
+   * @throws \Drupal\Core\DefaultContent\ImportException
+   *   - If any of the entities being imported are not content entities.
+   *   - If any of the entities being imported already exists, by UUID, and
+   *     $existing is \Drupal\Core\DefaultContent\Existing::Error.
    */
-  public function importContent(Finder $content): void {
+  public function importContent(Finder $content, Existing $existing = Existing::Error): void {
     if (count($content->data) === 0) {
       return;
     }
@@ -75,6 +86,16 @@ final class Importer implements LoggerAwareInterface {
       /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
       if (!$entity_type->entityClassImplements(ContentEntityInterface::class)) {
         throw new ImportException("Content entity $uuid is a '$entity_type_id', which is not a content entity type.");
+      }
+
+      $entity = $this->entityRepository->loadEntityByUuid($entity_type_id, $uuid);
+      if ($entity) {
+        if ($existing === Existing::Skip) {
+          continue;
+        }
+        else {
+          throw new ImportException("$entity_type_id $uuid already exists.");
+        }
       }
 
       $entity = $this->toEntity($decoded)->enforceIsNew();

@@ -7,8 +7,10 @@ namespace Drupal\FunctionalTests\DefaultContent;
 use ColinODell\PsrTestLogger\TestLogger;
 use Drupal\block_content\BlockContentInterface;
 use Drupal\block_content\Entity\BlockContentType;
+use Drupal\Core\DefaultContent\Existing;
 use Drupal\Core\DefaultContent\Finder;
 use Drupal\Core\DefaultContent\Importer;
+use Drupal\Core\DefaultContent\ImportException;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Url;
 use Drupal\field\Entity\FieldConfig;
@@ -103,6 +105,31 @@ class ContentImportTest extends BrowserTestBase {
   }
 
   /**
+   * @return array<array<mixed>>
+   */
+  public function providerImportEntityThatAlreadyExists(): array {
+    return [
+      [Existing::Error],
+      [Existing::Skip],
+    ];
+  }
+
+  /**
+   * @dataProvider providerImportEntityThatAlreadyExists
+   */
+  public function testImportEntityThatAlreadyExists(Existing $existing): void {
+    $this->drupalCreateUser(values: ['uuid' => '94503467-be7f-406c-9795-fc25baa22203']);
+
+    if ($existing === Existing::Error) {
+      $this->expectException(ImportException::class);
+      $this->expectExceptionMessage('user 94503467-be7f-406c-9795-fc25baa22203 already exists.');
+    }
+
+    $this->container->get(Importer::class)
+      ->importContent(new Finder($this->contentDir), $existing);
+  }
+
+  /**
    * Tests importing content directly, via the API.
    */
   public function testDirectContentImport(): void {
@@ -146,9 +173,7 @@ class ContentImportTest extends BrowserTestBase {
     // The tag carries a field with serialized data, so ensure it came through
     // properly.
     $this->assertSame('a:2:{i:0;s:2:"Hi";i:1;s:6:"there!";}', $tag->field_serialized_stuff->value);
-    $owner = $node->getOwner();
-    $this->assertSame('Naomi Malone', $owner->getAccountName());
-    $this->assertSame('94503467-be7f-406c-9795-fc25baa22203', $owner->uuid());
+    $this->assertSame('94503467-be7f-406c-9795-fc25baa22203', $node->getOwner()->uuid());
     // The node's URL should use the path alias shipped with the recipe.
     $node_url = $node->toUrl()->toString();
     $this->assertSame(Url::fromUserInput('/test-article')->toString(), $node_url);

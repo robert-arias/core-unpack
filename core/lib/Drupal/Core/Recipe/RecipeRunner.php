@@ -5,6 +5,7 @@ namespace Drupal\Core\Recipe;
 use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Config\InstallStorage;
 use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\DefaultContent\Existing;
 use Drupal\Core\DefaultContent\Importer;
 use Drupal\Core\DefaultContent\Finder;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -129,7 +130,7 @@ final class RecipeRunner {
     /** @var \Drupal\Core\DefaultContent\Importer $importer */
     $importer = \Drupal::service(Importer::class);
     $importer->setLogger(\Drupal::logger('recipe'));
-    $importer->importContent($content);
+    $importer->importContent($content, Existing::Skip);
   }
 
 }
