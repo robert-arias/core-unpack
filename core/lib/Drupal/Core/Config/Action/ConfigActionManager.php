@@ -31,10 +31,10 @@ use Drupal\Core\Validation\Plugin\Validation\Constraint\FullyValidatableConstrai
  *   \Drupal\Core\Config\Action\ConfigActionPluginInterface, in namespace
  *   Plugin\ConfigAction under your module namespace. For more information about
  *   creating plugins, see the @link plugin_api Plugin API topic. @endlink
- * - Config action plugins use the annotations defined by
- *  \Drupal\Core\Config\Action\Annotation\ConfigAction. See the
- *   @link annotation Annotations topic @endlink for more information about
- *   annotations.
+ * - Config action plugins use the attributes defined by
+ *  \Drupal\Core\Config\Action\Attribute\ConfigAction. See the
+ *   @link attribute Attributes topic @endlink for more information about
+ *   attributes.
  *
  * Further information and examples:
  * - \Drupal\Core\Config\Action\Plugin\ConfigAction\EntityMethod derives
@@ -97,7 +97,10 @@ class ConfigActionManager extends DefaultPluginManager {
    *   action plugin ID or a shorthand action ID that is available for the
    *   entity type of the provided configuration name.
    * @param string $configName
-   *   The configuration name.
+   *   The configuration name. This may be the full name of a config object, or
+   *   it may contain wildcards (to target all config entities of a specific
+   *   type, or a subset thereof). See
+   *   ConfigActionManager::getConfigNamesMatchingExpression() for more detail.
    * @param mixed $data
    *   The data for the action.
    *
@@ -105,6 +108,8 @@ class ConfigActionManager extends DefaultPluginManager {
    *   Thrown when the config action cannot be found.
    * @throws \Drupal\Core\Config\Action\ConfigActionException
    *   Thrown when the config action fails to apply.
+   *
+   * @see \Drupal\Core\Config\Action\ConfigActionManager::getConfigNamesMatchingExpression()
    */
   public function applyAction(string $action_id, string $configName, mixed $data): void {
     if (!$this->hasDefinition($action_id)) {

@@ -143,8 +143,10 @@ final class Recipe {
       'install' => new Optional([
         new All([
           new Type('string'),
-          new NotBlank(),
-          new Callback(self::validateExtensionIsAvailable(...)),
+          new Sequentially([
+            new NotBlank(),
+            new Callback(self::validateExtensionIsAvailable(...)),
+          ]),
         ]),
       ]),
       'config' => new Optional([
@@ -211,10 +213,6 @@ final class Recipe {
    * @see \Drupal\Core\Extension\ExtensionList::getAllAvailableInfo()
    */
   private static function validateExtensionIsAvailable(string $value, ExecutionContextInterface $context): void {
-    if (empty($value)) {
-      return;
-    }
-
     $name = Dependency::createFromString($value)->getName();
     $all_available = \Drupal::service(ModuleExtensionList::class)->getAllAvailableInfo() + \Drupal::service(ThemeExtensionList::class)->getAllAvailableInfo();
     if (!array_key_exists($name, $all_available)) {

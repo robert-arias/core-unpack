@@ -58,11 +58,6 @@ final class RecipeCommand extends Command {
   protected function execute(InputInterface $input, OutputInterface $output): int {
     $io = new SymfonyStyle($input, $output);
 
-    if (PHP_VERSION_ID < 80100) {
-      $io->error('Recipes require PHP 8.1');
-      return 1;
-    }
-
     $recipe_path = $input->getArgument('path');
     if (!is_string($recipe_path) || !is_dir($recipe_path)) {
       $io->error(sprintf('The supplied path %s is not a directory', $recipe_path));

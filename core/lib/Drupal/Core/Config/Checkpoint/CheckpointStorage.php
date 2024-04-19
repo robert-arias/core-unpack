@@ -252,39 +252,38 @@ final class CheckpointStorage implements CheckpointStorageInterface, EventSubscr
   public function checkpoint(string|\Stringable $label): Checkpoint {
     // Generate a new ID based on the state of the current active checkpoint.
     $active_checkpoint = $this->checkpoints->getActiveCheckpoint();
-    if ($active_checkpoint instanceof Checkpoint) {
-      $collections = $this->getAllCollectionNames();
-      $collections[] = StorageInterface::DEFAULT_COLLECTION;
-      foreach ($collections as $collection) {
-        $current_checkpoint_data[$collection] = $this->getKeyValue($active_checkpoint->id, $collection)->getAll();
-        // Remove the collections key because it is irrelevant.
-        unset($current_checkpoint_data[$collection][static::CONFIG_COLLECTION_KEY]);
-        // If there is no data in the collection then there is no need to hash
-        // the empty array.
-        if (empty($current_checkpoint_data[$collection])) {
-          unset($current_checkpoint_data[$collection]);
-        }
-      }
-
-      if (!empty($current_checkpoint_data)) {
-        // Use json_encode() here because it is both quicker and results in
-        // smaller output than serialize().
-        $id = hash('sha1', ($active_checkpoint->parent ?? '') . json_encode($current_checkpoint_data));
-        $active_checkpoint = $this->checkpoints->add($id, $label);
-      }
-      else {
-        $this->logger?->notice('A backup checkpoint was not created because nothing has changed since the "{active}" checkpoint was created.', [
-          'active' => $active_checkpoint->label,
-        ]);
-      }
-    }
-    else {
+    if (!$active_checkpoint instanceof Checkpoint) {
       // @todo https://www.drupal.org/i/3408525 Consider options for generating
       //   a real fingerprint.
       $id = hash('sha1', random_bytes(32));
-      $active_checkpoint = $this->checkpoints->add($id, $label);
+      return $this->checkpoints->add($id, $label);
     }
 
+    // Determine if we need to create a new checkpoint by checking if
+    // configuration has changed since the last checkpoint.
+    $collections = $this->getAllCollectionNames();
+    $collections[] = StorageInterface::DEFAULT_COLLECTION;
+    foreach ($collections as $collection) {
+      $current_checkpoint_data[$collection] = $this->getKeyValue($active_checkpoint->id, $collection)->getAll();
+      // Remove the collections key because it is irrelevant.
+      unset($current_checkpoint_data[$collection][static::CONFIG_COLLECTION_KEY]);
+      // If there is no data in the collection then there is no need to hash
+      // the empty array.
+      if (empty($current_checkpoint_data[$collection])) {
+        unset($current_checkpoint_data[$collection]);
+      }
+    }
+
+    if (!empty($current_checkpoint_data)) {
+      // Use json_encode() here because it is both quicker and results in
+      // smaller output than serialize().
+      $id = hash('sha1', ($active_checkpoint->parent ?? '') . json_encode($current_checkpoint_data));
+      return $this->checkpoints->add($id, $label);
+    }
+
+    $this->logger?->notice('A backup checkpoint was not created because nothing has changed since the "{active}" checkpoint was created.', [
+      'active' => $active_checkpoint->label,
+    ]);
     return $active_checkpoint;
   }
 
