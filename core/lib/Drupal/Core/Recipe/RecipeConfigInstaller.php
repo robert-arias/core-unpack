@@ -31,7 +31,7 @@ final class RecipeConfigInstaller extends ConfigInstaller {
     $list = array_filter($list, function ($config_name) use ($existing_config) {
       // Only list configuration that:
       // - does not already exist
-      return !in_array($config_name, $existing_config);
+      return !in_array($config_name, $existing_config, TRUE);
     });
 
     // If there is nothing to do.

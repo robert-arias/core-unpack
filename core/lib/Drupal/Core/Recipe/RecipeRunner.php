@@ -12,7 +12,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 /**
  * Applies a recipe.
  *
- * This class currently static and use \Drupal::service() in order to put off
+ * This class is currently static and use \Drupal::service() in order to put off
  * having to solve issues caused by container rebuilds during module install and
  * configuration import.
  *
