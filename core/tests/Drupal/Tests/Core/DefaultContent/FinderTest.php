@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\Core\DefaultContent;
 
+use Drupal\Component\FileSystem\FileSystem;
 use Drupal\Core\DefaultContent\Finder;
+use Drupal\Core\DefaultContent\ImportException;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -30,6 +32,20 @@ class FinderTest extends UnitTestCase {
       '3434bd5a-d2cd-4f26-bf79-a7f6b951a21b',
     ];
     $this->assertSame($expected_order, array_slice(array_keys($finder->data), 0, 4));
+  }
+
+  /**
+   * Tests that files without UUIDs will raise an exception.
+   */
+  public function testExceptionIfNoUuid(): void {
+    $dir = FileSystem::getOsTemporaryDirectory();
+    $this->assertIsString($dir);
+    /** @var string $dir */
+    file_put_contents($dir . '/no-uuid.yml', '_meta: {}');
+
+    $this->expectException(ImportException::class);
+    $this->expectExceptionMessage("$dir/no-uuid.yml does not have a UUID.");
+    new Finder($dir);
   }
 
 }

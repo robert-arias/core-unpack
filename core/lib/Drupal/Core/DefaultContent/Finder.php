@@ -41,9 +41,9 @@ final class Finder {
     $graph = $files = [];
     /** @var \Symfony\Component\Finder\SplFileInfo $file */
     foreach ($finder as $file) {
-      /** @var array{_meta: array{uuid: string, depends: array<string, string>|null}} $decoded */
+      /** @var array{_meta: array{uuid: string|null, depends: array<string, string>|null}} $decoded */
       $decoded = Yaml::decode($file->getContents());
-      $uuid = $decoded['_meta']['uuid'];
+      $uuid = $decoded['_meta']['uuid'] ?? throw new ImportException($file->getPathname() . ' does not have a UUID.');
       $decoded['_meta']['path'] = $file->getPath();
       $files[$uuid] = $decoded;
 
