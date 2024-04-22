@@ -198,6 +198,9 @@ build-patch:
     - mkdir -p ~/.ssh
     - ssh-keyscan git.drupal.org >> ~/.ssh/known_hosts
   script:
+    # Revert any changes to files due to build process.
+    - git reset HEAD
+    - git checkout .
     - git config --global user.email "gitlabci@example.com"
     - git config --global user.name "GitLabCi"
     - git config --global --add safe.directory /builds/project/distributions_recipes
