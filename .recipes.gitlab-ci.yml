@@ -18,6 +18,8 @@ variables:
   MYSQL_DATABASE: mysql
   MYSQL_USER: drupaltestbot
   MYSQL_PASSWORD: drupaltestbotpw
+  # Note if you add anything to the lists below you will need to change the root
+  # phpunit.xml.dist file.
   TEST_DIRECTORIES: "core/tests/Drupal/Tests/Core/Recipe core/tests/Drupal/KernelTests/Core/Recipe core/tests/Drupal/FunctionalTests/Core/Recipe core/tests/Drupal/KernelTests/Core/Config/Action core/tests/Drupal/KernelTests/Core/Config/Storage/Checkpoint core/tests/Drupal/Tests/Core/Config/Checkpoint core/tests/Drupal/Tests/Core/Config/Action core/modules/content_moderation/tests/src/Kernel/ConfigAction core/modules/ckeditor5/tests/src/Kernel/ConfigAction core/tests/Drupal/Tests/Core/DefaultContent core/tests/Drupal/FunctionalTests/DefaultContent"
   CODE_DIRECTORIES: "core/lib/Drupal/Core/Recipe core/lib/Drupal/Core/Config/Action core/modules/config/tests/config_action_duplicate_test core/tests/fixtures/recipes core/lib/Drupal/Core/Config/Checkpoint core/modules/content_moderation/src/Plugin/ConfigAction core/modules/ckeditor5/src/Plugin/ConfigAction core/lib/Drupal/Core/DefaultContent"
   ALL_DIRECTORIES: "${CODE_DIRECTORIES} ${TEST_DIRECTORIES}"
@@ -39,7 +41,8 @@ build:
     paths:
       - vendor/
   script:
-    - COMPOSER_ROOT_VERSION=10.0.x-dev composer install --no-interaction --no-progress --prefer-dist
+    - COMPOSER_ROOT_VERSION=11.x-dev composer install --no-interaction --no-progress --prefer-dist
+    - COMPOSER_ROOT_VERSION=11.x-dev composer require --dev brianium/paratest
   artifacts:
     paths:
       - vendor/
@@ -129,29 +132,22 @@ test:
   before_script:
     - ln -s $CI_PROJECT_DIR /var/www/html/subdirectory
     - sudo service apache2 start
+  coverage: '/^\s*Lines:\s*\d+.\d+\%/'
   script:
-    - mkdir sites/simpletest
-    - chown www-data sites/simpletest
-    - mkdir junit-reports
-    - chown www-data junit-reports
-    - mkdir -p $BROWSERTEST_OUTPUT_DIRECTORY
-    - chown www-data $BROWSERTEST_OUTPUT_DIRECTORY
-    - REAL_EXIT_CODE=0
-    - |
-      for TEST_DIRECTORY in $TEST_DIRECTORIES
-      do
-        REPORT="${TEST_DIRECTORY//[\/]/-}-test-report.xml"
-        sudo --preserve-env=SIMPLETEST_DB,SIMPLETEST_BASE_URL,BROWSERTEST_OUTPUT_DIRECTORY,BROWSERTEST_OUTPUT_FILE,MINK_DRIVER_ARGS_WEBDRIVER -u www-data vendor/bin/phpunit -v -c core/phpunit.xml.dist --log-junit junit-reports/${REPORT} ${TEST_DIRECTORY} || EXIT_CODE=$?
-        if [ -n "$EXIT_CODE" ]; then
-          REAL_EXIT_CODE=$EXIT_CODE
-        fi
-      done
-    - ls -lah junit-reports
-    - exit $REAL_EXIT_CODE
+    - docker-php-ext-enable pcov
+    - mkdir -p sites/simpletest junit-reports code_coverage_html $BROWSERTEST_OUTPUT_DIRECTORY
+    - chown www-data sites/simpletest junit-reports code_coverage_html $BROWSERTEST_OUTPUT_DIRECTORY
+    - sudo --preserve-env=SIMPLETEST_DB,SIMPLETEST_BASE_URL,BROWSERTEST_OUTPUT_DIRECTORY,BROWSERTEST_OUTPUT_FILE,MINK_DRIVER_ARGS_WEBDRIVER -u www-data vendor/bin/phpunit -v -c phpunit.xml.dist --list-tests
+    - sudo --preserve-env=SIMPLETEST_DB,SIMPLETEST_BASE_URL,BROWSERTEST_OUTPUT_DIRECTORY,BROWSERTEST_OUTPUT_FILE,MINK_DRIVER_ARGS_WEBDRIVER -u www-data vendor/bin/paratest -v -c phpunit.xml.dist --coverage-text --colors=never --coverage-cobertura=coverage.cobertura.xml --coverage-html=code_coverage_html/ --log-junit junit-reports/recipe-tests.xml
   artifacts:
     when: always
+    paths:
+      - "code_coverage_html/*"
     reports:
       junit: "junit-reports/*"
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.cobertura.xml
 
 core-tests:
   stage: test
@@ -167,30 +163,15 @@ core-tests:
     BROWSERTEST_OUTPUT_DIRECTORY: "sites/simpletest/browser_output"
     BROWSERTEST_OUTPUT_FILE: "test-output.html"
     MINK_DRIVER_ARGS_WEBDRIVER: '["chrome", {"chromeOptions": { "args": [ "--disable-gpu", "--headless" ] } }, "http://127.0.0.1:4444/wd/hub" ]'
-    CORE_TESTS: "core/modules/config/tests/src/Functional/ConfigImportUITest.php core/modules/jsonapi/tests/src/Functional/ConfigTestTest.php core/tests/Drupal/KernelTests/Core/Entity/ConfigEntityAdapterTest.php core/tests/Drupal/KernelTests/Core/Config/ConfigImporterTest.php core/tests/Drupal/KernelTests/Core/DependencyInjection/AutowireTest.php core/tests/Drupal/KernelTests/Core/DependencyInjection/AutoconfigurationTest.php core/tests/Drupal/KernelTests/Config/TypedConfigTest.php core/profiles/standard/tests/src/Functional/StandardTest.php"
   #    SYMFONY_DEPRECATIONS_HELPER: "max[self]=0"
   before_script:
     - ln -s $CI_PROJECT_DIR /var/www/html/subdirectory
     - sudo service apache2 start
   script:
-    - mkdir sites/simpletest
-    - chown www-data sites/simpletest
-    - mkdir junit-reports
-    - chown www-data junit-reports
-    - mkdir -p $BROWSERTEST_OUTPUT_DIRECTORY
-    - chown www-data $BROWSERTEST_OUTPUT_DIRECTORY
-    - REAL_EXIT_CODE=0
-    - |
-      for CORE_TEST in $CORE_TESTS
-      do
-        REPORT="${CORE_TEST//[\/]/-}-test-report.xml"
-        sudo --preserve-env=SIMPLETEST_DB,SIMPLETEST_BASE_URL,BROWSERTEST_OUTPUT_DIRECTORY,BROWSERTEST_OUTPUT_FILE,MINK_DRIVER_ARGS_WEBDRIVER -u www-data vendor/bin/phpunit -v -c core/phpunit.xml.dist --log-junit junit-reports/${REPORT} ${CORE_TEST} || EXIT_CODE=$?
-        if [ -n "$EXIT_CODE" ]; then
-          REAL_EXIT_CODE=$EXIT_CODE
-        fi
-      done
-    - ls -lah junit-reports
-    - exit $REAL_EXIT_CODE
+    - mkdir -p sites/simpletest junit-reports $BROWSERTEST_OUTPUT_DIRECTORY
+    - chown www-data sites/simpletest junit-reports $BROWSERTEST_OUTPUT_DIRECTORY
+    - sudo --preserve-env=SIMPLETEST_DB,SIMPLETEST_BASE_URL,BROWSERTEST_OUTPUT_DIRECTORY,BROWSERTEST_OUTPUT_FILE,MINK_DRIVER_ARGS_WEBDRIVER -u www-data vendor/bin/phpunit -v -c phpunit-core-tests.xml.dist --list-tests
+    - sudo --preserve-env=SIMPLETEST_DB,SIMPLETEST_BASE_URL,BROWSERTEST_OUTPUT_DIRECTORY,BROWSERTEST_OUTPUT_FILE,MINK_DRIVER_ARGS_WEBDRIVER -u www-data vendor/bin/paratest -v -c phpunit-core-tests.xml.dist --log-junit junit-reports/recipe-tests.xml
   artifacts:
     when: always
     reports:
