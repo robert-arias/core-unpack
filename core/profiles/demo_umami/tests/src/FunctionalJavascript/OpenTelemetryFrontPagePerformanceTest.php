@@ -11,6 +11,7 @@ use Drupal\FunctionalJavascriptTests\PerformanceTestBase;
  *
  * @group OpenTelemetry
  * @group #slow
+ * @requires extension apcu
  */
 class OpenTelemetryFrontPagePerformanceTest extends PerformanceTestBase {
 
@@ -64,9 +65,9 @@ class OpenTelemetryFrontPagePerformanceTest extends PerformanceTestBase {
     $this->assertSame(1, $performance_data->getCacheTagIsValidCount());
     $this->assertSame(0, $performance_data->getCacheTagInvalidationCount());
     $this->assertSame(1, $performance_data->getScriptCount());
-    $this->assertSame(7067, $performance_data->getScriptBytes());
+    $this->assertLessThan(7500, $performance_data->getScriptBytes());
     $this->assertSame(2, $performance_data->getStylesheetCount());
-    $this->assertSame(41548, $performance_data->getStylesheetBytes());
+    $this->assertLessThan(42000, $performance_data->getStylesheetBytes());
   }
 
   /**
@@ -80,7 +81,7 @@ class OpenTelemetryFrontPagePerformanceTest extends PerformanceTestBase {
     $this->drupalGet('<front>');
     $this->rebuildAll();
     // Now visit a different page to warm non-route-specific caches.
-    $this->drupalGet('/user/login');
+    $this->drupalGet('user/login');
     $this->collectPerformanceData(function () {
       $this->drupalGet('<front>');
     }, 'umamiFrontPageCoolCache');

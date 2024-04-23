@@ -11,5 +11,6 @@
 function contact_removed_post_updates() {
   return [
     'contact_post_update_add_message_redirect_field_to_contact_form' => '9.0.0',
+    'contact_post_update_set_empty_default_form_to_null' => '11.0.0',
   ];
 }

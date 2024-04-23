@@ -56,7 +56,6 @@ global-styling:
       css/components/system-status-counter.css: {}
       css/components/tableselect.css: {}
       css/components/tabs.css: {}
-      css/components/views-ui.css: {}
     theme:
       css/theme/colors.css: {}
     layout:
@@ -138,12 +137,6 @@ drupal.node.preview:
   css:
     theme:
       css/components/node-preview.css: {}
-
-tour-styling:
-  version: VERSION
-  css:
-    theme:
-      css/theme/tour.theme.css: {}
 
 media-form:
   version: VERSION
@@ -231,6 +224,18 @@ views:
     component:
       css/components/views-exposed-form.css: {}
 
+views_ui:
+  css:
+    component:
+      css/components/views-ui.css: {}
+  moved_files:
+    claro/global-styling:
+      deprecation_version: 10.3.0
+      removed_version: 11.0.0
+      deprecation_link: https://www.drupal.org/node/3432346
+      css:
+        component: 'css/components/views-ui.css'
+
 messages:
   js:
     js/messages.js: {}
@@ -304,23 +309,11 @@ tableselect:
     - core/tabbable
     - core/once
 
-classy.book-navigation:
-  version: VERSION
-  css:
-    component:
-      css/classy/components/book-navigation.css: {}
-
 classy.file:
   version: VERSION
   css:
     component:
       css/classy/components/file.css: { weight: -10 }
-
-classy.forum:
-  version: VERSION
-  css:
-    component:
-      css/classy/components/forum.css: { weight: -10 }
 
 classy.indented:
   version: VERSION

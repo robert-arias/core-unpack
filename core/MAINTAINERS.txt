@@ -32,9 +32,9 @@ Framework managers
 
   Frontend
   - Ben Mullins 'bnjmnm' https://www.drupal.org/u/bnjmnm
-  - (provisional) Théodore Biadala 'nod_' https://www.drupal.org/u/nod_
-  - (provisional) Cristina Chumillas 'ckrina' https://www.drupal.org/u/ckrina
-  - (provisional) Sally Young 'justafish' https://www.drupal.org/u/justafish
+  - Théodore Biadala 'nod_' https://www.drupal.org/u/nod_
+  - Cristina Chumillas 'ckrina' https://www.drupal.org/u/ckrina
+  - Sally Young 'justafish' https://www.drupal.org/u/justafish
 
 Release managers
 - Nathaniel Catchpole 'catch' https://www.drupal.org/u/catch
@@ -59,9 +59,6 @@ The Drupal core subsystem maintainers oversee the development of Drupal
 subsystems. See https://www.drupal.org/contribute/core-maintainers for more
 information on their responsibilities, and to find out how to become a subsystem
 maintainer. Current subsystem maintainers:
-
-Actions UI
-- ?
 
 Ajax
 - Alex Bronstein 'effulgentsia' https://www.drupal.org/u/effulgentsia
@@ -100,9 +97,6 @@ Block Content
 - Adam Bramley 'acbramley' https://www.drupal.org/u/acbramley
 - Lee Rowlands 'larowlan' https://www.drupal.org/u/larowlan
 - Stephen Mustgrave 'smustgrave' https://www.drupal.org/u/smustgrave
-
-Book
-- Peter Wolanin 'pwolanin' https://www.drupal.org/u/pwolanin
 
 Bootstrap
 - ?
@@ -219,9 +213,6 @@ File
 
 Filter
 - ?
-
-Forum
-- Lee Rowlands 'larowlan' https://www.drupal.org/u/larowlan
 
 Form API
 - Alex Bronstein 'effulgentsia' https://www.drupal.org/u/effulgentsia
@@ -373,9 +364,6 @@ Shortcut
 Stark
 - John Albin Wilkins 'JohnAlbin' https://www.drupal.org/u/johnalbin
 
-Statistics
-- ?
-
 Syslog
 - Mariano D'Agostino 'dagmar' https://www.drupal.org/u/dagmar
 
@@ -403,12 +391,6 @@ Token
 
 Toolbar
 - Théodore Biadala 'nod_' https://www.drupal.org/u/nod_
-
-Tour
-- Nick Schuch 'nick_schuch' https://www.drupal.org/u/nick_schuch
-
-Tracker
-- ?
 
 Transliteration
 - Andrei Mateescu 'amateescu' https://www.drupal.org/u/amateescu
@@ -441,6 +423,8 @@ Views
 Workflows
 - Sam Becker 'Sam152' https://www.drupal.org/u/sam152
 
+Workspaces
+- Andrei Mateescu 'amateescu' https://www.drupal.org/u/amateescu
 
 Topic maintainers
 -----------------

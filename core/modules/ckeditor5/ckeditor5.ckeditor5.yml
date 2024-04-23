@@ -588,6 +588,8 @@ ckeditor5_imageUpload:
     config:
       image:
         upload:
+          # The strings in this array should be IANA media type Names, without the "image/" prefix. So: image subtypes.
+          # https://www.iana.org/assignments/media-types/media-types.xhtml#image
           types: ["jpeg", "png", "gif"]
   drupal:
     label: Image Upload
@@ -818,8 +820,9 @@ media_library_mediaLibrary:
             name: Drupal.ckeditor5.openDialog
             invoke: false
         dialogSettings:
+          classes:
+            ui-dialog: media-library-widget-modal
           height: 75%
-          dialogClass: media-library-widget-modal
   drupal:
     label: Media Library
     elements: false

@@ -77,6 +77,11 @@ class UpdateSemverCoreTest extends UpdateSemverCoreTestBase {
 
   /**
    * Checks that Drupal recovers after problems connecting to update server.
+   *
+   * This test uses the following XML fixtures.
+   *  - drupal.broken.xml
+   *  - drupal.sec.8.0.2.xml
+   *     'supported_branches' is '8.0.,8.1.'.
    */
   public function testBrokenThenFixedUpdates() {
     $this->drupalLogin($this->drupalCreateUser([
@@ -98,7 +103,7 @@ class UpdateSemverCoreTest extends UpdateSemverCoreTestBase {
     $this->drupalGet('admin/reports/status');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('There was a problem checking available updates for Drupal.');
-    $this->mockReleaseHistory(['drupal' => 'sec.0.2']);
+    $this->mockReleaseHistory(['drupal' => 'sec.8.0.2']);
     // Simulate the update_available_releases state expiring before cron is run
     // and the state is used by \Drupal\update\UpdateManager::getProjects().
     \Drupal::keyValueExpirable('update_available_releases')->deleteAll();

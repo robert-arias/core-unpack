@@ -1878,6 +1878,23 @@ function hook_entity_form_mode_alter(&$form_mode, \Drupal\Core\Entity\EntityInte
 }
 
 /**
+ * Change the form mode of a specific entity type currently being displayed.
+ *
+ * @param string $form_mode
+ *   The form_mode currently displaying the entity.
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   The entity that is being viewed.
+ *
+ * @ingroup entity_crud
+ */
+function hook_ENTITY_TYPE_form_mode_alter(string &$form_mode, \Drupal\Core\Entity\EntityInterface $entity): void {
+  // Change the form mode for nodes with 'article' bundle.
+  if ($entity->bundle() == 'article') {
+    $form_mode = 'custom_article_form_mode';
+  }
+}
+
+/**
  * Alter the settings used for displaying an entity form.
  *
  * @param \Drupal\Core\Entity\Display\EntityFormDisplayInterface $form_display
@@ -2287,6 +2304,65 @@ function hook_entity_extra_field_info_alter(&$info) {
       $info['node'][$bundle->id()]['form']['title']['weight'] = -20;
     }
   }
+}
+
+/**
+ * Alter an entity query.
+ *
+ * @param \Drupal\Core\Entity\Query\QueryInterface $query
+ *   The entity query.
+ *
+ * @see hook_entity_query_ENTITY_TYPE_alter()
+ * @see hook_entity_query_tag__TAG_alter()
+ * @see \Drupal\Core\Entity\Query\QueryInterface
+ */
+function hook_entity_query_alter(\Drupal\Core\Entity\Query\QueryInterface $query): void {
+  if ($query->hasTag('entity_reference')) {
+    $entityType = \Drupal::entityTypeManager()->getDefinition($query->getEntityTypeId());
+    $query->sort($entityType->getKey('id'), 'desc');
+  }
+}
+
+/**
+ * Alter an entity query for a specific entity type.
+ *
+ * @param \Drupal\Core\Entity\Query\QueryInterface $query
+ *   The entity query.
+ *
+ * @see hook_entity_query_alter()
+ * @see \Drupal\Core\Entity\Query\QueryInterface
+ */
+function hook_entity_query_ENTITY_TYPE_alter(\Drupal\Core\Entity\Query\QueryInterface $query): void {
+  $query->condition('id', '1', '<>');
+}
+
+/**
+ * Alter an entity query that has a specific tag.
+ *
+ * @param \Drupal\Core\Entity\Query\QueryInterface $query
+ *   The entity query.
+ *
+ * @see hook_entity_query_alter()
+ * @see hook_entity_query_tag__ENTITY_TYPE__TAG_alter()
+ * @see \Drupal\Core\Entity\Query\QueryInterface
+ */
+function hook_entity_query_tag__TAG_alter(\Drupal\Core\Entity\Query\QueryInterface $query): void {
+  $entityType = \Drupal::entityTypeManager()->getDefinition($query->getEntityTypeId());
+  $query->sort($entityType->getKey('id'), 'desc');
+}
+
+/**
+ * Alter an entity query for a specific entity type that has a specific tag.
+ *
+ * @param \Drupal\Core\Entity\Query\QueryInterface $query
+ *   The entity query.
+ *
+ * @see hook_entity_query_ENTITY_TYPE_alter()
+ * @see hook_entity_query_tag__TAG_alter()
+ * @see \Drupal\Core\Entity\Query\QueryInterface
+ */
+function hook_entity_query_tag__ENTITY_TYPE__TAG_alter(\Drupal\Core\Entity\Query\QueryInterface $query): void {
+  $query->condition('id', '1', '<>');
 }
 
 /**
