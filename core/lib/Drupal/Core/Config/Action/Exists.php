@@ -1,6 +1,8 @@
 <?php
 // phpcs:ignoreFile
 
+declare(strict_types=1);
+
 namespace Drupal\Core\Config\Action;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;

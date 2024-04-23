@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Core\Config\Action\Plugin\ConfigAction;
 
 use Drupal\Core\Config\Action\Attribute\ConfigAction;
