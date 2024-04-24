@@ -63,8 +63,6 @@ config:
   actions:
     node.settings:
       simple_config_update:
-        # @todo Remove `langcode` once https://drupal.org/i/3427564 lands.
-        langcode: en
         use_admin_theme: true
     user.role.authenticated:
       grantPermission: 'delete own files'
