@@ -70,6 +70,7 @@ class ContentImportTest extends BrowserTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->setUpCurrentUser(admin: TRUE);
 
     BlockContentType::create(['id' => 'basic', 'label' => 'Basic'])->save();
     block_content_add_body_field('basic');
@@ -215,10 +216,11 @@ class ContentImportTest extends BrowserTestBase {
     $this->assertSame('Useful Info', $block_content->label());
     $this->assertSame("<p>I'd love to put some useful info here.</p>", $block_content->body->value);
 
-    // A node with a non-existent owner should be reassigned to user 1.
+    // A node with a non-existent owner should be reassigned to the current
+    // user.
     $node = $entity_repository->loadEntityByUuid('node', '7f1dd75a-0be2-4d3b-be5d-9d1a868b9267');
     $this->assertInstanceOf(NodeInterface::class, $node);
-    $this->assertSame('1', $node->getOwner()->id());
+    $this->assertSame(\Drupal::currentUser()->id(), $node->getOwner()->id());
 
     // Ensure a node with a translation is imported properly.
     $node = $entity_repository->loadEntityByUuid('node', '2d3581c3-92c7-4600-8991-a0d4b3741198');

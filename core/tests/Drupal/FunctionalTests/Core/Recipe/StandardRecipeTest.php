@@ -7,7 +7,6 @@ namespace Drupal\FunctionalTests\Core\Recipe;
 use Drupal\contact\Entity\ContactForm;
 use Drupal\shortcut\Entity\Shortcut;
 use Drupal\Tests\standard\Functional\StandardTest;
-use Drupal\user\Entity\User;
 use Drupal\user\RoleInterface;
 
 /**
@@ -55,7 +54,9 @@ class StandardRecipeTest extends StandardTest {
     // Clean up roles before recipe import.
     $storage = \Drupal::entityTypeManager()->getStorage('user_role');
     $roles = $storage->loadMultiple();
-    unset($roles[RoleInterface::ANONYMOUS_ID], $roles[RoleInterface::AUTHENTICATED_ID]);
+    // Do not delete the administrator role. There would be no user with the
+    // permissions to create content.
+    unset($roles[RoleInterface::ANONYMOUS_ID], $roles[RoleInterface::AUTHENTICATED_ID], $roles['administrator']);
     $storage->delete($roles);
 
     $this->applyRecipe('core/recipes/standard');
@@ -73,7 +74,6 @@ class StandardRecipeTest extends StandardTest {
 
     // Add a Home link to the main menu as Standard expects "Main navigation"
     // block on the page.
-    User::load(1)->addRole('administrator')->save();
     $this->drupalLogin($this->rootUser);
     $this->drupalGet('admin/structure/menu/manage/main/add');
     $this->submitForm([

@@ -64,6 +64,7 @@ class CoreRecipesTest extends BrowserTestBase {
    * @dataProvider providerApplyRecipe
    */
   public function testApplyRecipe(string $path): void {
+    $this->setUpCurrentUser(admin: TRUE);
     $this->applyRecipe($path);
   }
 

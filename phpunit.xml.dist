@@ -72,6 +72,7 @@
       <directory>core/modules/content_moderation/tests/src/Kernel/ConfigAction</directory>
       <directory>core/modules/ckeditor5/tests/src/Kernel/ConfigAction</directory>
       <directory>core/tests/Drupal/Tests/Core/DefaultContent</directory>
+      <directory>core/tests/Drupal/KernelTests/Core/DefaultContent</directory>
       <directory>core/tests/Drupal/FunctionalTests/DefaultContent</directory>
     </testsuite>
   </testsuites>

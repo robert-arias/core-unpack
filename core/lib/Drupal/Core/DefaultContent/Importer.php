@@ -13,7 +13,6 @@ use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Installer\InstallerKernel;
 use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\Core\Session\AccountSwitcherInterface;
 use Drupal\file\FileInterface;
 use Drupal\link\Plugin\Field\FieldType\LinkItem;
 use Drupal\user\EntityOwnerInterface;
@@ -42,7 +41,7 @@ final class Importer implements LoggerAwareInterface {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly AccountSwitcherInterface $accountSwitcher,
+    private readonly AdminAccountSwitcher $accountSwitcher,
     private readonly FileSystemInterface $fileSystem,
     private readonly LanguageManagerInterface $languageManager,
     private readonly EntityRepositoryInterface $entityRepository,
@@ -71,48 +70,50 @@ final class Importer implements LoggerAwareInterface {
       return;
     }
 
-    /** @var \Drupal\user\UserInterface $root_user */
-    $root_user = $this->entityTypeManager->getStorage('user')->load(1);
-    $this->accountSwitcher->switchTo($root_user);
+    $account = $this->accountSwitcher->switchToAdministrator();
 
-    /** @var array{_meta: array<mixed>} $decoded */
-    foreach ($content->data as $decoded) {
-      ['uuid' => $uuid, 'entity_type' => $entity_type_id, 'path' => $path] = $decoded['_meta'];
-      assert(is_string($uuid));
-      assert(is_string($entity_type_id));
-      assert(is_string($path));
+    try {
+      /** @var array{_meta: array<mixed>} $decoded */
+      foreach ($content->data as $decoded) {
+        ['uuid' => $uuid, 'entity_type' => $entity_type_id, 'path' => $path] = $decoded['_meta'];
+        assert(is_string($uuid));
+        assert(is_string($entity_type_id));
+        assert(is_string($path));
 
-      $entity_type = $this->entityTypeManager->getDefinition($entity_type_id);
-      /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
-      if (!$entity_type->entityClassImplements(ContentEntityInterface::class)) {
-        throw new ImportException("Content entity $uuid is a '$entity_type_id', which is not a content entity type.");
-      }
-
-      $entity = $this->entityRepository->loadEntityByUuid($entity_type_id, $uuid);
-      if ($entity) {
-        if ($existing === Existing::Skip) {
-          continue;
+        $entity_type = $this->entityTypeManager->getDefinition($entity_type_id);
+        /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
+        if (!$entity_type->entityClassImplements(ContentEntityInterface::class)) {
+          throw new ImportException("Content entity $uuid is a '$entity_type_id', which is not a content entity type.");
         }
-        else {
-          throw new ImportException("$entity_type_id $uuid already exists.");
+
+        $entity = $this->entityRepository->loadEntityByUuid($entity_type_id, $uuid);
+        if ($entity) {
+          if ($existing === Existing::Skip) {
+            continue;
+          }
+          else {
+            throw new ImportException("$entity_type_id $uuid already exists.");
+          }
         }
-      }
 
-      $entity = $this->toEntity($decoded)->enforceIsNew();
+        $entity = $this->toEntity($decoded)->enforceIsNew();
 
-      // Ensure that the entity is not owned by the anonymous user.
-      if ($entity instanceof EntityOwnerInterface && empty($entity->getOwnerId())) {
-        $entity->setOwner($root_user);
-      }
+        // Ensure that the entity is not owned by the anonymous user.
+        if ($entity instanceof EntityOwnerInterface && empty($entity->getOwnerId())) {
+          $entity->setOwnerId($account->id());
+        }
 
-      // If a file exists in the same folder, copy it to the designated
-      // target URI.
-      if ($entity instanceof FileInterface) {
-        $this->copyFileAssociatedWithEntity($path, $entity);
+        // If a file exists in the same folder, copy it to the designated
+        // target URI.
+        if ($entity instanceof FileInterface) {
+          $this->copyFileAssociatedWithEntity($path, $entity);
+        }
+        $entity->save();
       }
-      $entity->save();
     }
-    $this->accountSwitcher->switchBack();
+    finally {
+      $this->accountSwitcher->switchBack();
+    }
   }
 
   private function copyFileAssociatedWithEntity(string $path, FileInterface $entity): void {
