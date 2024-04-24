@@ -35,7 +35,7 @@ final class RecipeConfigurator {
       $recipes[] = $recipe;
       $recipes = array_merge($recipes, $recipe->recipes->listAllRecipes());
     }
-    return $recipes;
+    return array_values(array_unique($recipes, SORT_REGULAR));
   }
 
   /**
@@ -50,7 +50,7 @@ final class RecipeConfigurator {
     foreach ($this->listAllRecipes() as $recipe) {
       $extensions = array_merge($extensions, $recipe->install->modules, $recipe->install->themes);
     }
-    return $extensions;
+    return array_values(array_unique($extensions));
   }
 
 }
