@@ -6,6 +6,7 @@ namespace Drupal\Core\Recipe;
 
 use Drupal\Core\Config\Checkpoint\Checkpoint;
 use Drupal\Core\Config\ConfigImporter;
+use Drupal\Core\Config\ConfigImporterException;
 use Drupal\Core\Config\StorageComparer;
 use Drupal\Core\DrupalKernel;
 use Drupal\Core\Site\Settings;
@@ -87,7 +88,12 @@ final class RecipeCommand extends Command {
       return 0;
     }
     catch (\Throwable $e) {
-      $this->rollBackToCheckpoint($backup_checkpoint);
+      try {
+        $this->rollBackToCheckpoint($backup_checkpoint);
+      }
+      catch (ConfigImporterException $importer_exception) {
+        $io->error($importer_exception->getMessage());
+      }
       throw $e;
     }
   }

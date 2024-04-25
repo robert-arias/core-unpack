@@ -78,6 +78,20 @@ class RecipeCommandTest extends BrowserTestBase {
   }
 
   /**
+   * Tests that errors during config rollback won't steamroll validation errors.
+   */
+  public function testExceptionOnRollback(): void {
+    $process = $this->applyRecipe('core/tests/fixtures/recipes/config_rollback_exception', 1);
+
+    // The error from the config importer should be visible.
+    $output = $process->getOutput();
+    $this->assertStringContainsString('There were errors validating the config synchronization.', $output);
+    $this->assertStringContainsString('Provides a filter plugin that is in use', $output);
+    // And the exception that actually *caused* the error should be visible too.
+    $this->assertStringContainsString('There were validation errors in system.image:', $process->getErrorOutput());
+  }
+
+  /**
    * Asserts that the current set of checkpoints matches the given labels.
    *
    * @param string[] $expected_labels
