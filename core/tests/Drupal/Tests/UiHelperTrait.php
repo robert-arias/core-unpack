@@ -181,10 +181,20 @@ trait UiHelperTrait {
     // screen.
     $assert_session = $this->assertSession();
     $destination = Url::fromRoute('user.page')->toString();
-    $this->drupalGet(Url::fromRoute('user.logout', [], ['query' => ['destination' => $destination]]));
+    $this->drupalGet(Url::fromRoute('user.logout.confirm', options: ['query' => ['destination' => $destination]]));
+    // Target the submit button using the name rather than the value to work
+    // regardless of the user interface language.
+    $this->submitForm([], 'op', 'user-logout-confirm');
     $assert_session->fieldExists('name');
     $assert_session->fieldExists('pass');
 
+    $this->drupalResetSession();
+  }
+
+  /**
+   * Resets the current active session back to Anonymous session.
+   */
+  protected function drupalResetSession(): void {
     // @see BrowserTestBase::drupalUserIsLoggedIn()
     unset($this->loggedInUser->sessionId);
     $this->loggedInUser = FALSE;

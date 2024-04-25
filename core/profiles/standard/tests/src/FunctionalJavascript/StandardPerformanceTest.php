@@ -221,11 +221,11 @@ class StandardPerformanceTest extends PerformanceTestBase {
     $recorded_queries = $performance_data->getQueries();
     $this->assertSame($expected_queries, $recorded_queries);
     $this->assertSame(15, $performance_data->getQueryCount());
-    $this->assertSame(63, $performance_data->getCacheGetCount());
+    $this->assertSame(60, $performance_data->getCacheGetCount());
     $this->assertSame(1, $performance_data->getCacheSetCount());
     $this->assertSame(1, $performance_data->getCacheDeleteCount());
     $this->assertSame(1, $performance_data->getCacheTagChecksumCount());
-    $this->assertSame(28, $performance_data->getCacheTagIsValidCount());
+    $this->assertSame(23, $performance_data->getCacheTagIsValidCount());
     $this->assertSame(0, $performance_data->getCacheTagInvalidationCount());
   }
 
@@ -239,7 +239,6 @@ class StandardPerformanceTest extends PerformanceTestBase {
     // this twice so that any caches which take two requests to warm are also
     // covered.
     $account = $this->drupalCreateUser();
-    $this->drupalLogout();
 
     foreach (range(0, 1) as $index) {
       $this->drupalGet('node');
