@@ -32,7 +32,7 @@ final class ActionMethod {
    *   logical sense.
    */
   public function __construct(
-    public readonly Exists $exists = Exists::ERROR_IF_NOT_EXISTS,
+    public readonly Exists $exists = Exists::ErrorIfNotExists,
     public readonly TranslatableMarkup|string $adminLabel = '',
     public readonly bool|string $pluralize = TRUE
   ) {

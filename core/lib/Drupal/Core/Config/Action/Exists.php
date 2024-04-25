@@ -12,10 +12,10 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
  *   This API is experimental.
  */
 enum Exists {
-  case ERROR_IF_EXISTS;
-  case ERROR_IF_NOT_EXISTS;
-  case RETURN_EARLY_IF_EXISTS;
-  case RETURN_EARLY_IF_NOT_EXISTS;
+  case ErrorIfExists;
+  case ErrorIfNotExists;
+  case ReturnEarlyIfExists;
+  case ReturnEarlyIfNotExists;
 
   /**
    * Determines if an action should return early depending on $entity.
@@ -33,10 +33,10 @@ enum Exists {
    */
   public function returnEarly(string $configName, ?ConfigEntityInterface $entity): bool {
     return match (TRUE) {
-      $this === self::RETURN_EARLY_IF_EXISTS && $entity !== NULL,
-      $this === self::RETURN_EARLY_IF_NOT_EXISTS && $entity === NULL => TRUE,
-      $this === self::ERROR_IF_EXISTS && $entity !== NULL => throw new ConfigActionException(sprintf('Entity %s exists', $configName)),
-      $this === self::ERROR_IF_NOT_EXISTS && $entity === NULL => throw new ConfigActionException(sprintf('Entity %s does not exist', $configName)),
+      $this === self::ReturnEarlyIfExists && $entity !== NULL,
+      $this === self::ReturnEarlyIfNotExists && $entity === NULL => TRUE,
+      $this === self::ErrorIfExists && $entity !== NULL => throw new ConfigActionException(sprintf('Entity %s exists', $configName)),
+      $this === self::ErrorIfNotExists && $entity === NULL => throw new ConfigActionException(sprintf('Entity %s does not exist', $configName)),
       default => FALSE
     };
   }
