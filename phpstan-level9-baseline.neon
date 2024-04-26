@@ -416,6 +416,11 @@ parameters:
 			path: core/modules/content_moderation/src/Plugin/ConfigAction/AddModerationDeriver.php
 
 		-
+			message: "#^Access to an undefined property Drupal\\\\Core\\\\Session\\\\AccountInterface\\:\\:\\$passRaw\\.$#"
+			count: 1
+			path: core/tests/Drupal/FunctionalTests/Core/Recipe/StandardRecipeInstallTest.php
+
+		-
 			message: "#^PHPDoc tag @var for variable \\$sync_data has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: core/tests/Drupal/FunctionalTests/Core/Recipe/StandardRecipeTest.php

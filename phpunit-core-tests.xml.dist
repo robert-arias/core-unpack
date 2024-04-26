@@ -70,6 +70,7 @@
       <file>core/tests/Drupal/KernelTests/Core/DependencyInjection/AutoconfigurationTest.php</file>
       <file>core/tests/Drupal/KernelTests/Config/TypedConfigTest.php</file>
       <file>core/profiles/standard/tests/src/Functional/StandardTest.php</file>
+      <file>core/tests/Drupal/Tests/Core/Command/QuickStartTest.php</file>
     </testsuite>
   </testsuites>
   <listeners>

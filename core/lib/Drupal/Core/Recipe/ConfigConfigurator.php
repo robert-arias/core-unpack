@@ -109,4 +109,15 @@ final class ConfigConfigurator {
     return RecipeConfigStorageWrapper::createStorageFromArray($storages);
   }
 
+  /**
+   * Determines if the recipe has any config or config actions to apply.
+   *
+   * @return bool
+   *   TRUE if the recipe has any config or config actions to apply, FALSE if
+   *   not.
+   */
+  public function hasTasks(): bool {
+    return $this->recipeConfigDirectory !== NULL || count($this->config);
+  }
+
 }

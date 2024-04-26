@@ -7,6 +7,7 @@ namespace Drupal\Core\Recipe;
 use Drupal\Core\Config\ConfigInstaller;
 use Drupal\Core\Config\Entity\ConfigDependencyManager;
 use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\Installer\InstallerKernel;
 use Drupal\Core\Validation\Plugin\Validation\Constraint\FullyValidatableConstraint;
 
 /**
@@ -51,6 +52,18 @@ final class RecipeConfigInstaller extends ConfigInstaller {
     // Create the optional configuration if there is any left after filtering.
     if (!empty($config_to_create)) {
       $this->createConfiguration(StorageInterface::DEFAULT_COLLECTION, $config_to_create);
+    }
+
+    // Validation during the installer is hard. For example:
+    // Drupal\ckeditor5\Plugin\Validation\Constraint\EnabledConfigurablePluginsConstraintValidator
+    // ends up calling _ckeditor5_theme_css() via
+    // Drupal\ckeditor5\Plugin\CKEditor5PluginDefinition->validateDrupalAspects()
+    // and this expects the theme system to be set up correctly but we're in the
+    // installer so this cannot happen.
+    // @todo https://www.drupal.org/i/3443603 consider adding a validation step
+    //   for recipes to the installer via install_tasks().
+    if (InstallerKernel::installationAttempted()) {
+      return;
     }
 
     foreach (array_keys($config_to_create) as $name) {
