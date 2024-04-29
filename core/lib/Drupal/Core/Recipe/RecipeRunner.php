@@ -51,6 +51,7 @@ final class RecipeRunner {
     $event = new RecipeAppliedEvent($recipe);
     \Drupal::service(EventDispatcherInterface::class)->dispatch($event);
     $context['message'] = t('Applied %recipe recipe.', ['%recipe' => $recipe->name]);
+    $context['results']['recipe'][] = $recipe->name;
   }
 
   /**
@@ -248,6 +249,7 @@ final class RecipeRunner {
     \Drupal::service('module_installer')->install([$module]);
     \Drupal::service('config.installer')->setSyncing(FALSE);
     $context['message'] = t('Installed %module module.', ['%module' => \Drupal::service('extension.list.module')->getName($module)]);
+    $context['results']['module'][] = $module;
   }
 
   /**
@@ -277,6 +279,7 @@ final class RecipeRunner {
     \Drupal::service('theme_installer')->install([$theme]);
     \Drupal::service('config.installer')->setSyncing(FALSE);
     $context['message'] = t('Installed %theme theme.', ['%theme' => \Drupal::service('extension.list.theme')->getName($theme)]);
+    $context['results']['theme'][] = $theme;
   }
 
   /**
@@ -290,6 +293,7 @@ final class RecipeRunner {
   public static function installConfig(Recipe $recipe, ?array &$context = NULL): void {
     static::processConfiguration($recipe->config);
     $context['message'] = t('Installed configuration for %recipe recipe.', ['%recipe' => $recipe->name]);
+    $context['results']['config'][] = $recipe->name;
   }
 
   /**
@@ -303,6 +307,7 @@ final class RecipeRunner {
   public static function installContent(Recipe $recipe, ?array &$context = NULL): void {
     static::processContent($recipe->content);
     $context['message'] = t('Created content for %recipe recipe.', ['%recipe' => $recipe->name]);
+    $context['results']['content'][] = $recipe->name;
   }
 
 }

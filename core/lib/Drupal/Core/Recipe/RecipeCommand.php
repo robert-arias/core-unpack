@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Core\Recipe;
 
+use Drupal\Component\Render\PlainTextOutput;
 use Drupal\Core\Config\Checkpoint\Checkpoint;
 use Drupal\Core\Config\ConfigImporter;
 use Drupal\Core\Config\ConfigImporterException;
@@ -83,8 +84,45 @@ final class RecipeCommand extends Command {
     $backup_checkpoint = $checkpoint_storage
       ->checkpoint("Backup before the '$recipe->name' recipe.");
     try {
-      RecipeRunner::processRecipe($recipe);
-      $io->success(sprintf('%s applied successfully', $recipe->name));
+      $steps = RecipeRunner::toBatchOperations($recipe);
+      $progress_bar = $io->createProgressBar();
+      $progress_bar->setFormat("%current%/%max% [%bar%]\n%message%\n");
+      $progress_bar->setMessage($this->toPlainString(t('Applying recipe')));
+      $progress_bar->start(count($steps));
+
+      /** @var array{message?: \Stringable|string, results: array{module?: string[], theme?: string[], content?: string[], recipe?: string[]}} $context */
+      $context = ['results' => []];
+      foreach ($steps as $step) {
+        call_user_func_array($step[0], array_merge($step[1], [&$context]));
+        if (isset($context['message'])) {
+          $progress_bar->setMessage($this->toPlainString($context['message']));
+        }
+        unset($context['message']);
+        $progress_bar->advance();
+      }
+      if ($io->isVerbose()) {
+        if (!empty($context['results']['module'])) {
+          $io->section($this->toPlainString(t('Modules installed')));
+          $modules = array_map(fn ($module) => \Drupal::service('extension.list.module')->getName($module), $context['results']['module']);
+          sort($modules, SORT_NATURAL);
+          $io->listing($modules);
+        }
+        if (!empty($context['results']['theme'])) {
+          $io->section($this->toPlainString(t('Themes installed')));
+          $themes = array_map(fn ($theme) => \Drupal::service('extension.list.theme')->getName($theme), $context['results']['theme']);
+          sort($themes, SORT_NATURAL);
+          $io->listing($themes);
+        }
+        if (!empty($context['results']['content'])) {
+          $io->section($this->toPlainString(t('Content created for recipes')));
+          $io->listing($context['results']['content']);
+        }
+        if (!empty($context['results']['recipe'])) {
+          $io->section($this->toPlainString(t('Recipes applied')));
+          $io->listing($context['results']['recipe']);
+        }
+      }
+      $io->success($this->toPlainString(t('%recipe applied successfully', ['%recipe' => $recipe->name])));
       return 0;
     }
     catch (\Throwable $e) {
@@ -96,6 +134,19 @@ final class RecipeCommand extends Command {
       }
       throw $e;
     }
+  }
+
+  /**
+   * Converts a stringable like TranslatableMarkup to a plain text string.
+   *
+   * @param \Stringable|string $text
+   *   The string to convert.
+   *
+   * @return string
+   *   The plain text string.
+   */
+  private function toPlainString(\Stringable|string $text): string {
+    return PlainTextOutput::renderFromHtml((string) $text);
   }
 
   /**
