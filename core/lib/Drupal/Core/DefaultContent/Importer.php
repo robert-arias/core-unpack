@@ -32,10 +32,10 @@ final class Importer implements LoggerAwareInterface {
   /**
    * The dependencies of the currently importing entity, if any.
    *
-   * The keys are the UUIDs of the dependencies, and the values are their entity
-   * type.
+   * The keys are the UUIDs of the dependencies, and the values are arrays with
+   * two members: the entity type ID of the dependency, and the UUID to load.
    *
-   * @var string[]|null
+   * @var array<string, string[]>|null
    */
   private ?array $dependencies = NULL;
 
@@ -106,7 +106,11 @@ final class Importer implements LoggerAwareInterface {
         // If a file exists in the same folder, copy it to the designated
         // target URI.
         if ($entity instanceof FileInterface) {
-          $this->copyFileAssociatedWithEntity($path, $entity);
+          $this->copyFileAssociatedWithEntity(dirname($path), $entity);
+        }
+        $violations = $entity->validate();
+        if (count($violations) > 0) {
+          throw new InvalidEntityException($violations, $path);
         }
         $entity->save();
       }
@@ -116,7 +120,7 @@ final class Importer implements LoggerAwareInterface {
     }
   }
 
-  private function copyFileAssociatedWithEntity(string $path, FileInterface $entity): void {
+  private function copyFileAssociatedWithEntity(string $path, FileInterface &$entity): void {
     $destination = $entity->getFileUri();
     assert(is_string($destination));
 
@@ -130,22 +134,27 @@ final class Importer implements LoggerAwareInterface {
       return;
     }
 
+    $copy_file = TRUE;
     if (file_exists($destination)) {
       $source_hash = hash_file('sha256', $source);
       assert(is_string($source_hash));
       $destination_hash = hash_file('sha256', $destination);
       assert(is_string($destination_hash));
 
-      // If we already have the file, we don't need to do anything else.
-      if (hash_equals($source_hash, $destination_hash)) {
-        return;
+      if (hash_equals($source_hash, $destination_hash) && $this->entityTypeManager->getStorage('file')->loadByProperties(['uri' => $destination]) === []) {
+        // If the file hashes match and the file is not already a managed file
+        // then do not copy a new version to the file system. This prevents
+        // re-installs during development from creating unnecessary duplicates.
+        $copy_file = FALSE;
       }
     }
 
     $target_directory = dirname($destination);
     $this->fileSystem->prepareDirectory($target_directory, FileSystemInterface::CREATE_DIRECTORY);
-    $uri = $this->fileSystem->copy($source, $destination);
-    $entity->setFileUri($uri);
+    if ($copy_file) {
+      $uri = $this->fileSystem->copy($source, $destination);
+      $entity->setFileUri($uri);
+    }
   }
 
   /**
@@ -168,16 +177,19 @@ final class Importer implements LoggerAwareInterface {
       throw new ImportException('The uuid metadata must be specified.');
     }
 
-    ['entity_type' => $entity_type] = $data['_meta'];
-    assert(is_string($entity_type));
-
     $is_root = FALSE;
     // @see ::loadEntityDependency()
     if ($this->dependencies === NULL && !empty($data['_meta']['depends'])) {
       $is_root = TRUE;
-      $this->dependencies = $data['_meta']['depends'];
+      foreach ($data['_meta']['depends'] as $uuid => $entity_type) {
+        assert(is_string($uuid));
+        assert(is_string($entity_type));
+        $this->dependencies[$uuid] = [$entity_type, $uuid];
+      }
     }
 
+    ['entity_type' => $entity_type] = $data['_meta'];
+    assert(is_string($entity_type));
     /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
     $entity_type = $this->entityTypeManager->getDefinition($entity_type);
 
@@ -307,7 +319,7 @@ final class Importer implements LoggerAwareInterface {
    */
   private function loadEntityDependency(string $target_uuid): ?ContentEntityInterface {
     if ($this->dependencies && array_key_exists($target_uuid, $this->dependencies)) {
-      $entity = $this->entityRepository->loadEntityByUuid($this->dependencies[$target_uuid], $target_uuid);
+      $entity = $this->entityRepository->loadEntityByUuid(...$this->dependencies[$target_uuid]);
       assert($entity instanceof ContentEntityInterface || $entity === NULL);
       return $entity;
     }

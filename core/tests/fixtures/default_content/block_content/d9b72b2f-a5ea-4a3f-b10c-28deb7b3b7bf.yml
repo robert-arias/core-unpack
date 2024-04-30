@@ -19,6 +19,6 @@ default:
       value: true
   body:
     -
-      value: "<p>I'd love to put some useful info here.</p>"
-      format: basic_html
+      value: "I'd love to put some useful info here."
+      format: plain_text
       summary: ''

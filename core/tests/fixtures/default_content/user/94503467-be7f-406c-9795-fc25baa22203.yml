@@ -41,6 +41,3 @@ default:
   init:
     -
       value: author@example.com
-  roles:
-    -
-      target_id: content_editor

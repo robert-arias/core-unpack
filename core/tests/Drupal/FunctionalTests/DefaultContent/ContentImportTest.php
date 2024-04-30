@@ -7,11 +7,14 @@ namespace Drupal\FunctionalTests\DefaultContent;
 use ColinODell\PsrTestLogger\TestLogger;
 use Drupal\block_content\BlockContentInterface;
 use Drupal\block_content\Entity\BlockContentType;
+use Drupal\Component\Serialization\Yaml;
 use Drupal\Core\DefaultContent\Existing;
 use Drupal\Core\DefaultContent\Finder;
 use Drupal\Core\DefaultContent\Importer;
 use Drupal\Core\DefaultContent\ImportException;
+use Drupal\Core\DefaultContent\InvalidEntityException;
 use Drupal\Core\Entity\EntityRepositoryInterface;
+use Drupal\Core\File\FileExists;
 use Drupal\Core\Url;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -103,6 +106,7 @@ class ContentImportTest extends BrowserTestBase {
       ->save();
 
     $this->contentDir = $this->getDrupalRoot() . '/core/tests/fixtures/default_content';
+    \Drupal::service('file_system')->copy($this->contentDir . '/file/druplicon_copy.png', $this->publicFilesDirectory . '/druplicon_copy.png', FileExists::Error);
   }
 
   /**
@@ -155,6 +159,25 @@ class ContentImportTest extends BrowserTestBase {
   }
 
   /**
+   * Tests that the importer validates entities before saving them.
+   */
+  public function testEntityValidationIsTriggered(): void {
+    $dir = uniqid('public://');
+    mkdir($dir);
+
+    /** @var string $data */
+    $data = file_get_contents($this->contentDir . '/node/2d3581c3-92c7-4600-8991-a0d4b3741198.yml');
+    $data = Yaml::decode($data);
+    /** @var array{default: array{sticky: array<int, array{value: mixed}>}} $data */
+    $data['default']['sticky'][0]['value'] = 'not a boolean!';
+    file_put_contents($dir . '/invalid.yml', Yaml::encode($data));
+
+    $this->expectException(InvalidEntityException::class);
+    $this->expectExceptionMessage("$dir/invalid.yml: sticky.0.value=This value should be of the correct primitive type.");
+    $this->container->get(Importer::class)->importContent(new Finder($dir));
+  }
+
+  /**
    * Asserts that the default content was imported as expected.
    */
   private function assertContentWasImported(): void {
@@ -188,12 +211,12 @@ class ContentImportTest extends BrowserTestBase {
     $this->assertSame('druplicon.png', $file->getFilename());
     $this->assertSame('d8404562-efcc-40e3-869e-40132d53fe0b', $file->uuid());
 
-    // Another file entity referencing an existing file should have the same
-    // file URI -- in other words, it should have reused the existing file.
-    $duplicate_file = $entity_repository->loadEntityByUuid('file', '23a7f61f-1db3-407d-a6dd-eb4731995c9f');
-    $this->assertInstanceOf(FileInterface::class, $duplicate_file);
-    $this->assertSame('druplicon-duplicate.png', $duplicate_file->getFilename());
-    $this->assertSame($file->getFileUri(), $duplicate_file->getFileUri());
+    // Another file entity referencing an existing file but already in use by
+    // another entity, should be imported.
+    $same_file_different_entity = $entity_repository->loadEntityByUuid('file', '23a7f61f-1db3-407d-a6dd-eb4731995c9f');
+    $this->assertInstanceOf(FileInterface::class, $same_file_different_entity);
+    $this->assertSame('druplicon-duplicate.png', $same_file_different_entity->getFilename());
+    $this->assertStringEndsWith('/druplicon_0.png', (string) $same_file_different_entity->getFileUri());
 
     // Another file entity that references a file with the same name as, but
     // different contents than, an existing file, should be imported and the
@@ -201,7 +224,14 @@ class ContentImportTest extends BrowserTestBase {
     $different_file = $entity_repository->loadEntityByUuid('file', 'a6b79928-838f-44bd-a8f0-44c2fff9e4cc');
     $this->assertInstanceOf(FileInterface::class, $different_file);
     $this->assertSame('druplicon-different.png', $different_file->getFilename());
-    $this->assertStringEndsWith('/druplicon_0.png', (string) $different_file->getFileUri());
+    $this->assertStringEndsWith('/druplicon_1.png', (string) $different_file->getFileUri());
+
+    // Another file entity referencing an existing file but one that is not in
+    // use by another entity, should be imported but use the existing file.
+    $different_file = $entity_repository->loadEntityByUuid('file', '7fb09f9f-ba5f-4db4-82ed-aa5ccf7d425d');
+    $this->assertInstanceOf(FileInterface::class, $different_file);
+    $this->assertSame('druplicon_copy.png', $different_file->getFilename());
+    $this->assertStringEndsWith('/druplicon_copy.png', (string) $different_file->getFileUri());
 
     // Our node should have a menu link, and it should use the path alias we
     // included with the recipe.
@@ -214,7 +244,7 @@ class ContentImportTest extends BrowserTestBase {
     $this->assertInstanceOf(BlockContentInterface::class, $block_content);
     $this->assertSame('basic', $block_content->bundle());
     $this->assertSame('Useful Info', $block_content->label());
-    $this->assertSame("<p>I'd love to put some useful info here.</p>", $block_content->body->value);
+    $this->assertSame("I'd love to put some useful info here.", $block_content->body->value);
 
     // A node with a non-existent owner should be reassigned to the current
     // user.
@@ -227,7 +257,7 @@ class ContentImportTest extends BrowserTestBase {
     $this->assertInstanceOf(NodeInterface::class, $node);
     $translation = $node->getTranslation('fr');
     $this->assertSame('Perdu en traduction', $translation->label());
-    $this->assertSame("<p>Içi c'est la version français.</p>", $translation->body->value);
+    $this->assertSame("Içi c'est la version français.", $translation->body->value);
   }
 
 }

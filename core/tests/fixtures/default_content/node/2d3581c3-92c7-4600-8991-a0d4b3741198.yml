@@ -40,8 +40,8 @@ default:
       value: false
   body:
     -
-      value: "<p>Here's the English version.</p>"
-      format: basic_html
+      value: "Here's the English version."
+      format: plain_text
       summary: ''
 translations:
   fr:
@@ -78,6 +78,6 @@ translations:
         value: false
     body:
       -
-        value: "<p>Içi c'est la version français.</p>"
-        format: basic_html
+        value: "Içi c'est la version français."
+        format: plain_text
         summary: ''

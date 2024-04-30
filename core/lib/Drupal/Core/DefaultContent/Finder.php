@@ -43,8 +43,8 @@ final class Finder {
     foreach ($finder as $file) {
       /** @var array{_meta: array{uuid: string|null, depends: array<string, string>|null}} $decoded */
       $decoded = Yaml::decode($file->getContents());
-      $uuid = $decoded['_meta']['uuid'] ?? throw new ImportException($file->getPathname() . ' does not have a UUID.');
-      $decoded['_meta']['path'] = $file->getPath();
+      $decoded['_meta']['path'] = $file->getPathname();
+      $uuid = $decoded['_meta']['uuid'] ?? throw new ImportException($decoded['_meta']['path'] . ' does not have a UUID.');
       $files[$uuid] = $decoded;
 
       // For the graph to work correctly, every entity must be mentioned in it.

@@ -39,6 +39,6 @@ default:
       langcode: en
   body:
     -
-      value: '<p>This page was authored by a non-existent user.</p>'
-      format: basic_html
+      value: 'This page was authored by a non-existent user.'
+      format: plain_text
       summary: ''

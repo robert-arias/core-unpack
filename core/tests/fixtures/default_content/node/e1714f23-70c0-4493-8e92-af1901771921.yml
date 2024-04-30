@@ -39,7 +39,7 @@ default:
   body:
     -
       value: 'Crikey it works!'
-      format: basic_html
+      format: plain_text
       summary: ''
   field_tags:
     -
