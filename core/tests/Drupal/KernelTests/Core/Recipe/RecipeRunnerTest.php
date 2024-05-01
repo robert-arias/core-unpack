@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\KernelTests\Core\Recipe;
 
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
+use Drupal\config_test\Entity\ConfigTest;
 use Drupal\Core\Recipe\Recipe;
 use Drupal\Core\Recipe\RecipePreExistingConfigException;
 use Drupal\Core\Recipe\RecipeRunner;
@@ -75,7 +76,7 @@ class RecipeRunnerTest extends KernelTestBase {
     $this->assertTrue($this->container->get('config.storage')->exists('node.settings'), 'The node.settings configuration has been created');
     $this->assertTrue($this->container->get('config.storage')->exists('node.settings'), 'The node.settings configuration has been created');
     $this->assertTrue($this->config('node.settings')->get('use_admin_theme'), 'The node.settings:use_admin_theme is set to TRUE');
-    $this->assertSame('Test content type', NodeType::load('test')->label());
+    $this->assertSame('Test content type', NodeType::load('test')?->label());
     $node_type_data = $this->config('node.type.test')->get();
     $this->assertGreaterThan(0, strlen($node_type_data['uuid']), 'The node type configuration has been assigned a UUID.');
     // cSpell:disable-next-line
@@ -158,8 +159,8 @@ class RecipeRunnerTest extends KernelTestBase {
 
     // Test the state after to applying the recipe.
     $this->assertTrue($this->container->get('module_handler')->moduleExists('dblog'), 'Dblog module installed');
-    $this->assertSame('Test content type', NodeType::load('test')->label());
-    $this->assertSame('Another test content type', NodeType::load('another_test')->label());
+    $this->assertSame('Test content type', NodeType::load('test')?->label());
+    $this->assertSame('Another test content type', NodeType::load('another_test')?->label());
   }
 
   public function testConfigActions() :void {
@@ -171,8 +172,8 @@ class RecipeRunnerTest extends KernelTestBase {
 
     // Test the state after to applying the recipe.
     $storage = \Drupal::entityTypeManager()->getStorage('config_test');
-    /** @var \Drupal\config_test\Entity\ConfigTest $config_test_entity */
     $config_test_entity = $storage->load('recipe');
+    $this->assertInstanceOf(ConfigTest::class, $config_test_entity);
     $this->assertSame('Created by recipe', $config_test_entity->label());
     $this->assertSame('Set by recipe', $config_test_entity->getProtectedProperty());
     $this->assertSame('not bar', $this->config('config_test.system')->get('foo'));
@@ -183,8 +184,8 @@ class RecipeRunnerTest extends KernelTestBase {
     $this->installConfig(['config_test']);
     $this->assertSame('bar', $this->config('config_test.system')->get('foo'));
     $storage = \Drupal::entityTypeManager()->getStorage('config_test');
-    /** @var \Drupal\config_test\Entity\ConfigTest $config_test_entity */
     $config_test_entity = $storage->create(['id' => 'recipe', 'label' => 'Created by test']);
+    $this->assertInstanceOf(ConfigTest::class, $config_test_entity);
     $config_test_entity->setProtectedProperty('Set by test');
     $config_test_entity->save();
 
@@ -192,8 +193,8 @@ class RecipeRunnerTest extends KernelTestBase {
     RecipeRunner::processRecipe($recipe);
 
     // Test the state after to applying the recipe.
-    /** @var \Drupal\config_test\Entity\ConfigTest $config_test_entity */
     $config_test_entity = $storage->load('recipe');
+    $this->assertInstanceOf(ConfigTest::class, $config_test_entity);
     $this->assertSame('Created by test', $config_test_entity->label());
     $this->assertSame('Set by recipe', $config_test_entity->getProtectedProperty());
     $this->assertSame('not bar', $this->config('config_test.system')->get('foo'));
@@ -216,6 +217,38 @@ YAML;
     $this->expectException(PluginNotFoundException::class);
     $this->expectExceptionMessage('The "setBody" plugin does not exist.');
     RecipeRunner::processRecipe($recipe);
+  }
+
+  public function testRecipesAreDisambiguatedByPath(): void {
+    $recipe_data = <<<YAML
+name: 'Recipe include'
+recipes:
+  - core/tests/fixtures/recipes/recipe_include
+install:
+  - config_test
+YAML;
+
+    $recipe = $this->createRecipe($recipe_data, 'recipe_include');
+    RecipeRunner::processRecipe($recipe);
+
+    // Test the state after to applying the recipe.
+    $this->assertTrue($this->container->get('module_handler')->moduleExists('dblog'), 'Dblog module installed');
+    $this->assertTrue($this->container->get('module_handler')->moduleExists('config_test'), 'Config test module installed');
+    $this->assertSame('Test content type', NodeType::load('test')?->label());
+    $this->assertSame('Another test content type', NodeType::load('another_test')?->label());
+
+    $operations = RecipeRunner::toBatchOperations($recipe);
+    $this->assertSame('triggerEvent', $operations[7][0][1]);
+    $this->assertSame('Install node with config', $operations[7][1][0]->name);
+    $this->assertStringEndsWith('core/tests/fixtures/recipes/install_node_with_config', $operations[7][1][0]->path);
+
+    $this->assertSame('triggerEvent', $operations[10][0][1]);
+    $this->assertSame('Recipe include', $operations[10][1][0]->name);
+    $this->assertStringEndsWith('core/tests/fixtures/recipes/recipe_include', $operations[10][1][0]->path);
+
+    $this->assertSame('triggerEvent', $operations[12][0][1]);
+    $this->assertSame('Recipe include', $operations[12][1][0]->name);
+    $this->assertSame($this->siteDirectory . '/recipes/recipe_include', $operations[12][1][0]->path);
   }
 
 }

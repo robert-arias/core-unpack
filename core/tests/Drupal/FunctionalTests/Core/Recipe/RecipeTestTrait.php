@@ -21,16 +21,24 @@ trait RecipeTestTrait {
    * @param string|array<mixed> $data
    *   The contents of recipe.yml. If passed as an array, will be encoded to
    *   YAML.
+   * @param string|null $machine_name
+   *   The machine name for the recipe. Will be used as the directory name.
    *
    * @return \Drupal\Core\Recipe\Recipe
    *   The recipe object.
    */
-  protected function createRecipe(string|array $data): Recipe {
+  protected function createRecipe(string|array $data, ?string $machine_name = NULL): Recipe {
     if (is_array($data)) {
       $data = Yaml::encode($data);
     }
-    $dir = uniqid('public://');
-    mkdir($dir);
+    $recipes_dir = $this->siteDirectory . '/recipes';
+    if ($machine_name === NULL) {
+      $dir = uniqid($recipes_dir . '/');
+    }
+    else {
+      $dir = $recipes_dir . '/' . $machine_name;
+    }
+    mkdir($dir, recursive: TRUE);
     file_put_contents($dir . '/recipe.yml', $data);
 
     return Recipe::createFromDirectory($dir);

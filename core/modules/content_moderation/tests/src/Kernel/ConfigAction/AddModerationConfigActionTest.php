@@ -95,7 +95,7 @@ class AddModerationConfigActionTest extends KernelTestBase {
     $recipe = <<<YAML
 name: 'Add entity types and bundles to workflow'
 recipes:
-  - editorial_workflow
+  - core/recipes/editorial_workflow
 config:
   actions:
     $config_name:

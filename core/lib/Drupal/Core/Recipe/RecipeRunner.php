@@ -151,7 +151,7 @@ final class RecipeRunner {
    * @param \Drupal\Core\Recipe\Recipe $recipe
    *   The recipe to convert to batch operations.
    * @param string[] $recipes
-   *   The recipes that have already been converted to batch operations.
+   *   The paths of the recipes that have already been converted to batch operations.
    * @param string[] $modules
    *   The modules that will already be installed due to previous recipes in the
    *   batch.
@@ -165,11 +165,11 @@ final class RecipeRunner {
    *   pass to the callable.
    */
   protected static function toBatchOperationsRecipe(Recipe $recipe, array $recipes, array &$modules, array &$themes): array {
-    if (in_array($recipe->name, $recipes, TRUE)) {
+    if (in_array($recipe->path, $recipes, TRUE)) {
       return [];
     }
     $steps = [];
-    $recipes[] = $recipe->name;
+    $recipes[] = $recipe->path;
 
     foreach ($recipe->recipes->recipes as $sub_recipe) {
       $steps = array_merge($steps, static::toBatchOperationsRecipe($sub_recipe, $recipes, $modules, $themes));

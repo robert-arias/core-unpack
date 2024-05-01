@@ -291,7 +291,7 @@ parameters:
 			path: core/lib/Drupal/Core/Recipe/RecipeConfigurator.php
 
 		-
-			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\RecipeDiscovery\\:\\:__construct\\(\\) has parameter \\$paths with no value type specified in iterable type array\\.$#"
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: core/lib/Drupal/Core/Recipe/RecipeDiscovery.php
 
@@ -389,11 +389,6 @@ parameters:
 			message: "#^Parameter \\#6 \\$install_profile of class Drupal\\\\Core\\\\Recipe\\\\RecipeConfigInstaller constructor expects string, null given\\.$#"
 			count: 1
 			path: core/lib/Drupal/Core/Recipe/RecipeRunner.php
-
-		-
-			message: "#^Method Drupal\\\\Core\\\\Recipe\\\\UnknownRecipeException\\:\\:__construct\\(\\) has parameter \\$searchPaths with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: core/lib/Drupal/Core/Recipe/UnknownRecipeException.php
 
 		-
 			message: "#^Method Drupal\\\\ckeditor5\\\\Plugin\\\\ConfigAction\\\\AddItemToToolbar\\:\\:create\\(\\) has parameter \\$configuration with no value type specified in iterable type array\\.$#"
@@ -496,7 +491,17 @@ parameters:
 			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeRunnerTest.php
 
 		-
-			message: "#^Cannot call method label\\(\\) on Drupal\\\\node\\\\Entity\\\\NodeType\\|null\\.$#"
+			message: "#^Cannot access offset 1 on callable\\(\\)\\: mixed\\.$#"
+			count: 3
+			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeRunnerTest.php
+
+		-
+			message: "#^Cannot access property \\$name on mixed\\.$#"
+			count: 3
+			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeRunnerTest.php
+
+		-
+			message: "#^Cannot access property \\$path on mixed\\.$#"
 			count: 3
 			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeRunnerTest.php
 

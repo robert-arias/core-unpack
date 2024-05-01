@@ -49,7 +49,7 @@ class RecipeEventsTest extends KernelTestBase implements EventSubscriberInterfac
   }
 
   public function testRecipeAppliedEvent(): void {
-    $recipe = Recipe::createFromDirectory($this->getDrupalRoot() . '/core/tests/fixtures/recipes/recipe_include');
+    $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/recipe_include');
     RecipeRunner::processRecipe($recipe);
 
     $this->assertSame(['Install node with config', 'Recipe include'], $this->recipesApplied);

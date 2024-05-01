@@ -40,7 +40,8 @@ final class Recipe {
     public readonly RecipeConfigurator $recipes,
     public readonly InstallConfigurator $install,
     public readonly ConfigConfigurator $config,
-    public readonly Finder $content
+    public readonly Finder $content,
+    public readonly string $path,
   ) {
   }
 
@@ -61,7 +62,7 @@ final class Recipe {
     $install = new InstallConfigurator($recipe_data['install'], \Drupal::service('extension.list.module'), \Drupal::service('extension.list.theme'));
     $config = new ConfigConfigurator($recipe_data['config'], $path, \Drupal::service('config.storage'));
     $content = new Finder($path . '/content');
-    return new static($recipe_data['name'], $recipe_data['description'], $recipe_data['type'], $recipes, $install, $config, $content);
+    return new static($recipe_data['name'], $recipe_data['description'], $recipe_data['type'], $recipes, $install, $config, $content, $path);
   }
 
   /**
@@ -255,7 +256,7 @@ final class Recipe {
    * @return \Drupal\Core\Recipe\RecipeDiscovery
    */
   private static function getRecipeDiscovery(string $recipeDirectory): RecipeDiscovery {
-    return new RecipeDiscovery([$recipeDirectory]);
+    return new RecipeDiscovery($recipeDirectory);
   }
 
   /**

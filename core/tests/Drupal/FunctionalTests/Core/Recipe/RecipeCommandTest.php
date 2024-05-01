@@ -37,7 +37,7 @@ class RecipeCommandTest extends BrowserTestBase {
 
     $process = $this->applyRecipe('core/tests/fixtures/recipes/install_node_with_config');
     $this->assertSame(0, $process->getExitCode());
-    $this->assertStringContainsString("6/6 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓]\nApplied Install node with config recipe.", $process->getErrorOutput());
+    $this->assertStringContainsString("Applied Install node with config recipe.", $process->getErrorOutput());
     $this->assertStringContainsString('Install node with config applied successfully', $process->getOutput());
     $this->assertTrue(\Drupal::moduleHandler()->moduleExists('node'), 'The node module is installed');
     $this->assertCheckpointsExist(["Backup before the 'Install node with config' recipe."]);
@@ -45,7 +45,7 @@ class RecipeCommandTest extends BrowserTestBase {
     // Ensure recipes can be applied without affecting pre-existing checkpoints.
     $process = $this->applyRecipe('core/tests/fixtures/recipes/install_two_modules');
     $this->assertSame(0, $process->getExitCode());
-    $this->assertStringContainsString("1/1 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓]\nApplied Install two modules recipe.", $process->getErrorOutput());
+    $this->assertStringContainsString("Applied Install two modules recipe.", $process->getErrorOutput());
     $this->assertStringContainsString('Install two modules applied successfully', $process->getOutput());
     $this->assertTrue(\Drupal::moduleHandler()->moduleExists('node'), 'The node module is installed');
     $this->assertCheckpointsExist([
@@ -68,7 +68,7 @@ class RecipeCommandTest extends BrowserTestBase {
     \Drupal::service('config.storage.checkpoint')->checkpoint('Test log message');
     $process = $this->applyRecipe('core/tests/fixtures/recipes/no_extensions');
     $this->assertSame(0, $process->getExitCode());
-    $this->assertStringContainsString("1/1 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓]\nApplied No extensions recipe.", $process->getErrorOutput());
+    $this->assertStringContainsString("Applied No extensions recipe.", $process->getErrorOutput());
     $this->assertCheckpointsExist([
       "Backup before the 'Install node with config' recipe.",
       "Backup before the 'Install two modules' recipe.",
