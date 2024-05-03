@@ -24,18 +24,8 @@ final class RecipeConfigInstaller extends ConfigInstaller {
   public function installRecipeConfig(ConfigConfigurator $recipe_config): void {
     $storage = $recipe_config->getConfigStorage();
 
-    // Build the list of possible configuration to create.
-    $list = $storage->listAll();
-
-    $existing_config = $this->getActiveStorages()->listAll();
-
-    // Filter the list of configuration to only include configuration that
-    // should be created.
-    $list = array_filter($list, function ($config_name) use ($existing_config) {
-      // Only list configuration that:
-      // - does not already exist
-      return !in_array($config_name, $existing_config, TRUE);
-    });
+    // Build the list of new configuration to create.
+    $list = array_diff($storage->listAll(), $this->getActiveStorages()->listAll());
 
     // If there is nothing to do.
     if (empty($list)) {

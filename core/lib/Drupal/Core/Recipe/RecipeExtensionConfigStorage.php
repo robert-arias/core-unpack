@@ -90,14 +90,14 @@ final class RecipeExtensionConfigStorage implements StorageInterface {
    * {@inheritdoc}
    */
   public function encode($data): string {
-    return $this->storage->encode($data);
+    throw new \BadMethodCallException();
   }
 
   /**
    * {@inheritdoc}
    */
   public function decode($raw): array {
-    return $this->storage->decode($raw);
+    throw new \BadMethodCallException();
   }
 
   /**

@@ -110,14 +110,14 @@ final class RecipeConfigStorageWrapper implements StorageInterface {
    * {@inheritdoc}
    */
   public function encode($data): string {
-    return $this->storageA->encode($data);
+    throw new \BadMethodCallException();
   }
 
   /**
    * {@inheritdoc}
    */
   public function decode($raw): array {
-    return $this->storageA->decode($raw);
+    throw new \BadMethodCallException();
   }
 
   /**

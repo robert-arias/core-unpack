@@ -118,6 +118,12 @@ final class RecipeRunner {
     }
   }
 
+  /**
+   * Creates content contained in a recipe.
+   *
+   * @param \Drupal\Core\DefaultContent\Finder $content
+   *   The content finder object for the recipe.
+   */
   protected static function processContent(Finder $content): void {
     /** @var \Drupal\Core\DefaultContent\Importer $importer */
     $importer = \Drupal::service(Importer::class);

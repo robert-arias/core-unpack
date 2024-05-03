@@ -120,6 +120,14 @@ final class Importer implements LoggerAwareInterface {
     }
   }
 
+  /**
+   * Copies a file from default content directory to the site's file system.
+   *
+   * @param string $path
+   *   The path to the file to copy.
+   * @param \Drupal\file\FileInterface $entity
+   *   The file entity.
+   */
   private function copyFileAssociatedWithEntity(string $path, FileInterface &$entity): void {
     $destination = $entity->getFileUri();
     assert(is_string($destination));
