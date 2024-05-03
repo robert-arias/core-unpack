@@ -2594,10 +2594,11 @@ function install_recipe_required_modules() {
       $required[$module] = $extension->sort;
     }
   }
-  // The system module is already installed. See install_base_system().
-  // unset($required['system']);
-
   arsort($required);
+
+  // The system module is already installed. See install_base_system().
+  unset($required['system']);
+
   foreach ($required as $module => $weight) {
     $batch_builder->addOperation(
       '_install_module_batch',
