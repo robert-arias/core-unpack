@@ -24,7 +24,11 @@ final class RecipeConfigStorageWrapper implements StorageInterface {
    *   (optional) The collection to store configuration in. Defaults to the
    *   default collection.
    */
-  public function __construct(protected readonly StorageInterface $storageA, protected readonly StorageInterface $storageB, protected readonly string $collection = StorageInterface::DEFAULT_COLLECTION) {
+  public function __construct(
+    protected readonly StorageInterface $storageA,
+    protected readonly StorageInterface $storageB,
+    protected readonly string $collection = StorageInterface::DEFAULT_COLLECTION,
+  ) {
   }
 
   /**

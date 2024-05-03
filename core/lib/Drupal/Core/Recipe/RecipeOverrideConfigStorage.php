@@ -23,7 +23,11 @@ final class RecipeOverrideConfigStorage implements StorageInterface {
    *   (optional) The collection to store configuration in. Defaults to the
    *   default collection.
    */
-  public function __construct(protected readonly StorageInterface $recipeStorage, protected readonly StorageInterface $wrappedStorage, protected readonly string $collection = StorageInterface::DEFAULT_COLLECTION) {
+  public function __construct(
+    protected readonly StorageInterface $recipeStorage,
+    protected readonly StorageInterface $wrappedStorage,
+    protected readonly string $collection = StorageInterface::DEFAULT_COLLECTION,
+  ) {
   }
 
   /**

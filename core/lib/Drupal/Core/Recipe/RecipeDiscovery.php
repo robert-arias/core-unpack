@@ -39,7 +39,7 @@ final class RecipeDiscovery {
     // 'core/recipes/article_tags'. It is strongly recommended not to rely on
     // relative paths for including recipes. Required recipes should be put in
     // the same parent directory as the recipe being applied. Note, only linux
-    // style directory separators are supported. PHP on windows can resolve the
+    // style directory separators are supported. PHP on Windows can resolve the
     // mix of directory separators.
     if (str_contains($name, '/')) {
       $path = \Drupal::root() . "/$name/recipe.yml";

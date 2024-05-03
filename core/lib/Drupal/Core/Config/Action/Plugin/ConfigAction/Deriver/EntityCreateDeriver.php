@@ -12,7 +12,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
  * @internal
  *   This API is experimental.
  */
-class EntityCreateDeriver extends DeriverBase {
+final class EntityCreateDeriver extends DeriverBase {
   use StringTranslationTrait;
 
   /**

@@ -37,7 +37,7 @@ final class RecipeCommand extends Command {
   protected $classLoader;
 
   /**
-   * Constructs a new ServerCommand command.
+   * Constructs a new RecipeCommand command.
    *
    * @param object $class_loader
    *   The class loader.
