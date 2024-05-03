@@ -2,7 +2,9 @@
 
 /* This is a universal size that helps in the case of themes with a size of 10 pixels.
 We need it root to calculate the size of the displace in .dialog-off-canvas-main-canvas */
+/* prettier-ignore */
 :root {
+  /* stylelint-disable-next-line */
   --admin-toolbar-rem: max(1rem, 16PX); /* Workaround until postcss-px-to-rem is removed so this is not converted to rems. */
 }
 
@@ -135,7 +137,7 @@ We need it root to calculate the size of the displace in .dialog-off-canvas-main
   --admin-toolbar-font-size-info-md: var(--drupal-admin-font-size-info-md, var(--admin-toolbar-rem)); /* 16px */
   --admin-toolbar-line-height-info-md: var(--drupal-admin-line-height-info-md, calc(1.5 * var(--admin-toolbar-rem))); /* 24px */
   --admin-toolbar-font-size-info-lg: var(--drupal-admin-font-size-info-lg, calc(1.125 * var(--admin-toolbar-rem))); /* 18px */
-  --admin-toolbar-line-height-info-lg: var(--drupal-admin-line-height-info-lg,  calc(1.5 * var(--admin-toolbar-rem))); /* 24px */
+  --admin-toolbar-line-height-info-lg: var(--drupal-admin-line-height-info-lg, calc(1.5 * var(--admin-toolbar-rem))); /* 24px */
   --admin-toolbar-font-size-info-xl: var(--drupal-admin-font-size-info-xl, calc(1.25 * var(--admin-toolbar-rem))); /* 20px */
   --admin-toolbar-line-height-info-xl: var(--drupal-admin-line-height-info-xl, calc(1.5 * var(--admin-toolbar-rem))); /* 24px */
 
@@ -144,11 +146,6 @@ We need it root to calculate the size of the displace in .dialog-off-canvas-main
    */
   --admin-toolbar-letter-spacing-0-8: var(--drupal-admin-letter-spacing-0-8, calc(0.05 * var(--admin-toolbar-rem))); /* 0.8px */
   --admin-toolbar-letter-spacing-0-06: var(--drupal-admin-letter-spacing-0-06, calc(0.00375 * var(--admin-toolbar-rem))); /* 0.06px */
-
-  /**
-   * Transitions.
-   */
-   --admin-toolbar-transition: 150ms ease-out;
 
   /**
    * Z-index.
@@ -164,6 +161,13 @@ We need it root to calculate the size of the displace in .dialog-off-canvas-main
   --admin-toolbar-z-index-popover: var(--drupal-admin-z-index-popover, 601);
   --admin-toolbar-z-index-footer: var(--drupal-admin-z-index-footer, 701);
   --admin-toolbar-z-index-tooltip: var(--drupal-admin-z-index-tooltip, 801);
+}
+
+/**
+  * Transitions.
+  */
+[data-admin-toolbar-transitions] {
+  --admin-toolbar-transition: 150ms ease-out;
 }
 
 @media (--admin-toolbar-reduced-motion) {
