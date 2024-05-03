@@ -50,6 +50,7 @@ class AddItemToToolbarConfigActionTest extends KernelTestBase {
     $editor = Editor::create([
       'editor' => 'ckeditor5',
       'format' => 'filter_test',
+      'image_upload' => ['status' => FALSE],
     ]);
     $editor->save();
 
