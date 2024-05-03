@@ -98,7 +98,7 @@ final class EntityMethod implements ConfigActionPluginInterface, ContainerFactor
   }
 
   /**
-   * Apply the action to entity treating the $values array as multiple calls.
+   * Applies the action to entity treating the $values array as multiple calls.
    *
    * @param \Drupal\Core\Config\Entity\ConfigEntityInterface $entity
    *   The entity to apply the action to.
@@ -119,7 +119,7 @@ final class EntityMethod implements ConfigActionPluginInterface, ContainerFactor
   }
 
   /**
-   * Apply the action to entity treating the $values array a single call.
+   * Applies the action to entity treating the $values array a single call.
    *
    * @param \Drupal\Core\Config\Entity\ConfigEntityInterface $entity
    *   The entity to apply the action to.
