@@ -200,13 +200,10 @@ class RecipeConfigStorageWrapperTest extends UnitTestCase {
    */
   public function testEncode(): void {
     $a = $this->createMock(StorageInterface::class);
-    $data = 'value';
-    $a->expects($this->once())->method('encode')->with([$data])
-      ->willReturn($data);
     $b = $this->createMock(StorageInterface::class);
-    $b->expects($this->never())->method('encode');
     $storage = new RecipeConfigStorageWrapper($a, $b);
-    $this->assertSame($data, $storage->encode([$data]));
+    $this->expectException(\BadMethodCallException::class);
+    $storage->encode(['value']);
   }
 
   /**
@@ -214,13 +211,10 @@ class RecipeConfigStorageWrapperTest extends UnitTestCase {
    */
   public function testDecode(): void {
     $a = $this->createMock(StorageInterface::class);
-    $raw = 'value';
-    $a->expects($this->once())->method('decode')->with($raw)
-      ->willReturn([$raw]);
     $b = $this->createMock(StorageInterface::class);
-    $b->expects($this->never())->method('decode');
     $storage = new RecipeConfigStorageWrapper($a, $b);
-    $this->assertEquals([$raw], $storage->decode($raw));
+    $this->expectException(\BadMethodCallException::class);
+    $storage->decode('value');
   }
 
   /**
