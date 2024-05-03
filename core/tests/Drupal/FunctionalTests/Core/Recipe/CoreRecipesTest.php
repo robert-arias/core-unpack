@@ -32,10 +32,10 @@ class CoreRecipesTest extends BrowserTestBase {
    * @return iterable<array<string>>
    *   An iterable containing paths to recipe files.
    */
-  public function providerApplyRecipe(): iterable {
+  public static function providerApplyRecipe(): iterable {
     $finder = Finder::create()
       ->in([
-        $this->getDrupalRoot() . '/core/recipes',
+        static::getDrupalRoot() . '/core/recipes',
       ])
       ->directories()
       // Recipes can't contain other recipes, so we don't need to search in

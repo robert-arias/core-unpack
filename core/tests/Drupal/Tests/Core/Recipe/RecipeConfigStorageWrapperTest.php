@@ -187,7 +187,10 @@ class RecipeConfigStorageWrapperTest extends UnitTestCase {
    * @param array $args
    *   The arguments to pass to the method.
    *
-   * @dataProvider unsupportedMethods
+   * @testWith ["write", "name", []]
+   *           ["delete", "name"]
+   *           ["rename", "old_name", "new_name"]
+   *           ["deleteAll"]
    */
   public function testUnsupportedMethods(string $method, ...$args): void {
     $this->expectException(\BadMethodCallException::class);
@@ -298,21 +301,6 @@ class RecipeConfigStorageWrapperTest extends UnitTestCase {
     $b->expects($this->once())->method('exists')->with('a_key')
       ->willReturn($b_return);
     return [$a, $b];
-  }
-
-  /**
-   * Data provider for methods that are unsupported.
-   *
-   * @return array
-   *   An array of method names w/ args to test the unsupported methods.
-   */
-  public function unsupportedMethods(): array {
-    return [
-      ['write', 'name', []],
-      ['delete', 'name'],
-      ['rename', 'old_name', 'new_name'],
-      ['deleteAll'],
-    ];
   }
 
 }

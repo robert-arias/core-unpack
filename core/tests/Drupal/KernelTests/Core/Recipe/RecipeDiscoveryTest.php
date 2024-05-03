@@ -14,17 +14,11 @@ use Drupal\KernelTests\KernelTestBase;
  */
 class RecipeDiscoveryTest extends KernelTestBase {
 
-  public function providerRecipeDiscovery(): array {
-    return [
-      ['install_two_modules', 'Install two modules'],
-      ['recipe_include', 'Recipe include'],
-    ];
-  }
-
   /**
    * Tests that recipe discovery can find recipes.
    *
-   * @dataProvider providerRecipeDiscovery
+   * @testWith ["install_two_modules", "Install two modules"]
+   *           ["recipe_include", "Recipe include"]
    */
   public function testRecipeDiscovery(string $recipe, string $name): void {
     $discovery = new RecipeDiscovery('core/tests/fixtures/recipes');
@@ -32,17 +26,11 @@ class RecipeDiscoveryTest extends KernelTestBase {
     $this->assertSame($name, $recipe->name);
   }
 
-  public function providerRecipeDiscoveryException(): array {
-    return [
-      'missing recipe.yml' => ['no_recipe'],
-      'no folder' => ['does_not_exist'],
-    ];
-  }
-
   /**
    * Tests the exception thrown when recipe discovery cannot find a recipe.
    *
-   * @dataProvider providerRecipeDiscoveryException
+   * @testWith ["no_recipe"]
+   *           ["does_not_exist"]
    */
   public function testRecipeDiscoveryException(string $recipe): void {
     $discovery = new RecipeDiscovery('core/tests/fixtures/recipes');

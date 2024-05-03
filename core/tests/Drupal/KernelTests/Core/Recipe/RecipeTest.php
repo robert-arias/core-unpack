@@ -20,16 +20,9 @@ class RecipeTest extends KernelTestBase {
    */
   protected static $modules = ['system', 'user', 'field'];
 
-  public function providerTestCreateFromDirectory(): array {
-    return [
-      'no extensions' => ['no_extensions', 'No extensions' , 'Testing', [], 'A recipe description'],
-      // Filter is installed because it is a dependency and it is not yet installed.
-      'install_two_modules' => ['install_two_modules', 'Install two modules' , 'Content type', ['filter', 'text', 'node'], ''],
-    ];
-  }
-
   /**
-   * @dataProvider providerTestCreateFromDirectory
+   * @testWith ["no_extensions", "No extensions" , "Testing", [], "A recipe description"]
+   *           ["install_two_modules", "Install two modules" , "Content type", ["filter", "text", "node"], ""]
    */
   public function testCreateFromDirectory2(string $recipe_name, string $expected_name, string $expected_type, array $expected_modules, string $expected_description): void {
     $recipe = Recipe::createFromDirectory('core/tests/fixtures/recipes/' . $recipe_name);

@@ -134,7 +134,7 @@ class CheckpointStorageTest extends UnitTestCase {
    * @return array
    *   The data.
    */
-  public function readMethodsProvider(): array {
+  public static function readMethodsProvider(): array {
     $fixture = [
       StorageInterface::DEFAULT_COLLECTION => ['config.a', 'config.b', 'other.a'],
     ];

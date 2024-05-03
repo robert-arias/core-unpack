@@ -112,7 +112,7 @@ class ContentImportTest extends BrowserTestBase {
   /**
    * @return array<array<mixed>>
    */
-  public function providerImportEntityThatAlreadyExists(): array {
+  public static function providerImportEntityThatAlreadyExists(): array {
     return [
       [Existing::Error],
       [Existing::Skip],
