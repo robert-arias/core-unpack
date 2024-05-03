@@ -466,16 +466,6 @@ parameters:
 			path: core/tests/Drupal/KernelTests/Core/Config/Storage/Checkpoint/CheckpointStorageTest.php
 
 		-
-			message: "#^Method Drupal\\\\KernelTests\\\\Core\\\\Recipe\\\\RecipeDiscoveryTest\\:\\:providerRecipeDiscovery\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeDiscoveryTest.php
-
-		-
-			message: "#^Method Drupal\\\\KernelTests\\\\Core\\\\Recipe\\\\RecipeDiscoveryTest\\:\\:providerRecipeDiscoveryException\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeDiscoveryTest.php
-
-		-
 			message: "#^Cannot access offset '_core' on mixed\\.$#"
 			count: 1
 			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeRunnerTest.php
@@ -519,11 +509,6 @@ parameters:
 			message: "#^Parameter \\#1 \\$string of function strlen expects string, mixed given\\.$#"
 			count: 1
 			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeRunnerTest.php
-
-		-
-			message: "#^Method Drupal\\\\KernelTests\\\\Core\\\\Recipe\\\\RecipeTest\\:\\:providerTestCreateFromDirectory\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: core/tests/Drupal/KernelTests/Core/Recipe/RecipeTest.php
 
 		-
 			message: "#^Method Drupal\\\\KernelTests\\\\Core\\\\Recipe\\\\RecipeTest\\:\\:testCreateFromDirectory2\\(\\) has parameter \\$expected_modules with no value type specified in iterable type array\\.$#"
@@ -647,11 +632,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\Tests\\\\Core\\\\Recipe\\\\RecipeConfigStorageWrapperTest\\:\\:testUnsupportedMethods\\(\\) has parameter \\$args with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: core/tests/Drupal/Tests/Core/Recipe/RecipeConfigStorageWrapperTest.php
-
-		-
-			message: "#^Method Drupal\\\\Tests\\\\Core\\\\Recipe\\\\RecipeConfigStorageWrapperTest\\:\\:unsupportedMethods\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: core/tests/Drupal/Tests/Core/Recipe/RecipeConfigStorageWrapperTest.php
 
