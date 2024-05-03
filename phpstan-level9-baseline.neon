@@ -654,3 +654,23 @@ parameters:
 			message: "#^Method Drupal\\\\Tests\\\\Core\\\\Recipe\\\\RecipeConfigStorageWrapperTest\\:\\:unsupportedMethods\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: core/tests/Drupal/Tests/Core/Recipe/RecipeConfigStorageWrapperTest.php
+
+		-
+			message: "#^Cannot access offset 0 on mixed\\.$#"
+			count: 1
+			path: core/tests/Drupal/Tests/Core/Recipe/RecipeQuickStartTest.php
+
+		-
+			message: "#^Cannot call method fetch\\(\\) on PDOStatement\\|false\\.$#"
+			count: 1
+			path: core/tests/Drupal/Tests/Core/Recipe/RecipeQuickStartTest.php
+
+		-
+			message: "#^Cannot cast mixed to string\\.$#"
+			count: 1
+			path: core/tests/Drupal/Tests/Core/Recipe/RecipeQuickStartTest.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: core/tests/Drupal/Tests/Core/Recipe/RecipeQuickStartTest.php

@@ -68,7 +68,6 @@ class RecipeQuickStartTest extends TestCase {
    * {@inheritdoc}
    */
   protected function tearDown(): void {
-    // @phpstan-ignore-next-line
     if ($this->testDb) {
       $test_site_directory = $this->root . DIRECTORY_SEPARATOR . $this->testDb->getTestSitePath();
       if (file_exists($test_site_directory)) {
@@ -85,7 +84,6 @@ class RecipeQuickStartTest extends TestCase {
    * Tests the quick-start command with a recipe.
    */
   public function testQuickStartRecipeCommand(): void {
-    // @phpstan-ignore-next-line
     $sqlite = (string) (new \PDO('sqlite::memory:'))->query('select sqlite_version()')->fetch()[0];
     if (version_compare($sqlite, Tasks::SQLITE_MINIMUM_VERSION) < 0) {
       $this->markTestSkipped();
