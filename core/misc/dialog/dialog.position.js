@@ -84,7 +84,7 @@
         // jQuery UI does not support percentages on heights, convert to pixels.
         if (
           typeof optionValue === 'string' &&
-          /%$/.test(optionValue) &&
+          optionValue.endsWith('%') &&
           /height/i.test(option)
         ) {
           // Take offsets in account.
@@ -108,9 +108,13 @@
     if (!event.data.settings.modal) {
       adjustedOptions = resetPosition(adjustedOptions);
     }
+    event.data.$element.dialog('option', adjustedOptions);
+
     event.data.$element
-      .dialog('option', adjustedOptions)
-      .trigger('dialogContentResize');
+      ?.get(0)
+      ?.dispatchEvent(
+        new CustomEvent('dialogContentResize', { bubbles: true }),
+      );
   }
 
   window.addEventListener('dialog:aftercreate', (e) => {

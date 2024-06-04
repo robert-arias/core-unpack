@@ -7,7 +7,6 @@ use Drupal\Component\Annotation\Reflection\MockFileFinder;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Extension\ExtensionDiscovery;
 use Drupal\Core\Test\Exception\MissingGroupException;
-use Drupal\TestTools\PhpUnitCompatibility\ClassWriter;
 
 /**
  * Discovers available tests.
@@ -81,12 +80,15 @@ class TestDiscovery {
 
     $existing = $this->classLoader->getPrefixesPsr4();
 
-    // Add PHPUnit test namespaces of Drupal core.
-    $this->testNamespaces['Drupal\\Tests\\'] = [$this->root . '/core/tests/Drupal/Tests'];
-    $this->testNamespaces['Drupal\\BuildTests\\'] = [$this->root . '/core/tests/Drupal/BuildTests'];
-    $this->testNamespaces['Drupal\\KernelTests\\'] = [$this->root . '/core/tests/Drupal/KernelTests'];
-    $this->testNamespaces['Drupal\\FunctionalTests\\'] = [$this->root . '/core/tests/Drupal/FunctionalTests'];
+    // Add PHPUnit test namespaces of Drupal core. Order the namespaces by the
+    // test types that tend to be slowest first, to optimize overall test times
+    // when multiple different test types are run concurrently by the same test
+    // runner.
     $this->testNamespaces['Drupal\\FunctionalJavascriptTests\\'] = [$this->root . '/core/tests/Drupal/FunctionalJavascriptTests'];
+    $this->testNamespaces['Drupal\\FunctionalTests\\'] = [$this->root . '/core/tests/Drupal/FunctionalTests'];
+    $this->testNamespaces['Drupal\\BuildTests\\'] = [$this->root . '/core/tests/Drupal/BuildTests'];
+    $this->testNamespaces['Drupal\\Tests\\'] = [$this->root . '/core/tests/Drupal/Tests'];
+    $this->testNamespaces['Drupal\\KernelTests\\'] = [$this->root . '/core/tests/Drupal/KernelTests'];
     $this->testNamespaces['Drupal\\TestTools\\'] = [$this->root . '/core/tests/Drupal/TestTools'];
 
     $this->availableExtensions = [];
@@ -107,10 +109,6 @@ class TestDiscovery {
     foreach ($this->testNamespaces as $prefix => $paths) {
       $this->classLoader->addPsr4($prefix, $paths);
     }
-
-    $loader = require __DIR__ . '/../../../../../autoload.php';
-    // Ensure we have a valid TestCase class.
-    ClassWriter::mutateTestBase($loader);
 
     return $this->testNamespaces;
   }

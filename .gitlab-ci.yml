@@ -1,4 +1,4 @@
-# cspell:ignore codequality Micheh micheh webide updatedb stylelintrc
+# cspell:ignore codequality Micheh micheh webide updatedb stylelintrc unshallow
 
 ################
 # Drupal GitLabCI template.
@@ -193,35 +193,11 @@ default:
 # Main listing of jobs.
 # All of these are available on Merge Requests and also work as base jobs for
 # on-commit and daily jobs to extend from.
-'PHP 8.3 MySQL 5.7':
-  <<: [ *default-stage, *run-on-mr ]
-  variables:
-    _TARGET_PHP: "8.3"
-    _TARGET_DB: "mysql-5.7"
-
-'PHP 8.3 MariaDB 10.3.22':
-  <<: [ *default-stage, *run-on-mr ]
-  variables:
-    _TARGET_PHP: "8.3"
-    _TARGET_DB: "mariadb-10.3.22"
-
 'PHP 8.3 MariaDB 10.6':
   <<: [ *default-stage, *run-on-mr ]
   variables:
     _TARGET_PHP: "8.3"
     _TARGET_DB: "mariadb-10.6"
-
-'PHP 8.3 PostgreSQL 14.1':
-  <<: [ *default-stage, *run-on-mr ]
-  variables:
-    _TARGET_PHP: "8.3"
-    _TARGET_DB: "pgsql-14.1"
-
-'PHP 8.3 PostgreSQL 15':
-  <<: [ *default-stage, *run-on-mr ]
-  variables:
-    _TARGET_PHP: "8.3"
-    _TARGET_DB: "pgsql-15"
 
 'PHP 8.3 PostgreSQL 16':
   <<: [ *default-stage, *run-on-mr ]
@@ -237,14 +213,9 @@ default:
 
 # Jobs running on commits.
 # The value set in the "needs" property will determine the order in the sequence.
-'[Commit] PHP 8.3 MySQL 5.7':
-  extends: 'PHP 8.3 MySQL 5.7'
-  needs: [ 'DEFAULT: PHP 8.3 MySQL 8' ]
-  <<: [ *run-on-commit ]
-
 '[Commit] PHP 8.3 PostgreSQL 16':
   extends: 'PHP 8.3 PostgreSQL 16'
-  needs: [ '[Commit] PHP 8.3 MySQL 5.7' ]
+  needs: [ 'DEFAULT: PHP 8.3 MySQL 8' ]
   <<: [ *run-on-commit ]
 
 '[Commit] PHP 8.3 SQLite 3.45':
@@ -264,8 +235,8 @@ default:
   needs: [ '[Daily] PHP 8.3 PostgreSQL 16' ]
   <<: [ *run-daily ]
 
-'[Daily] PHP 8.3 MariaDB 10.3.22':
-  extends: 'PHP 8.3 MariaDB 10.3.22'
+'[Daily] PHP 8.3 MariaDB 10.6':
+  extends: 'PHP 8.3 MariaDB 10.6'
   needs: [ '[Daily] PHP 8.3 SQLite 3.45' ]
   <<: [ *run-daily ]
 
@@ -359,7 +330,7 @@ default:
     KUBERNETES_CPU_REQUEST: "16"
   script:
     - vendor/bin/phpcs --version
-    - composer phpcs -- --report-full --report-summary --report-\\Micheh\\PhpCodeSniffer\\Report\\Gitlab=phpcs-quality-report.json
+    - composer phpcs -- -s --report-full --report-summary --report-\\Micheh\\PhpCodeSniffer\\Report\\Gitlab=phpcs-quality-report.json
   artifacts:
     reports:
       codequality: phpcs-quality-report.json
@@ -430,6 +401,7 @@ default:
       fi;
     - cd core
     - corepack enable
+    - git diff ${CI_MERGE_REQUEST_TARGET_BRANCH_SHA:-$CI_MERGE_REQUEST_DIFF_BASE_SHA} --name-only 2>1 > /dev/null || (echo "Warning, cannot find changed files, converting to full clone." & (git fetch --unshallow --quiet && echo "Fetch successful."))
     - git diff ${CI_MERGE_REQUEST_TARGET_BRANCH_SHA:-$CI_MERGE_REQUEST_DIFF_BASE_SHA} --name-only | sed "s_^_../_" | yarn run spellcheck:core --no-must-find-files --file-list stdin
 
 '📔 Validatable config':

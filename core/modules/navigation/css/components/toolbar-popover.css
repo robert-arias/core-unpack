@@ -44,12 +44,10 @@
   inset-block-start: var(--admin-toolbar-sidebar-header);
   inset-inline-start: 0;
   /* Hide the drop-shadow on the left side. */
-  -webkit-clip-path: inset(0 -10rem 0 0);
   clip-path: inset(0 -10rem 0 0);
 }
 [dir="rtl"] [data-toolbar-popover-wrapper] {
   /* Hide the drop-shadow on the right side. */
-  -webkit-clip-path: inset(0 0 0 -10rem);
   clip-path: inset(0 0 0 -10rem);
   transform: translateX(0);
 }
@@ -59,10 +57,13 @@
 
     padding-block-start: var(--admin-toolbar-space-16);
     transform: translateX(0);
-    filter: drop-shadow(0 0 4.5rem rgba(0, 0, 0, 0.2)) drop-shadow(0 0 0.5rem rgba(0, 0, 0, 0.04)) drop-shadow(0 0 2.5rem rgba(0, 0, 0, 0.06));
+    box-shadow:
+      0 0 72px rgba(0, 0, 0, 0.2),
+      0 0 8px rgba(0, 0, 0, 0.04),
+      0 0 40px rgba(0, 0, 0, 0.06);
     inline-size: var(--admin-toolbar-popover-width);
     inset-block-start: 0;
-    inset-inline-start: 0;
+    inset-inline-start: 1px;
   }
 }
 [data-toolbar-popover-safe-triangle] {
@@ -70,7 +71,6 @@
   display: none;
   content: "";
   inset: 0;
-  -webkit-clip-path: polygon(var(--safe-triangle-cursor-x, 0) var(--safe-triangle-cursor-y, 0), var(--safe-triangle-submenu-start-x, 0) var(--safe-triangle-submenu-start-y, 0), var(--safe-triangle-submenu-end-x, 0) max(var(--safe-triangle-submenu-end-y, 0), var(--safe-triangle-cursor-y, 0), 66vh));
   clip-path: polygon(var(--safe-triangle-cursor-x, 0) var(--safe-triangle-cursor-y, 0), var(--safe-triangle-submenu-start-x, 0) var(--safe-triangle-submenu-start-y, 0), var(--safe-triangle-submenu-end-x, 0) max(var(--safe-triangle-submenu-end-y, 0), var(--safe-triangle-cursor-y, 0), 66vh));
 }
 [data-toolbar-popover-control][aria-expanded="true"] + [data-toolbar-popover-wrapper] {
@@ -87,8 +87,8 @@
   }
 }
 [data-admin-toolbar="collapsed"] [data-toolbar-popover-wrapper] {
-  transform: translateX(calc((16 * var(--admin-toolbar-rem) * -1) + var(--drupal-displace-offset-left)));
+  transform: translateX(calc((16 * var(--admin-toolbar-rem) * -1) + var(--drupal-displace-offset-left, var(--admin-toolbar-space-72))));
 }
 [dir="rtl"] :is([data-admin-toolbar="collapsed"] [data-toolbar-popover-wrapper]) {
-  transform: translateX(calc((16 * var(--admin-toolbar-rem)) + var(--drupal-displace-offset-right)));
+  transform: translateX(calc((16 * var(--admin-toolbar-rem)) + var(--drupal-displace-offset-right, var(--admin-toolbar-space-72))));
 }

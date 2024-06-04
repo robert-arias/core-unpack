@@ -210,7 +210,7 @@ class EntityField extends FieldPluginBase implements CacheableDependencyInterfac
   /**
    * {@inheritdoc}
    */
-  public function init(ViewExecutable $view, DisplayPluginBase $display, array &$options = NULL) {
+  public function init(ViewExecutable $view, DisplayPluginBase $display, ?array &$options = NULL) {
     parent::init($view, $display, $options);
 
     $this->multiple = FALSE;
@@ -531,7 +531,7 @@ class EntityField extends FieldPluginBase implements CacheableDependencyInterfac
 
     // Get the settings form.
     $settings_form = ['#value' => []];
-    $format = isset($form_state->getUserInput()['options']['type']) ? $form_state->getUserInput()['options']['type'] : $this->options['type'];
+    $format = $form_state->getUserInput()['options']['type'] ?? $this->options['type'];
     if ($formatter = $this->getFormatterInstance($format)) {
       $settings_form = $formatter->settingsForm($form, $form_state);
       // Convert field UI selector states to work in the Views field form.

@@ -8,10 +8,12 @@ use Drupal\Core\Config\Checkpoint\Checkpoint;
 use Drupal\Tests\BrowserTestBase;
 
 /**
- * @coversDefaultClass \Drupal\Core\Recipe\RecipeCommand
- * @group Recipe
+ * Tests recipe command.
  *
  * BrowserTestBase is used for a proper Drupal install.
+ *
+ * @coversDefaultClass \Drupal\Core\Recipe\RecipeCommand
+ * @group Recipe
  */
 class RecipeCommandTest extends BrowserTestBase {
 
@@ -89,6 +91,18 @@ class RecipeCommandTest extends BrowserTestBase {
     $this->assertStringContainsString('Provides a filter plugin that is in use', $output);
     // And the exception that actually *caused* the error should be visible too.
     $this->assertStringContainsString('There were validation errors in system.image:', $process->getErrorOutput());
+  }
+
+  /**
+   * Tests the recipe command with a non-existent directory.
+   */
+  public function testErrorOnNonExistentDirectory(): void {
+    $process = $this->applyRecipe('core/tests/fixtures/recipes/does_not_exist', 1);
+
+    // The directory error should be the only error visible.
+    $output = trim(preg_replace('/\s+/', ' ', $process->getOutput()));
+    $this->assertSame('[ERROR] The supplied path core/tests/fixtures/recipes/does_not_exist is not a directory', $output);
+    $this->assertEmpty($process->getErrorOutput());
   }
 
   /**

@@ -59,11 +59,10 @@ class NavigationBlockUiTest extends WebDriverTestBase {
     $this->drupalPlaceBlock('page_title_block', ['id' => 'title']);
     // Create an administrative user.
     $this->adminUser = $this->drupalCreateUser([
-      'administer navigation_block',
+      'configure navigation layout',
       'access administration pages',
       'access navigation',
       'access shortcuts',
-      'configure any layout',
       'access contextual links',
       'administer shortcuts',
       'administer site configuration',
@@ -114,6 +113,7 @@ class NavigationBlockUiTest extends WebDriverTestBase {
     $this->assertSession()->elementNotExists('css', 'form .block-navigation-shortcuts');
 
     // Add a new block.
+    $this->getSession()->getPage()->uncheckField('toggle_content_preview');
     $this->openAddBlockForm('Navigation Shortcuts');
 
     $page->fillField('settings[label]', 'New Shortcuts');

@@ -35,6 +35,14 @@ class RequestSanitizerTest extends UnitTestCase {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  protected function tearDown(): void {
+    restore_error_handler();
+    parent::tearDown();
+  }
+
+  /**
    * Tests RequestSanitizer class.
    *
    * @param \Symfony\Component\HttpFoundation\Request $request
@@ -52,7 +60,7 @@ class RequestSanitizerTest extends UnitTestCase {
    *
    * @dataProvider providerTestRequestSanitization
    */
-  public function testRequestSanitization(Request $request, array $expected = [], array $expected_errors = NULL, array $whitelist = []) {
+  public function testRequestSanitization(Request $request, array $expected = [], ?array $expected_errors = NULL, array $whitelist = []) {
     // Set up globals.
     $_GET = $request->query->all();
     $_POST = $request->request->all();

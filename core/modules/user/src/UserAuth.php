@@ -8,7 +8,7 @@ use Drupal\Core\Password\PasswordInterface;
 /**
  * Validates user authentication credentials.
  */
-class UserAuth implements UserAuthInterface, UserAuthenticationInterface {
+class UserAuth implements UserAuthInterface {
 
   /**
    * The entity type manager.
@@ -33,6 +33,7 @@ class UserAuth implements UserAuthInterface, UserAuthenticationInterface {
    *   The password service.
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager, PasswordInterface $password_checker) {
+    @trigger_error(__CLASS__ . ' is deprecated in drupal:10.3.0 and will be removed from drupal:12.0.0. Implement \Drupal\user\UserAuthenticationInterface instead. See https://www.drupal.org/node/3411040');
     $this->entityTypeManager = $entity_type_manager;
     $this->passwordChecker = $password_checker;
   }
@@ -48,41 +49,20 @@ class UserAuth implements UserAuthInterface, UserAuthenticationInterface {
       $account_search = $this->entityTypeManager->getStorage('user')->loadByProperties(['name' => $username]);
 
       if ($account = reset($account_search)) {
-        if ($this->authenticateAccount($account, $password)) {
+        if ($this->passwordChecker->check($password, $account->getPassword())) {
+          // Successful authentication.
           $uid = $account->id();
+
+          // Update user to new password scheme if needed.
+          if ($this->passwordChecker->needsRehash($account->getPassword())) {
+            $account->setPassword($password);
+            $account->save();
+          }
         }
       }
     }
+
     return $uid;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function lookupAccount($identifier): UserInterface|false {
-    if (!empty($identifier)) {
-      $account_search = $this->entityTypeManager->getStorage('user')->loadByProperties(['name' => $identifier]);
-
-      if ($account = reset($account_search)) {
-        return $account;
-      }
-    }
-    return FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function authenticateAccount(UserInterface $account, #[\SensitiveParameter] string $password): bool {
-    if ($this->passwordChecker->check($password, $account->getPassword())) {
-      // Update user to new password scheme if needed.
-      if ($this->passwordChecker->needsRehash($account->getPassword())) {
-        $account->setPassword($password);
-        $account->save();
-      }
-      return TRUE;
-    }
-    return FALSE;
   }
 
 }

@@ -124,7 +124,7 @@ abstract class StylePluginBase extends PluginBase {
    * The style options might come externally as the style can be sourced from at
    * least two locations. If it's not included, look on the display.
    */
-  public function init(ViewExecutable $view, DisplayPluginBase $display, array &$options = NULL) {
+  public function init(ViewExecutable $view, DisplayPluginBase $display, ?array &$options = NULL) {
     parent::init($view, $display, $options);
 
     if ($this->usesRowPlugin() && $display->getOption('row')) {
@@ -564,7 +564,7 @@ abstract class StylePluginBase extends PluginBase {
     // This is for backward compatibility, when $groupings was a string
     // containing the ID of a single field.
     if (is_string($groupings)) {
-      $rendered = $group_rendered === NULL ? TRUE : $group_rendered;
+      $rendered = $group_rendered ?? TRUE;
       $groupings = [['field' => $groupings, 'rendered' => $rendered]];
     }
 

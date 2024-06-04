@@ -510,15 +510,12 @@ class UrlGeneratorTest extends UnitTestCase {
 
   /**
    * @covers \Drupal\Core\Routing\UrlGenerator::generateFromRoute
-   *
-   * Note: We use absolute covers to let
-   * \Drupal\Tests\Core\Render\MetadataBubblingUrlGeneratorTest work.
    */
   public function testGenerateWithPathProcessorChangingOptions() {
     $path_processor = $this->createMock(OutboundPathProcessorInterface::CLASS);
     $path_processor->expects($this->atLeastOnce())
       ->method('processOutbound')
-      ->willReturnCallback(function ($path, &$options = [], Request $request = NULL, BubbleableMetadata $bubbleable_metadata = NULL) {
+      ->willReturnCallback(function ($path, &$options = [], ?Request $request = NULL, ?BubbleableMetadata $bubbleable_metadata = NULL) {
         $options['query'] = ['zoo' => 5];
         $options['fragment'] = 'foo';
         return $path;

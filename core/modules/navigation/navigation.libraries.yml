@@ -1,4 +1,6 @@
-navigation:
+internal.navigation:
+  # Internal library. Do not depend on it outside core nor add core usage
+  # beyond the Navigation module.
   version: VERSION
   js:
     js/toolbar-menu.js: {}
@@ -22,29 +24,18 @@ navigation:
     - core/tabbable
     - navigation/admin-reset-styles
     - navigation/body-scroll-lock
-    - navigation/dropdown
-    - navigation/tooltip
-    - navigation/popover
+    - navigation/internal.dropdown
+    - navigation/internal.tooltip
+    - navigation/internal.popover
 
 admin-reset-styles:
   css:
     base:
       css/base/admin-reset-styles.css: {}
 
-navigation.escapeAdmin:
-  version: VERSION
-  js:
-    js/escapeAdmin.js: {}
-  dependencies:
-    - core/drupal
-    - core/drupalSettings
-    - core/once
-    - core/drupal.displace
-
 navigation.layout:
   dependencies:
-    - navigation/navigation
-    - navigation/navigation.escapeAdmin
+    - navigation/internal.navigation
 
 body-scroll-lock:
   version: VERSION
@@ -52,12 +43,9 @@ body-scroll-lock:
     base:
       css/components/body-scroll-lock.css: {}
 
-floating-ui:
-  js:
-    assets/vendor/floating-ui/floating-ui.core.umd.js: { minified: true }
-    assets/vendor/floating-ui/floating-ui.dom.umd.js: { minified: true }
-
-popover:
+internal.popover:
+  # Internal library. Do not depend on it outside core nor add core usage
+  # beyond the Navigation module.
   js:
     js/toolbar-popover.js: {}
   css:
@@ -66,7 +54,9 @@ popover:
   dependencies:
     - core/once
 
-tooltip:
+internal.tooltip:
+  # Internal library. Do not depend on it outside core nor add core usage
+  # beyond the Navigation module.
   js:
     js/tooltip.js: {}
   css:
@@ -76,7 +66,9 @@ tooltip:
     - core/once
     - core/internal.floating-ui
 
-dropdown:
+internal.dropdown:
+  # Internal library. Do not depend on it outside core nor add core usage
+  # beyond the Navigation module.
   js:
     js/toolbar-dropdown.js: {}
   css:

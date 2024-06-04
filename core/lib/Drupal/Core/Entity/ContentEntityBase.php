@@ -727,7 +727,7 @@ abstract class ContentEntityBase extends EntityBase implements \IteratorAggregat
   /**
    * {@inheritdoc}
    */
-  public function access($operation, AccountInterface $account = NULL, $return_as_object = FALSE) {
+  public function access($operation, ?AccountInterface $account = NULL, $return_as_object = FALSE) {
     if ($operation == 'create') {
       return $this->entityTypeManager()
         ->getAccessControlHandler($this->entityTypeId)
@@ -1450,7 +1450,7 @@ abstract class ContentEntityBase extends EntityBase implements \IteratorAggregat
     $original = $this->original ? $this->original : NULL;
 
     if (!$original) {
-      $id = $this->getOriginalId() !== NULL ? $this->getOriginalId() : $this->id();
+      $id = $this->getOriginalId() ?? $this->id();
       $original = $this->entityTypeManager()->getStorage($this->getEntityTypeId())->loadUnchanged($id);
     }
 

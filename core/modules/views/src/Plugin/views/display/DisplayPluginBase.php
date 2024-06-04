@@ -162,7 +162,7 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
   /**
    * {@inheritdoc}
    */
-  public function initDisplay(ViewExecutable $view, array &$display, array &$options = NULL) {
+  public function initDisplay(ViewExecutable $view, array &$display, ?array &$options = NULL) {
     $this->view = $view;
 
     // Load extenders as soon as possible.
@@ -174,7 +174,7 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
       foreach ($extenders as $extender) {
         /** @var \Drupal\views\Plugin\views\display_extender\DisplayExtenderPluginBase $plugin */
         if ($plugin = $manager->createInstance($extender)) {
-          $extender_options = isset($display_extender_options[$plugin->getPluginId()]) ? $display_extender_options[$plugin->getPluginId()] : [];
+          $extender_options = $display_extender_options[$plugin->getPluginId()] ?? [];
           $plugin->init($this->view, $this, $extender_options);
           $this->extenders[$extender] = $plugin;
         }
@@ -2300,7 +2300,7 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
   /**
    * {@inheritdoc}
    */
-  public function access(AccountInterface $account = NULL) {
+  public function access(?AccountInterface $account = NULL) {
     if (!isset($account)) {
       $account = \Drupal::currentUser();
     }

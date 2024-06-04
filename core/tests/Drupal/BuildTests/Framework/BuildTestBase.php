@@ -11,7 +11,6 @@ use Composer\InstalledVersions;
 use Drupal\Component\FileSystem\FileSystem as DrupalFilesystem;
 use Drupal\Tests\DrupalTestBrowser;
 use Drupal\Tests\PhpUnitCompatibilityTrait;
-use Drupal\Tests\Traits\PhpUnitWarnings;
 use Drupal\TestTools\Extension\RequiresComposerTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
@@ -55,7 +54,6 @@ use Symfony\Component\Process\Process;
 abstract class BuildTestBase extends TestCase {
 
   use RequiresComposerTrait;
-  use PhpUnitWarnings;
   use PhpUnitCompatibilityTrait;
 
   /**
@@ -549,7 +547,7 @@ abstract class BuildTestBase extends TestCase {
    *   (optional) Relative path within the test workspace file system that will
    *   contain the copy of the codebase. Defaults to the workspace directory.
    */
-  public function copyCodebase(\Iterator $iterator = NULL, $working_dir = NULL) {
+  public function copyCodebase(?\Iterator $iterator = NULL, $working_dir = NULL) {
     $working_path = $this->getWorkingPath($working_dir);
 
     if ($iterator === NULL) {
