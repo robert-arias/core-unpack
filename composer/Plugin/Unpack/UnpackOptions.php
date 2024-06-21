@@ -56,6 +56,8 @@ class UnpackOptions {
    *
    * @param array $extras
    *   The contents of the 'extras' section.
+   * @param string $unpacker_type
+   *   The type of unpacker.
    *
    * @return self
    *   The unpack options object representing the provided unpack options

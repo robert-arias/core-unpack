@@ -45,11 +45,6 @@ interface UnpackerInterface {
   public function shouldUnpackPatches(): bool;
 
   /**
-   * Unpack patches if any from the package.
-   */
-  public function unpackPatches(): void;
-
-  /**
    * Whether the package can be unpacked recursively.
    *
    * A package can be unpacked recursively if within its dependencies there are

@@ -16,7 +16,26 @@ use Drupal\Composer\Plugin\Unpack\Unpackers\UnpackerInterface;
  */
 class UnpackManager {
 
+  /**
+   * The unpack collection.
+   *
+   * @var \Drupal\Composer\Plugin\Unpack\UnpackCollection
+   */
   protected UnpackCollection $unpackCollection;
+
+  /**
+   * The unpacker factory.
+   *
+   * @var \Drupal\Composer\Plugin\Unpack\UnpackerFactory
+   */
+  protected UnpackerFactory $unpackerFactory;
+
+  /**
+   * The root composer with the root dependencies to be manipulated.
+   *
+   * @var \Drupal\Composer\Plugin\Unpack\RootComposer
+   */
+  protected RootComposer $rootComposer;
 
   /**
    * UnpackManager constructor.
@@ -28,28 +47,47 @@ class UnpackManager {
    */
   public function __construct(
     protected Composer $composer,
-    protected IOInterface $io
+    protected IOInterface $io,
   ) {
     $this->unpackCollection = new UnpackCollection();
+    $this->rootComposer = new RootComposer($this->composer, $this->io);
+    $this->unpackerFactory = new UnpackerFactory(
+      $this->composer,
+      $this->io,
+      $this->unpackCollection,
+      $this->rootComposer,
+    );
   }
 
-  public function unpack(PackageEvent $event): void {
-    try {
-      $package = self::getPackage($event);
-      $unpacker_factory = new UnpackerFactory($this->composer, $this->io, $this->unpackCollection);
+  /**
+   * Register a package for unpacking.
+   *
+   * If the package is unpackable, it will be added into the package queue in
+   * the UnpackCollection.
+   *
+   * @param \Composer\Installer\PackageEvent $event
+   *   Composer package event sent on install/update/remove.
+   */
+  public function registerPackage(PackageEvent $event): void {
+    $package = self::getPackage($event);
+    if ($this->unpackerFactory->isUnpackable($package)) {
       $this->unpackCollection->enqueuePackage($package);
+    }
+  }
 
-      // see PostPackageEventListenerInterface in scaffold plugin.
-      // basically, the unpacker can add into the queue in case a dependency
-      // needs to be unpacked, for example, a recipe package has another recipe
-      // dependency.
-      while ($this->unpackCollection->hasUnpackQueue()) {
-        $package = $this->unpackCollection->popPackageQueue();
-        $unpacker = $unpacker_factory->create($package);
+  /**
+   * Unpack the packages in the queue.
+   */
+  public function unpack(): void {
+    try {
+      while ($package = $this->unpackCollection->popPackageQueue()) {
+        $unpacker = $this->unpackerFactory->create($package);
         if ($unpacker) {
           $unpacker->unpackDependencies();
         }
       }
+
+      $this->rootComposer->updateComposer();
     }
     catch (\Exception $e) {
       $this->io->writeError($e->getMessage());

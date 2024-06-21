@@ -3,11 +3,13 @@
 namespace Drupal\Composer\Plugin\Unpack;
 
 use Composer\Composer;
+use Composer\EventDispatcher\Event;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
 use Composer\Installer\PackageEvent;
 use Composer\Installer\PackageEvents;
 use Composer\Plugin\PluginInterface;
+use Composer\Script\ScriptEvents;
 
 /**
  * Composer plugin for handling dependency unpacking.
@@ -63,6 +65,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
   public static function getSubscribedEvents(): array {
     return [
       PackageEvents::POST_PACKAGE_INSTALL => 'postPackage',
+      ScriptEvents::POST_AUTOLOAD_DUMP => 'postCmd',
     ];
   }
 
@@ -73,7 +76,17 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
    *   Composer package event sent on install/update/remove.
    */
   public function postPackage(PackageEvent $event): void {
-    $this->manager()->unpack($event);
+    $this->manager()->registerPackage($event);
+  }
+
+  /**
+   * Post autoload event callback.
+   *
+   * @param \Composer\Script\Event $event
+   *   The Composer event.
+   */
+  public function postCmd(Event $event): void {
+    $this->manager()->unpack();
   }
 
   /**
@@ -82,7 +95,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
    * @return \Drupal\Composer\Plugin\Unpack\UnpackManager
    *   The unpack manager.
    */
-  public function manager() {
+  public function manager(): UnpackManager {
     if (!$this->manager) {
       $this->manager = new UnpackManager($this->composer, $this->io);
     }

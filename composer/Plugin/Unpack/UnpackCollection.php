@@ -50,7 +50,9 @@ class UnpackCollection implements \IteratorAggregate {
    *   The package to add to the queue.
    */
   public function enqueuePackage(PackageInterface $package): void {
-    $this->packagesToUnpack[] = $package;
+    if (!isset($this->packagesToUnpack[$package->getPrettyName()])) {
+      $this->packagesToUnpack[$package->getPrettyName()] = $package;
+    }
   }
 
   /**
@@ -76,7 +78,7 @@ class UnpackCollection implements \IteratorAggregate {
   }
 
   /**
-   * Check if a package has been unpacked.
+   * Check if a package has been unpacked or it's queued for unpacking.
    *
    * @param \Composer\Package\PackageInterface $package
    *   The package to check.
@@ -87,7 +89,7 @@ class UnpackCollection implements \IteratorAggregate {
    *   TRUE if the package has been unpacked.
    */
   public function isUnpacked(PackageInterface $package, string $unpacker_id): bool {
-    return isset($this->unpackedPackages[$unpacker_id][$package->getPrettyName()]);
+    return isset($this->unpackedPackages[$unpacker_id][$package->getPrettyName()]) || isset($this->packagesToUnpack[$package->getPrettyName()]);
   }
 
   public function addPackageDependencies(string $name, string $version, bool $dev = FALSE): void {
