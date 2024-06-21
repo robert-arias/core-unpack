@@ -94,6 +94,17 @@ class UnpackManager {
     }
   }
 
+  /**
+   * Get the unpack options for a package.
+   *
+   * @param \Composer\Package\PackageInterface $package
+   *   The package to unpack.
+   * @param \Drupal\Composer\Plugin\Unpack\UnpackerInterface $unpacker
+   *   The unpacker to use.
+   *
+   * @return \Drupal\Composer\Plugin\Unpack\UnpackOptions
+   *   The unpack options.
+   */
   public static function getUnpackOptions(PackageInterface $package, UnpackerInterface $unpacker): UnpackOptions {
     return UnpackOptions::create($package->getExtra(), $unpacker->getUnpackerId());
   }

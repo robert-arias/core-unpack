@@ -11,7 +11,7 @@ namespace Drupal\Composer\Plugin\Unpack;
  * @code
  *  "extras": {
  *    "drupal-unpack": {
- *      "drupal-recipes": {
+ *      "drupal-recipe": {
  *        "unpack-dev-dependencies": true,
  *        "unpack-patches": true
  *      }

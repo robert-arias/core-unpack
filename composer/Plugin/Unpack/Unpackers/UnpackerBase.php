@@ -3,7 +3,6 @@
 namespace Drupal\Composer\Plugin\Unpack\Unpackers;
 
 use Composer\Composer;
-use Composer\Factory;
 use Composer\IO\IOInterface;
 use Composer\Package\Link;
 use Composer\Package\PackageInterface;
@@ -76,7 +75,7 @@ abstract class UnpackerBase implements UnpackerInterface {
    * @param bool $dev
    *   The flag to indicate if the dependencies are dev dependencies.
    */
-  protected function addPackageDependencies(array $package_dependencies, bool $dev = FALSE): void {
+  public function addPackageDependencies(array $package_dependencies, bool $dev = FALSE): void {
     foreach ($package_dependencies as $package_dependency) {
       if ($package_dependency->getTarget() === $this->package->getName()) {
         // This dependency is the same as the current package, so let's skip it.
@@ -109,6 +108,9 @@ abstract class UnpackerBase implements UnpackerInterface {
     }
   }
 
+  /**
+   * Update the root composer dependencies.
+   */
   public function updateRootDependencies(): void {
     try {
       $this->updateComposerJson();
@@ -120,6 +122,15 @@ abstract class UnpackerBase implements UnpackerInterface {
     }
   }
 
+  /**
+   * Update the composer.json file.
+   *
+   * This method will add all the package dependencies to the composer.json file
+   * and also remove the package itself from the root composer.json.
+   *
+   * @throws \RuntimeException
+   *   If the composer.json could not be updated.
+   */
   public function updateComposerJson(): void {
     $composer_json = $this->rootComposer->getComposerContent();
     $composer_manipulator = $this->rootComposer->getComposerManipulator();
@@ -164,6 +175,11 @@ abstract class UnpackerBase implements UnpackerInterface {
     }
   }
 
+  /**
+   * Update the composer.lock file.
+   *
+   * This method will remove the package itself from the composer.lock file.
+   */
   public function updateComposerLock(): void {
     $composer_locker_content = $this->rootComposer->getComposerLockedContent();
 
@@ -177,14 +193,14 @@ abstract class UnpackerBase implements UnpackerInterface {
         if (isset($composer_locker_content['packages'][$max]) &&
            $composer_locker_content['packages'][$max]['name'] === $this->package->getName()
         ) {
-          $this->rootComposer->removeFromRootComposer('packages', $max);
+          $this->rootComposer->removeFromComposerLock('packages', $max);
           break;
         }
 
         if (isset($composer_locker_content['packages-dev'][$max]) &&
            $composer_locker_content['packages-dev'][$max]['name'] === $this->package->getName()
         ) {
-          $this->rootComposer->removeFromRootComposer('packages-dev', $max);
+          $this->rootComposer->removeFromComposerLock('packages-dev', $max);
           break;
         }
 
@@ -193,15 +209,15 @@ abstract class UnpackerBase implements UnpackerInterface {
     }
   }
 
-  protected function getComposerJsonPath(): string {
-    return Factory::getComposerFile();
-  }
-
-  protected function getComposerLockPath(): string {
-    $composer_path = $this->getComposerJsonPath();
-    return substr($composer_path, 0, -4) . 'lock';
-  }
-
+  /**
+   * Get the package object from a link dependency.
+   *
+   * @param \Composer\Package\Link $dependency
+   *   The link dependency.
+   *
+   * @return \Composer\Package\PackageInterface|null
+   *   The package object.
+   */
   protected function getDependencyPackage(Link $dependency): ?PackageInterface {
     return $this->composer->getRepositoryManager()
       ->getLocalRepository()

@@ -93,7 +93,15 @@ class RootComposer {
     return $this->composerLockedContent;
   }
 
-  public function removeFromRootComposer(string $key, string $index): void {
+  /**
+   * Remove an element from the composer lock.
+   *
+   * @param string $key
+   *   The key of the element to remove.
+   * @param string $index
+   *   The index of the element to remove.
+   */
+  public function removeFromComposerLock(string $key, string $index): void {
     unset($this->composerLockedContent[$key][$index]);
   }
 
