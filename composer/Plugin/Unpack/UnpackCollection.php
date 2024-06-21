@@ -78,6 +78,16 @@ class UnpackCollection implements \IteratorAggregate {
   }
 
   /**
+   * Get the list of unpacked packages.
+   *
+   * @return array
+   *   The list of unpacked packages.
+   */
+  public function getUnpackedPackages(): array {
+    return $this->unpackedPackages;
+  }
+
+  /**
    * Check if a package has been unpacked or it's queued for unpacking.
    *
    * @param \Composer\Package\PackageInterface $package

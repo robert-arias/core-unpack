@@ -88,9 +88,16 @@ class UnpackManager {
       }
 
       $this->rootComposer->updateComposer();
+
+      foreach ($this->unpackCollection->getUnpackedPackages() as $packages) {
+        foreach ($packages as $package) {
+          /** @var \Composer\Package\PackageInterface $package */
+          $this->io->write("Package <info>{$package->getName()}</info> of type <info>{$package->getType()}</info> was unpacked successfully.");
+        }
+      }
     }
     catch (\Exception $e) {
-      $this->io->writeError($e->getMessage());
+      $this->io->writeError(sprintf('An error occurred while unpacking dependencies: %s', $e->getMessage()));
     }
   }
 
